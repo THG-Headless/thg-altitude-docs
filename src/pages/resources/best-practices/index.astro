@@ -1,0 +1,132 @@
+---
+import PageLayout from '../../../layouts/PageLayout.astro';
+import Navigation from '../../../components/Navigation.astro';
+---
+
+<PageLayout
+  title="Best Practices"
+  description="Best practices for building with THG Commerce"
+>
+  <Navigation slot="sidebar" />
+  
+  <div class="space-y-12">
+    <section>
+      <h2 class="text-2xl font-bold mb-6">Architecture Best Practices</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="p-6 bg-white dark:bg-stone-800 rounded-lg shadow-sm border border-stone-200 dark:border-stone-700">
+          <h3 class="text-xl font-semibold mb-3">API-First Design</h3>
+          <ul class="list-disc list-inside text-stone-600 dark:text-stone-300 space-y-2">
+            <li>Design APIs before implementing UIs</li>
+            <li>Use GraphQL for flexible data fetching</li>
+            <li>Implement proper error handling</li>
+            <li>Version your APIs appropriately</li>
+          </ul>
+        </div>
+
+        <div class="p-6 bg-white dark:bg-stone-800 rounded-lg shadow-sm border border-stone-200 dark:border-stone-700">
+          <h3 class="text-xl font-semibold mb-3">Performance</h3>
+          <ul class="list-disc list-inside text-stone-600 dark:text-stone-300 space-y-2">
+            <li>Utilize edge caching with Altitude</li>
+            <li>Implement proper data loading strategies</li>
+            <li>Optimize images and assets</li>
+            <li>Use code splitting effectively</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="text-2xl font-bold mb-6">Development Practices</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="p-6 bg-white dark:bg-stone-800 rounded-lg shadow-sm border border-stone-200 dark:border-stone-700">
+          <h3 class="text-xl font-semibold mb-3">Component Design</h3>
+          <ul class="list-disc list-inside text-stone-600 dark:text-stone-300 space-y-2">
+            <li>Follow atomic design principles</li>
+            <li>Maintain consistent naming</li>
+            <li>Document component APIs</li>
+            <li>Write unit tests</li>
+          </ul>
+        </div>
+
+        <div class="p-6 bg-white dark:bg-stone-800 rounded-lg shadow-sm border border-stone-200 dark:border-stone-700">
+          <h3 class="text-xl font-semibold mb-3">State Management</h3>
+          <ul class="list-disc list-inside text-stone-600 dark:text-stone-300 space-y-2">
+            <li>Choose appropriate state solutions</li>
+            <li>Implement proper caching</li>
+            <li>Handle loading states</li>
+            <li>Manage side effects</li>
+          </ul>
+        </div>
+
+        <div class="p-6 bg-white dark:bg-stone-800 rounded-lg shadow-sm border border-stone-200 dark:border-stone-700">
+          <h3 class="text-xl font-semibold mb-3">Testing</h3>
+          <ul class="list-disc list-inside text-stone-600 dark:text-stone-300 space-y-2">
+            <li>Write comprehensive tests</li>
+            <li>Use testing best practices</li>
+            <li>Implement CI/CD pipelines</li>
+            <li>Monitor test coverage</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="text-2xl font-bold mb-6">Commerce-Specific Practices</h2>
+      <div class="space-y-6">
+        <div class="p-6 bg-white dark:bg-stone-800 rounded-lg shadow-sm border border-stone-200 dark:border-stone-700">
+          <h3 class="text-xl font-semibold mb-3">Product Management</h3>
+          <p class="text-stone-600 dark:text-stone-300 mb-4">
+            Best practices for managing products in your commerce platform:
+          </p>
+          <ul class="list-disc list-inside text-stone-600 dark:text-stone-300 space-y-2">
+            <li>Implement proper categorization</li>
+            <li>Use consistent attribute naming</li>
+            <li>Manage variants effectively</li>
+            <li>Optimize product search</li>
+          </ul>
+        </div>
+
+        <div class="p-6 bg-white dark:bg-stone-800 rounded-lg shadow-sm border border-stone-200 dark:border-stone-700">
+          <h3 class="text-xl font-semibold mb-3">Cart & Checkout</h3>
+          <p class="text-stone-600 dark:text-stone-300 mb-4">
+            Optimize the purchase flow for better conversion:
+          </p>
+          <ul class="list-disc list-inside text-stone-600 dark:text-stone-300 space-y-2">
+            <li>Minimize checkout steps</li>
+            <li>Implement proper validation</li>
+            <li>Handle edge cases gracefully</li>
+            <li>Provide clear error messages</li>
+          </ul>
+        </div>
+
+        <div class="p-6 bg-white dark:bg-stone-800 rounded-lg shadow-sm border border-stone-200 dark:border-stone-700">
+          <h3 class="text-xl font-semibold mb-3">User Experience</h3>
+          <p class="text-stone-600 dark:text-stone-300 mb-4">
+            Create delightful shopping experiences:
+          </p>
+          <ul class="list-disc list-inside text-stone-600 dark:text-stone-300 space-y-2">
+            <li>Implement responsive design</li>
+            <li>Optimize for mobile</li>
+            <li>Use clear CTAs</li>
+            <li>Provide feedback on actions</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="text-2xl font-bold mb-6">Next Steps</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <a href="/resources/case-studies" class="block p-6 bg-white dark:bg-stone-800 rounded-lg shadow-sm border border-stone-200 dark:border-stone-700 hover:shadow-md transition-shadow">
+          <h3 class="text-xl font-semibold mb-2">View Case Studies →</h3>
+          <p class="text-stone-600 dark:text-stone-300">Learn from successful implementations and real-world examples.</p>
+        </a>
+        
+        <a href="/resources/integration-guides" class="block p-6 bg-white dark:bg-stone-800 rounded-lg shadow-sm border border-stone-200 dark:border-stone-700 hover:shadow-md transition-shadow">
+          <h3 class="text-xl font-semibold mb-2">Integration Guides →</h3>
+          <p class="text-stone-600 dark:text-stone-300">Detailed guides for integrating THG Commerce products.</p>
+        </a>
+      </div>
+    </section>
+  </div>
+</PageLayout>

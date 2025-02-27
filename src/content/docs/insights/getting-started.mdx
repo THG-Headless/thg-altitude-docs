@@ -1,0 +1,128 @@
+---
+title: Getting Started with THG Commerce Insights
+description: Learn how to add analytics to your application
+---
+
+import { Tip, Warning, Note, EmojiList, Table, BulletList } from '@components/docs';
+
+# Getting Started with Insights
+
+<Tip title="Quick Start">
+  <EmojiList items={[
+    {
+      emoji: "1️⃣",
+      title: "Install",
+      description: "Add the package to your project"
+    },
+    {
+      emoji: "2️⃣",
+      title: "Configure",
+      description: "Set up your endpoint and options"
+    },
+    {
+      emoji: "3️⃣",
+      title: "Track",
+      description: "Start collecting analytics data"
+    }
+  ]} />
+</Tip>
+
+## Installation
+
+Install the package using your preferred package manager:
+
+```bash
+# Using npm
+npm install @thg-commerce/insights
+
+# Using yarn
+yarn add @thg-commerce/insights
+
+# Using pnpm
+pnpm add @thg-commerce/insights
+```
+
+## Configuration
+
+Configure Insights with your endpoint and options:
+
+```typescript
+import { createTracker } from '@thg-commerce/insights';
+
+const tracker = createTracker({
+  endpoint: 'https://api.example.com/events',
+  domain: 'my-app',
+  debug: true // Enable for development
+});
+```
+
+<Warning title="API Endpoint">
+<BulletList items={[
+  "Use HTTPS endpoints in production",
+  "Ensure your endpoint can handle the expected traffic volume",
+  "Consider using environment variables for the endpoint URL"
+]} />
+</Warning>
+
+## Framework Integration
+
+Choose your framework-specific integration:
+
+<Table
+  headers={["Framework", "Package", "Auto-tracking"]}
+  rows={[
+    ["Astro", "@thg-commerce/insights/astro", "✅"],
+    ["Next.js", "@thg-commerce/insights/next", "✅"],
+    ["React Native", "@thg-commerce/insights/react-native", "✅"]
+  ]}
+/>
+
+### Framework-Specific Setup
+
+```typescript
+// Astro
+import insights from '@thg-commerce/insights/astro';
+
+// Next.js
+import insights from '@thg-commerce/insights/next';
+
+// React Native
+import insights from '@thg-commerce/insights/react-native';
+
+// Initialize with framework-specific integration
+insights({
+  endpoint: 'https://api.example.com/events',
+  debug: true
+});
+```
+
+<Note title="Framework Features">
+  <EmojiList items={[
+    {
+      emoji: "🔄",
+      title: "Automatic Page Views",
+      description: "Track page views without manual instrumentation"
+    },
+    {
+      emoji: "📱",
+      title: "Screen Tracking",
+      description: "Automatic screen view tracking in React Native"
+    },
+    {
+      emoji: "🔗",
+      title: "Route Changes",
+      description: "Handles client-side navigation in Next.js"
+    }
+  ]} />
+</Note>
+
+## Next Steps
+
+Ready to dive deeper? Check out these guides:
+
+<BulletList items={[
+  "[Core Concepts](/docs/insights/core/beacon)",
+  "[Offline Support](/docs/insights/guides/offline-support)",
+  "[Source Resolution](/docs/insights/guides/source-resolution)",
+  "[Troubleshooting](/docs/insights/guides/troubleshooting)"
+]} />

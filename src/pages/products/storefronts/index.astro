@@ -1,0 +1,140 @@
+---
+import PageLayout from '../../../layouts/PageLayout.astro';
+
+const product = {
+  id: "storefronts",
+  name: "Storefronts",
+  description: "Build and deploy high-performance commerce experiences",
+  icon: "/icons/storefronts.svg",
+  quickLinks: [
+    {
+      title: "Overview",
+      href: "/products/storefronts"
+    },
+    {
+      title: "Nutrition",
+      href: "/products/storefronts/nutrition"
+    },
+    {
+      title: "Luxury",
+      href: "/products/storefronts/luxury"
+    }
+  ]
+};
+
+const storefronts = [
+  {
+    title: "Nutrition Storefront",
+    description: "A specialized white-label solution built on Altitude, designed specifically for nutrition and supplement brands.",
+    href: "/products/storefronts/nutrition",
+    features: [
+      "Supersize functionality",
+      "Subscription management",
+      "VIP pricing tiers",
+      "Quick buy process"
+    ],
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v12m-6-6h12"/></svg>`
+  },
+  {
+    title: "Luxury Storefront",
+    description: "A sophisticated white-label solution crafted specifically for luxury and premium retail brands.",
+    href: "/products/storefronts/luxury",
+    features: [
+      "Premium UX design",
+      "Provenance tracking",
+      "VIP pricing",
+      "Sponsored products"
+    ],
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>`
+  }
+];
+---
+
+<PageLayout
+  title="Storefronts"
+  description="Build and deploy high-performance commerce experiences optimized for your business vertical"
+  {product}
+>
+  <div class="prose dark:prose-invert max-w-none">
+    <!-- Hero -->
+    <div class="not-prose bg-gradient-to-b from-stone-900 to-stone-800 -mx-4 sm:-mx-6 lg:-mx-8 p-8 sm:p-12 lg:p-16 rounded-xl mb-12">
+      <div class="max-w-3xl mx-auto text-center">
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6">THG Commerce Storefronts</h1>
+        <p class="text-xl text-stone-300 mb-8">White-label commerce experiences optimized for your business vertical.</p>
+      </div>
+    </div>
+
+    <!-- Storefronts Grid -->
+    <div class="not-prose grid md:grid-cols-2 gap-8 mb-12">
+      {storefronts.map(storefront => (
+        <a href={storefront.href} class="block bg-stone-900/50 rounded-xl p-6 hover:bg-stone-900/70 transition-colors">
+          <div class="text-primary-400 mb-4" set:html={storefront.icon} />
+          <h2 class="text-2xl font-bold text-stone-200 mb-2">{storefront.title}</h2>
+          <p class="text-stone-400 mb-4">{storefront.description}</p>
+          <ul class="space-y-2">
+            {storefront.features.map(feature => (
+              <li class="flex items-center text-stone-300">
+                <span class="flex-shrink-0 w-4 h-4 flex items-center justify-center rounded-full bg-primary-500/20 text-primary-400 mr-2 text-xs">•</span>
+                {feature}
+              </li>
+            ))}
+          </ul>
+        </a>
+      ))}
+    </div>
+
+    <h2 class="text-2xl font-bold text-stone-200 mb-6">Core Platform Features</h2>
+    <p class="text-stone-400 mb-8">All storefronts are built on our Altitude platform, providing:</p>
+
+    <div class="not-prose grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+      <div class="bg-stone-900/50 rounded-xl p-6">
+        <h3 class="text-lg font-semibold text-stone-200 mb-4">Commerce Essentials</h3>
+        <ul class="space-y-2">
+          <li class="text-stone-400">Quick Buy functionality</li>
+          <li class="text-stone-400">Advanced search</li>
+          <li class="text-stone-400">Integrated reviews</li>
+          <li class="text-stone-400">Wishlist management</li>
+        </ul>
+      </div>
+
+      <div class="bg-stone-900/50 rounded-xl p-6">
+        <h3 class="text-lg font-semibold text-stone-200 mb-4">Global Reach</h3>
+        <ul class="space-y-2">
+          <li class="text-stone-400">Multi-property support</li>
+          <li class="text-stone-400">Subsite capabilities</li>
+          <li class="text-stone-400">International domains</li>
+          <li class="text-stone-400">Market customization</li>
+        </ul>
+      </div>
+
+      <div class="bg-stone-900/50 rounded-xl p-6">
+        <h3 class="text-lg font-semibold text-stone-200 mb-4">Marketing & Analytics</h3>
+        <ul class="space-y-2">
+          <li class="text-stone-400">A/B testing</li>
+          <li class="text-stone-400">Campaign segmentation</li>
+          <li class="text-stone-400">Email marketing</li>
+          <li class="text-stone-400">Advanced analytics</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="not-prose bg-stone-900/50 rounded-xl p-8 text-center">
+      <h2 class="text-2xl font-bold text-stone-200 mb-4">Getting Started</h2>
+      <p class="text-stone-400 mb-6">Choose your storefront to get started:</p>
+      <div class="flex justify-center gap-4">
+        <a href="/products/storefronts/nutrition" class="inline-flex items-center gap-2 px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors">
+          Nutrition Storefront
+          <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+          </svg>
+        </a>
+        <a href="/products/storefronts/luxury" class="inline-flex items-center gap-2 px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors">
+          Luxury Storefront
+          <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</PageLayout>

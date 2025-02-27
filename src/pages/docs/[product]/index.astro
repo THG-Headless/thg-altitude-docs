@@ -1,0 +1,99 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro';
+import DocsSidebar from '../../../components/DocsSidebar.astro';
+import { getCollection, type CollectionEntry } from 'astro:content';
+import { products } from '../../../config/products';
+import { getProductVersions, getLatestVersion, isVersionFolder } from '../../../utils/versions';
+
+export async function getStaticPaths() {
+  const docs = await getCollection('docs');
+  
+  // Filter only index files
+  const indexDocs = docs.filter(doc => doc.id.endsWith('/index.mdx') || doc.id.endsWith('/index.md'));
+  
+  // Define the type for paths
+  type PathItem = {
+    params: { product: string };
+    props: { doc: CollectionEntry<'docs'> };
+  };
+  
+  const paths: PathItem[] = [];
+  
+  indexDocs.forEach(doc => {
+    // Get the path parts
+    const pathParts = doc.id.split('/');
+    
+    if (pathParts.length >= 1) {
+      const productId = pathParts[0];
+      
+      // Handle direct product index (e.g., "cloud/index.mdx")
+      if (pathParts.length === 2) {
+        paths.push({
+          params: { product: productId },
+          props: { doc }
+        });
+      }
+      
+      // Handle versioned index (e.g., "cloud/v2.3.0/index.mdx")
+      if (pathParts.length >= 3 && isVersionFolder(pathParts[1])) {
+        const version = pathParts[1];
+        
+        // Create a path for /docs/[product]/[version]
+        paths.push({
+          params: { product: `${productId}/${version}` },
+          props: { doc }
+        });
+      }
+    }
+  });
+  
+  return paths;
+}
+
+const { product: productParam } = Astro.params;
+const { doc } = Astro.props;
+
+// Split the product parameter to handle versioned paths
+const productParts = productParam.split('/');
+const productId = productParts[0];
+const version = productParts.length > 1 ? productParts[1] : null;
+
+// Check if this is a direct access to a product index (not a versioned page)
+const currentPath = Astro.url.pathname;
+const isDirectProductAccess = currentPath === `/docs/${productId}` || currentPath === `/docs/${productId}/`;
+
+if (isDirectProductAccess) {
+  // Get all versions for this product
+  const versions = await getProductVersions(productId);
+  
+  // If versions exist, redirect to the latest version
+  if (versions.length > 0) {
+    const latestVersion = getLatestVersion(versions);
+    if (latestVersion) {
+      return Astro.redirect(`/docs/${productId}/${latestVersion}`);
+    }
+  }
+}
+
+// Get product info from config
+const product = products[productId] || {
+  id: productId,
+  name: productId.charAt(0).toUpperCase() + productId.slice(1).replace(/-/g, ' '),
+  description: "",
+  icon: "/icons/altitude.svg",
+  status: "live",
+  quickLinks: []
+};
+
+const { Content, headings } = await doc.render();
+---
+
+<DocsLayout
+  title={doc.data.title}
+  description={doc.data.description}
+  product={product}
+  headings={headings}
+>
+  <DocsSidebar slot="sidebar" product={product} />
+  <Content />
+</DocsLayout>

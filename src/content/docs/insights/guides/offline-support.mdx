@@ -1,0 +1,154 @@
+---
+title: Offline Support
+description: Understanding how THG Commerce Insights handles offline scenarios
+---
+
+THG Commerce Insights includes robust offline support across all platforms, ensuring no events are lost when users have intermittent connectivity.
+
+## How It Works
+
+The package implements a queue-based system that:
+1. Detects network status changes
+2. Queues events when offline
+3. Retries sending when connectivity is restored
+4. Persists queue data across sessions
+
+## Platform-specific Behavior
+
+### Web Platforms (Astro & Next.js)
+
+Uses the browser's:
+- `navigator.onLine` status
+- `online` and `offline` events
+- `localStorage` for queue persistence
+
+```typescript
+// Events are automatically queued when offline
+window.addEventListener('offline', () => {
+  // Queue is stored in localStorage
+});
+
+window.addEventListener('online', () => {
+  // Queued events are sent automatically
+});
+```
+
+### React Native
+
+Uses:
+- NetInfo for network status
+- AsyncStorage for queue persistence
+- Platform-specific connectivity APIs
+
+```typescript
+import NetInfo from '@react-native-community/netinfo';
+
+NetInfo.addEventListener(state => {
+  if (state.isConnected) {
+    // Send queued events
+  }
+});
+```
+
+## Queue Management
+
+Events are stored in a FIFO (First In, First Out) queue:
+
+```typescript
+interface QueuedEvent {
+  type: string;
+  path: string;
+  timestamp: number;
+  retryCount: number;
+}
+```
+
+### Queue Persistence
+
+- **Web**: Uses `localStorage` with fallback to memory
+- **React Native**: Uses `AsyncStorage` with fallback to memory
+- **Maximum Queue Size**: 100 events by default (configurable)
+- **TTL**: Events expire after 7 days (configurable)
+
+## Retry Strategy
+
+The package implements an exponential backoff strategy:
+
+1. First retry: Immediate
+2. Second retry: 1 second delay
+3. Third retry: 2 seconds delay
+4. Fourth retry: 4 seconds delay
+5. Maximum retries: 5 (configurable)
+
+```typescript
+const getRetryDelay = (attempt: number) => {
+  return Math.min(1000 * Math.pow(2, attempt), 30000);
+};
+```
+
+## Configuration Options
+
+```typescript
+{
+  maxQueueSize: 100,      // Maximum events to queue
+  maxRetries: 5,          // Maximum retry attempts
+  eventTTL: 604800000,    // Event time-to-live (7 days in ms)
+  retryInitialDelay: 1000 // Base retry delay in ms
+}
+```
+
+## Debug Mode
+
+When debug mode is enabled, you'll see detailed logs about queue operations:
+
+```
+[THG Commerce Insights] Network offline, queuing event
+[THG Commerce Insights] Queue size: 3 events
+[THG Commerce Insights] Network restored, sending queued events
+[THG Commerce Insights] Retry attempt 1 for event
+```
+
+## Best Practices
+
+1. **Queue Size**: Monitor queue size in production
+2. **TTL**: Adjust TTL based on event relevance
+3. **Retries**: Configure retry attempts based on network reliability
+4. **Storage**: Consider storage limitations on different platforms
+
+## Error Handling
+
+The package handles various error scenarios:
+
+```typescript
+try {
+  await beacon.send(event);
+} catch (error) {
+  if (error.isNetworkError) {
+    // Event automatically queued
+  } else if (error.isStorageError) {
+    // Fallback to memory queue
+  }
+}
+```
+
+## Testing Offline Behavior
+
+```typescript
+describe('Offline Support', () => {
+  beforeEach(() => {
+    // Simulate offline state
+    window.dispatchEvent(new Event('offline'));
+  });
+
+  it('queues events when offline', async () => {
+    const beacon = new Beacon(config);
+    await beacon.send(event);
+    expect(beacon.getQueueSize()).toBe(1);
+  });
+
+  it('sends queued events when online', async () => {
+    // Simulate online state
+    window.dispatchEvent(new Event('online'));
+    // Verify queue is processed
+  });
+});

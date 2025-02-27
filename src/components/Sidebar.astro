@@ -1,0 +1,112 @@
+---
+const navigation = [
+  {
+    section: "Getting Started",
+    items: [
+      { title: "Introduction", href: "/" },
+      { title: "Quick Start", href: "/docs/getting-started" },
+    ],
+  },
+  {
+    section: "Products",
+    items: [
+      {
+        title: "Storefronts",
+        href: "/products/storefronts",
+        items: [
+          { title: "Elements", href: "/products/storefronts/elements" },
+          { title: "Browser Components", href: "/products/storefronts/browser-components" },
+          { title: "Custom Components", href: "/products/storefronts/custom-components" },
+          { title: "Altitude", href: "/products/storefronts/altitude" },
+        ],
+      },
+      { title: "Insights", href: "/products/insights" },
+      { title: "Account", href: "/products/account" },
+      { title: "Checkout", href: "/products/checkout" },
+      { title: "Search", href: "/products/search" },
+      { title: "CMS", href: "/products/cms" },
+      { title: "PIM", href: "/products/pim" },
+    ],
+  },
+  {
+    section: "Documentation",
+    items: [
+      {
+        title: "Storefronts",
+        href: "/docs/storefronts",
+        items: [
+          { title: "Elements", href: "/docs/storefronts/elements" },
+          { title: "Browser Components", href: "/docs/storefronts/browser-components" },
+          { title: "Custom Components", href: "/docs/storefronts/custom-components" },
+          { title: "Deployment", href: "/docs/storefronts/deployment" },
+        ],
+      },
+      {
+        title: "Insights",
+        href: "/docs/insights",
+        items: [
+          { title: "Installation", href: "/docs/insights/installation" },
+          { title: "SDK Reference", href: "/docs/insights/sdk" },
+          { title: "API Reference", href: "/docs/insights/api" },
+        ],
+      },
+    ],
+  },
+  {
+    section: "Resources",
+    items: [
+      { title: "Case Studies", href: "/resources/case-studies" },
+      { title: "Best Practices", href: "/resources/best-practices" },
+      { title: "Integration Guides", href: "/resources/integration-guides" },
+    ],
+  },
+];
+
+const currentPath = Astro.url.pathname;
+---
+
+<nav class="p-4 space-y-8">
+  {
+    navigation.map((section) => (
+      <div class="space-y-3">
+        <h2 class="font-semibold text-stone-900 dark:text-stone-100">{section.section}</h2>
+        <ul class="space-y-2">
+          {section.items.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                class:list={[
+                  'block py-1.5 px-3 rounded-md transition-colors',
+                  currentPath === item.href
+                    ? 'bg-primary-50 dark:bg-primary-900 text-primary-600 dark:text-primary-300'
+                    : 'hover:bg-stone-50 dark:hover:bg-stone-900',
+                ]}
+              >
+                {item.title}
+              </a>
+              {item.items && (
+                <ul class="ml-4 mt-1 space-y-1 border-l border-stone-200 dark:border-stone-800">
+                  {item.items.map((subItem) => (
+                    <li>
+                      <a
+                        href={subItem.href}
+                        class:list={[
+                          'block py-1 px-3 text-sm rounded-md transition-colors',
+                          currentPath === subItem.href
+                            ? 'text-primary-600 dark:text-primary-300'
+                            : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200',
+                        ]}
+                      >
+                        {subItem.title}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))
+  }
+</nav>

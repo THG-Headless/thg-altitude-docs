@@ -1,0 +1,121 @@
+---
+title: Source Resolution
+description: Learn how to customize source identification across platforms
+---
+
+Source resolution is a key concept in THG Commerce Insights that determines how events are attributed to different sources (domains, apps, or platforms).
+
+## Default Behavior
+
+Each platform has a default source resolution strategy:
+
+- **Web Platforms (Astro, Next.js)**
+  - Uses the current hostname (e.g., `example.com`)
+  - Automatically handles different environments
+
+- **React Native**
+  - Requires explicit domain configuration
+  - Useful for differentiating between app variants
+
+## Custom Source Resolution
+
+You can customize source resolution by implementing the `SourceResolver` interface:
+
+```typescript
+interface SourceResolver {
+  getCurrentSource(): string;
+}
+
+class CustomSourceResolver implements SourceResolver {
+  getCurrentSource() {
+    return 'custom-source';
+  }
+}
+```
+
+### Example Use Cases
+
+1. **Environment-based Resolution**
+```typescript
+class EnvironmentSourceResolver implements SourceResolver {
+  getCurrentSource() {
+    return process.env.NODE_ENV === 'production'
+      ? 'prod.example.com'
+      : 'dev.example.com';
+  }
+}
+```
+
+2. **Multi-tenant Resolution**
+```typescript
+class TenantSourceResolver implements SourceResolver {
+  getCurrentSource() {
+    return getCurrentTenant().domain;
+  }
+}
+```
+
+3. **App Variant Resolution**
+```typescript
+class AppVariantResolver implements SourceResolver {
+  getCurrentSource() {
+    return `${Platform.OS}-${getBuildVariant()}`;
+  }
+}
+```
+
+## Platform-specific Usage
+
+### Astro
+```typescript
+insights({
+  endpoint: 'https://api.example.com/events',
+  sourceResolver: new CustomSourceResolver()
+});
+```
+
+### Next.js
+```typescript
+// Middleware
+createMiddleware({
+  endpoint: 'https://api.example.com/events',
+  sourceResolver: new CustomSourceResolver()
+});
+
+// Hook
+createTracker({
+  endpoint: 'https://api.example.com/events',
+  sourceResolver: new CustomSourceResolver()
+});
+```
+
+### React Native
+```typescript
+createTracker({
+  endpoint: 'https://api.example.com/events',
+  sourceResolver: new CustomSourceResolver()
+});
+```
+
+## Best Practices
+
+1. **Consistency**: Use the same source resolution strategy across your application
+2. **Reliability**: Ensure your resolver always returns a valid string
+3. **Performance**: Keep source resolution logic lightweight
+4. **Error Handling**: Provide fallback values for edge cases
+
+## Testing Source Resolution
+
+```typescript
+describe('CustomSourceResolver', () => {
+  it('returns expected source', () => {
+    const resolver = new CustomSourceResolver();
+    expect(resolver.getCurrentSource()).toBe('expected-source');
+  });
+
+  it('handles edge cases', () => {
+    const resolver = new CustomSourceResolver();
+    // Test various scenarios
+    expect(resolver.getCurrentSource()).toBeTruthy();
+  });
+});

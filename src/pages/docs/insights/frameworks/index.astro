@@ -1,0 +1,53 @@
+---
+import DocsLayout from '../../../../layouts/DocsLayout.astro';
+import DocsSidebar from '../../../../components/DocsSidebar.astro';
+import { getCollection } from 'astro:content';
+
+const product = {
+  id: "insights",
+  name: "Insights",
+  description: "Track user interactions with powerful analytics",
+  icon: "/icons/insights.svg",
+  quickLinks: [
+    {
+      title: "Overview",
+      href: "/products/insights"
+    },
+    {
+      title: "Documentation",
+      href: "/docs/insights"
+    },
+    {
+      title: "Getting Started",
+      href: "/docs/insights/getting-started"
+    }
+  ]
+};
+---
+
+<DocsLayout
+  title="Framework Integrations"
+  description="Framework-specific integration guides for THG Commerce Insights"
+  product={product}
+>
+  <DocsSidebar slot="sidebar" product={product} />
+  <h1>Framework Integrations</h1>
+  <p>THG Commerce Insights provides integration guides for various frameworks:</p>
+  
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+    <a href="/docs/insights/frameworks/astro" class="block p-6 bg-stone-800 rounded-lg hover:bg-stone-700 transition">
+      <h2 class="text-xl font-semibold mb-2">Astro Integration</h2>
+      <p class="text-stone-300">Learn how to integrate Insights with your Astro site for automatic page view tracking.</p>
+    </a>
+    
+    <a href="/docs/insights/frameworks/nextjs" class="block p-6 bg-stone-800 rounded-lg hover:bg-stone-700 transition">
+      <h2 class="text-xl font-semibold mb-2">Next.js Integration</h2>
+      <p class="text-stone-300">Implement Insights in your Next.js application using middleware or hooks.</p>
+    </a>
+    
+    <a href="/docs/insights/frameworks/react-native" class="block p-6 bg-stone-800 rounded-lg hover:bg-stone-700 transition">
+      <h2 class="text-xl font-semibold mb-2">React Native Integration</h2>
+      <p class="text-stone-300">Track screen views and user interactions in your React Native mobile applications.</p>
+    </a>
+  </div>
+</DocsLayout>

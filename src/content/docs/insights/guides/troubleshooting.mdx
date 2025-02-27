@@ -1,0 +1,136 @@
+---
+title: Troubleshooting
+description: Common issues and solutions when using Ingenuity Insights
+---
+
+# Troubleshooting Guide
+
+This guide covers common issues you might encounter when using Ingenuity Insights and their solutions.
+
+## Network Issues
+
+### Events Not Being Sent
+
+**Symptoms:**
+- Events appear in debug logs but aren't reaching your endpoint
+- Queue length keeps growing
+
+**Solutions:**
+1. Check your endpoint URL is correct and accessible
+2. Verify your network connection
+3. Check browser console for CORS errors
+4. Ensure your endpoint accepts POST requests
+
+### Offline Handling
+
+**Symptoms:**
+- Events are queued but not sent when online
+- "Device is offline" messages in debug logs
+
+**Solutions:**
+1. Events are automatically queued when offline
+2. They will be sent when connection is restored
+3. Check `getQueueLength()` to monitor the queue
+4. Ensure your endpoint can handle batch processing
+
+## Configuration Issues
+
+### Source Resolution
+
+**Symptoms:**
+- Events have incorrect or missing source
+- "localhost" appearing as source
+
+**Solutions:**
+1. Check your source configuration:
+```typescript
+// Static source
+const beacon = new Beacon({
+  endpoint: '...',
+  source: 'my-app'
+});
+
+// Dynamic source
+const beacon = new Beacon({
+  endpoint: '...',
+  sourceResolver: new WebDomainResolver()
+});
+```
+
+2. For React Native, ensure you're providing an app identifier:
+```typescript
+const beacon = new Beacon({
+  endpoint: '...',
+  source: 'com.myapp'
+});
+```
+
+### Sampling Rate
+
+**Symptoms:**
+- Not all events are being tracked
+- "Event skipped due to sampling" in debug logs
+
+**Solutions:**
+1. Check your sampling rate configuration:
+```typescript
+const beacon = new Beacon({
+  endpoint: '...',
+  source: 'my-app',
+  sampleRate: 0.1 // Only track 10% of events
+});
+```
+
+2. Set `sampleRate` to 1 to track all events:
+```typescript
+const beacon = new Beacon({
+  endpoint: '...',
+  source: 'my-app',
+  sampleRate: 1 // Track 100% of events
+});
+```
+
+## Debug Mode
+
+Enable debug mode to get detailed logs about event tracking:
+
+```typescript
+const beacon = new Beacon({
+  endpoint: '...',
+  source: 'my-app',
+  debug: true
+});
+```
+
+Debug logs will show:
+- Event queueing
+- Sampling decisions
+- Network status
+- Send attempts
+- Error details
+
+## Common Error Messages
+
+### "Failed to send event, will retry later"
+
+**Cause:** Network request to endpoint failed
+**Solution:** Check endpoint availability and network connection
+
+### "Device is offline, keeping events in queue"
+
+**Cause:** No network connection detected
+**Solution:** Events will be sent automatically when connection is restored
+
+### "Event skipped due to sampling"
+
+**Cause:** Event was not selected for tracking due to sampling rate
+**Solution:** Increase or remove sampling rate if you need more events
+
+## Still Need Help?
+
+If you're encountering issues not covered here:
+
+1. Enable debug mode to get more information
+2. Check your browser's developer tools console
+3. Verify your endpoint is receiving and processing requests correctly
+4. Review your configuration against the documentation

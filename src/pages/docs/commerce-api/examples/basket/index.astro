@@ -1,0 +1,60 @@
+---
+import DocsLayout from '../../../../../layouts/DocsLayout.astro';
+import DocsSidebar from '../../../../../components/DocsSidebar.astro';
+import { getCollection, type CollectionEntry } from 'astro:content';
+
+const docs = await getCollection('docs');
+const basketDoc = docs.find((doc: CollectionEntry<'docs'>) => doc.id === 'commerce-api/examples/basket/index.mdx');
+
+const product = {
+  id: "commerce-api",
+  name: "Commerce API",
+  description: "Build commerce experiences with our powerful GraphQL API",
+  icon: "/icons/commerce-api.svg",
+  quickLinks: [
+    {
+      title: "Overview",
+      href: "/products/commerce-api"
+    },
+    {
+      title: "Documentation",
+      href: "/docs/commerce-api"
+    },
+    {
+      title: "Examples",
+      href: "/docs/commerce-api/examples"
+    }
+  ]
+};
+
+const { Content, headings } = basketDoc ? await basketDoc.render() : { Content: null, headings: [] };
+---
+
+{basketDoc ? (
+  <DocsLayout
+    title={basketDoc.data.title}
+    description={basketDoc.data.description}
+    product={product}
+    headings={headings}
+  >
+    <DocsSidebar slot="sidebar" product={product} />
+    <Content />
+  </DocsLayout>
+) : (
+  <DocsLayout
+    title="Basket Examples"
+    description="Examples for working with baskets in Commerce API"
+    product={product}
+  >
+    <DocsSidebar slot="sidebar" product={product} />
+    <h1>Basket Examples</h1>
+    <p>This section contains examples for working with baskets in Commerce API.</p>
+    
+    <h2>Available Examples</h2>
+    <ul>
+      <li><a href="/docs/commerce-api/examples/basket/add-to-basket">Add to Basket</a></li>
+      <li><a href="/docs/commerce-api/examples/basket/discount-codes">Discount Codes</a></li>
+      <li><a href="/docs/commerce-api/examples/basket/supersize">Supersize</a></li>
+    </ul>
+  </DocsLayout>
+)}

@@ -1,0 +1,195 @@
+---
+import PageLayout from '../../../layouts/PageLayout.astro';
+import ContentSection from '../../../components/ContentSection.astro';
+
+const product = {
+  id: "support",
+  name: "Support Platform",
+  description: "Comprehensive customer service solution",
+  icon: "/icons/commerce-api.svg",
+  quickLinks: [
+    {
+      title: "Overview",
+      href: "/products/support"
+    },
+    {
+      title: "Documentation",
+      href: "/docs/support"
+    },
+    {
+      title: "API Reference",
+      href: "/docs/support/api"
+    }
+  ]
+};
+
+const features = [
+  {
+    title: "Unified Inbox",
+    description: "Manage all customer communications in one place",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>`
+  },
+  {
+    title: "Automated Workflows",
+    description: "Route and assign tickets based on customizable rules",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>`
+  },
+  {
+    title: "Self-service Portal",
+    description: "Empower customers to find answers and track issues",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>`
+  },
+  {
+    title: "Performance Analytics",
+    description: "Track support metrics and agent performance",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>`
+  }
+];
+
+const highlights = [
+  {
+    title: "Omnichannel Support",
+    description: "Email, chat, phone, and social media"
+  },
+  {
+    title: "Ticket Management",
+    description: "Organize and prioritize customer inquiries"
+  },
+  {
+    title: "Knowledge Base",
+    description: "Self-service customer support resources"
+  },
+  {
+    title: "Customer History",
+    description: "Complete view of customer interactions"
+  }
+];
+
+const businessValues = [
+  {
+    title: "Improve Customer Satisfaction",
+    description: "Faster resolution times and personalized support"
+  },
+  {
+    title: "Reduce Support Costs",
+    description: "Efficient ticket handling and self-service options"
+  }
+];
+---
+
+<PageLayout
+  title="Support Platform"
+  description="Comprehensive customer service solution"
+  {product}
+>
+  <div class="prose dark:prose-invert max-w-none">
+    <!-- Hero -->
+    <div class="not-prose bg-gradient-to-b from-stone-900 to-stone-800 -mx-4 sm:-mx-6 lg:-mx-8 p-8 sm:p-12 lg:p-16 rounded-xl mb-12">
+      <div class="max-w-3xl mx-auto text-center mb-12">
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6">THG Orbit Support</h1>
+        <p class="text-xl text-stone-300">Connected support using THG Orbit. Our in-house solution for supporting customers pre and post purchase with omnichannel capabilities and powerful management tools.</p>
+      </div>
+      <div class="flex justify-center gap-4 mt-8">
+        <a href="/docs/support" class="inline-flex items-center gap-2 px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors">
+          Get Started
+          <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+          </svg>
+        </a>
+        <a href="/docs/support/api" class="inline-flex items-center gap-2 px-6 py-3 border border-stone-600 hover:border-stone-500 text-stone-300 hover:text-white rounded-lg transition-colors">
+          View API Reference
+          <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+          </svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- Highlights -->
+    <div class="not-prose grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+      {highlights.map(highlight => (
+        <div class="bg-stone-900/50 rounded-xl p-6">
+          <h3 class="text-lg font-semibold text-stone-200 mb-2">{highlight.title}</h3>
+          <p class="text-stone-400">{highlight.description}</p>
+        </div>
+      ))}
+    </div>
+
+    <!-- Key Features -->
+    <div class="grid sm:grid-cols-2 gap-8 mb-12">
+      {features.map(feature => (
+        <div class="not-prose bg-stone-900/50 rounded-xl p-6">
+          <div class="text-primary-400 mb-4" set:html={feature.icon} />
+          <h3 class="text-xl font-semibold text-stone-200 mb-2">{feature.title}</h3>
+          <p class="text-stone-400">{feature.description}</p>
+        </div>
+      ))}
+    </div>
+
+    <!-- Communication Channels -->
+    <ContentSection title="Omnichannel Support" description="Connect with customers through their preferred channels:">
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="bg-stone-800/50 rounded-xl p-6">
+          <h3 class="text-lg font-semibold text-stone-200 mb-2">Email</h3>
+          <p class="text-stone-400">Manage email conversations with threading and templates</p>
+        </div>
+        <div class="bg-stone-800/50 rounded-xl p-6">
+          <h3 class="text-lg font-semibold text-stone-200 mb-2">Live Chat</h3>
+          <p class="text-stone-400">Real-time customer conversations with chatbots and agent handoff</p>
+        </div>
+        <div class="bg-stone-800/50 rounded-xl p-6">
+          <h3 class="text-lg font-semibold text-stone-200 mb-2">Phone</h3>
+          <p class="text-stone-400">Integrated call center with IVR and call routing</p>
+        </div>
+        <div class="bg-stone-800/50 rounded-xl p-6">
+          <h3 class="text-lg font-semibold text-stone-200 mb-2">Social Media</h3>
+          <p class="text-stone-400">Monitor and respond to social media mentions and messages</p>
+        </div>
+      </div>
+    </ContentSection>
+
+    <!-- Business Value -->
+    <ContentSection title="Business Value" description="Enhance customer experience and optimize support operations:">
+      <div class="grid sm:grid-cols-2 gap-6">
+        {businessValues.map(value => (
+          <div class="bg-stone-800/50 rounded-xl p-6">
+            <h3 class="text-lg font-semibold text-stone-200 mb-2">{value.title}</h3>
+            <p class="text-stone-400">{value.description}</p>
+          </div>
+        ))}
+      </div>
+    </ContentSection>
+
+    <!-- Resources -->
+    <ContentSection title="Resources">
+      <div class="grid sm:grid-cols-3 gap-6">
+        <a href="/docs/support" class="block bg-stone-800/50 rounded-xl p-6 hover:bg-stone-800/70 transition-colors">
+          <h3 class="text-lg font-semibold text-stone-200 mb-2">Documentation</h3>
+          <p class="text-stone-400">Learn how to implement customer support</p>
+        </a>
+        <a href="/docs/support/quickstart" class="block bg-stone-800/50 rounded-xl p-6 hover:bg-stone-800/70 transition-colors">
+          <h3 class="text-lg font-semibold text-stone-200 mb-2">Quick Start</h3>
+          <p class="text-stone-400">Set up your support system in minutes</p>
+        </a>
+        <a href="/docs/support/api" class="block bg-stone-800/50 rounded-xl p-6 hover:bg-stone-800/70 transition-colors">
+          <h3 class="text-lg font-semibold text-stone-200 mb-2">API Reference</h3>
+          <p class="text-stone-400">Explore the Support API</p>
+        </a>
+      </div>
+    </ContentSection>
+
+    <!-- Getting Started -->
+    <div class="not-prose bg-stone-900/50 rounded-xl p-8 text-center mt-12">
+      <h2 class="text-2xl font-bold text-stone-200 mb-4">Ready to transform your customer support?</h2>
+      <p class="text-stone-400 mb-6">Get started with THG Orbit Support today.</p>
+      <div class="flex justify-center gap-4">
+        <a href="/docs/support" class="inline-flex items-center gap-2 px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors">
+          Get Started
+          <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</PageLayout>

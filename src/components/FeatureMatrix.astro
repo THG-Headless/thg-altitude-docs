@@ -1,0 +1,65 @@
+---
+interface Feature {
+  name: string;
+  nutrition: string;
+  luxury: string;
+}
+
+interface FeatureGroup {
+  title: string;
+  features: Feature[];
+}
+
+interface Props {
+  features: FeatureGroup[];
+}
+
+const { features } = Astro.props;
+
+const getStatusClass = (status: string) => {
+  switch (status) {
+    case 'Supported':
+      return 'text-green-500 dark:text-green-400';
+    case 'Unsupported':
+      return 'text-red-500 dark:text-red-400';
+    case 'In Discussion':
+      return 'text-yellow-500 dark:text-yellow-400';
+    case 'Work in Progress':
+      return 'text-stone-500 dark:text-stone-400';
+    case 'Deprioritised':
+      return 'text-stone-500 dark:text-stone-400';
+    case 'N/A':
+      return 'text-stone-400 dark:text-stone-500';
+    default:
+      return 'text-stone-500 dark:text-stone-400';
+  }
+};
+---
+
+<div class="not-prose">
+  {features.map(group => (
+    <div class="mb-8">
+      <h3 class="text-lg font-semibold mb-4">{group.title}</h3>
+      <div class="overflow-x-auto">
+        <table class="w-full border-collapse">
+          <thead>
+            <tr class="bg-stone-100 dark:bg-stone-800">
+              <th class="text-left p-3 border-b border-stone-200 dark:border-stone-700">Feature</th>
+              <th class="text-left p-3 border-b border-stone-200 dark:border-stone-700">Nutrition Storefront</th>
+              <th class="text-left p-3 border-b border-stone-200 dark:border-stone-700">Luxury Storefront</th>
+            </tr>
+          </thead>
+          <tbody>
+            {group.features.map(feature => (
+              <tr class="border-b border-stone-200 dark:border-stone-700 hover:bg-stone-50 dark:hover:bg-stone-800/50">
+                <td class="p-3">{feature.name}</td>
+                <td class={`p-3 ${getStatusClass(feature.nutrition)}`}>{feature.nutrition}</td>
+                <td class={`p-3 ${getStatusClass(feature.luxury)}`}>{feature.luxury}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  ))}
+</div>

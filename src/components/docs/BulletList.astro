@@ -1,0 +1,14 @@
+---
+interface Props {
+  items: string[] | string;
+}
+
+const { items: rawItems = [] } = Astro.props;
+const items = typeof rawItems === 'string' ? JSON.parse(rawItems) : rawItems;
+---
+
+<ul class="list-disc pl-6 my-4 space-y-2">
+  {Array.isArray(items) && items.map((item) => (
+    <li class="text-stone-700 dark:text-stone-300">{item}</li>
+  ))}
+</ul>

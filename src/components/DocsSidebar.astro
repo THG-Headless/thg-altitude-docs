@@ -1,0 +1,194 @@
+---
+interface NavItem {
+  title: string;
+  href: string;
+  items?: NavItem[];
+}
+
+interface Props {
+  product: {
+    id: string;
+    name: string;
+  };
+}
+
+const { product } = Astro.props;
+
+const cloudNav: NavItem[] = [
+  {
+    title: "Getting Started",
+    href: "/docs/cloud",
+    items: [
+      { title: "Quick Start", href: "/docs/cloud/quickstart" },
+      { title: "Installation", href: "/docs/cloud/installation" },
+      { title: "Configuration", href: "/docs/cloud/configuration" }
+    ]
+  },
+  {
+    title: "Core Concepts",
+    href: "/docs/cloud/concepts",
+    items: [
+      { title: "Edge Computing", href: "/docs/cloud/concepts/edge" },
+      { title: "Global Distribution", href: "/docs/cloud/concepts/distribution" },
+      { title: "Performance", href: "/docs/cloud/concepts/performance" }
+    ]
+  },
+  {
+    title: "Features",
+    href: "/docs/cloud/features",
+    items: [
+      { title: "Caching", href: "/docs/cloud/features/caching" },
+      { title: "Custom Domains", href: "/docs/cloud/features/domains" },
+      { title: "Edge Functions", href: "/docs/cloud/features/functions" },
+      { title: "Rules", href: "/docs/cloud/features/rules" }
+    ]
+  },
+  {
+    title: "Deployment",
+    href: "/docs/cloud/deployment",
+    items: [
+      { title: "GitHub Integration", href: "/docs/cloud/deployment/github" },
+      { title: "CI/CD", href: "/docs/cloud/deployment/cicd" },
+      { title: "Environment Variables", href: "/docs/cloud/deployment/env" }
+    ]
+  },
+  {
+    title: "Monitoring",
+    href: "/docs/cloud/monitoring",
+    items: [
+      { title: "Metrics", href: "/docs/cloud/monitoring/metrics" },
+      { title: "Logging", href: "/docs/cloud/monitoring/logging" },
+      { title: "Alerts", href: "/docs/cloud/monitoring/alerts" }
+    ]
+  }
+];
+
+const commerceApiNav: NavItem[] = [
+  {
+    title: "Overview",
+    href: "/docs/commerce-api",
+  },
+  {
+    title: "Examples",
+    href: "/docs/commerce-api/examples",
+    items: [
+      { title: "Basket", href: "/docs/commerce-api/examples/basket" },
+      { title: "Checkout", href: "/docs/commerce-api/examples/checkout" },
+      { title: "Customer", href: "/docs/commerce-api/examples/customer" },
+      { title: "Features", href: "/docs/commerce-api/examples/features" },
+      { title: "Navigation", href: "/docs/commerce-api/examples/navigation" },
+      { title: "Product", href: "/docs/commerce-api/examples/product" }
+    ]
+  },
+  {
+    title: "API Types",
+    href: "/docs/commerce-api#api-types",
+  },
+  {
+    title: "Feature Switching",
+    href: "/docs/commerce-api#feature-switching",
+  },
+  {
+    title: "Rate Limiting",
+    href: "/docs/commerce-api#rate-limiting-and-captcha",
+  },
+  {
+    title: "Automated Persisted Queries",
+    href: "/docs/commerce-api#automated-persisted-queries",
+  }
+];
+
+const insightsNav: NavItem[] = [
+  {
+    title: "Overview",
+    href: "/docs/insights",
+  },
+  {
+    title: "Getting Started",
+    href: "/docs/insights/getting-started",
+  },
+  {
+    title: "Framework Integrations",
+    href: "/docs/insights/frameworks",
+    items: [
+      { title: "Astro", href: "/docs/insights/frameworks/astro" },
+      { title: "Next.js", href: "/docs/insights/frameworks/nextjs" },
+      { title: "React Native", href: "/docs/insights/frameworks/react-native" }
+    ]
+  },
+  {
+    title: "Core Concepts",
+    href: "/docs/insights/core/beacon",
+  },
+  {
+    title: "Guides",
+    href: "/docs/insights/guides",
+    items: [
+      { title: "Altitude Integration", href: "/docs/insights/guides/altitude" },
+      { title: "Offline Support", href: "/docs/insights/guides/offline-support" },
+      { title: "Source Resolution", href: "/docs/insights/guides/source-resolution" },
+      { title: "Troubleshooting", href: "/docs/insights/guides/troubleshooting" }
+    ]
+  },
+  {
+    title: "API Reference",
+    href: "/docs/insights/reference/api",
+  }
+];
+
+const productNavs = {
+  cloud: cloudNav,
+  "commerce-api": commerceApiNav,
+  insights: insightsNav
+  // Add other product navs here
+};
+
+const currentPath = Astro.url.pathname;
+const nav = productNavs[product.id as keyof typeof productNavs] || [];
+
+function isActive(href: string): boolean {
+  return currentPath === href || currentPath.startsWith(`${href}/`);
+}
+---
+
+<div class="pb-10">
+  <div class="mb-8">
+    <h5 class="mb-3 text-sm font-semibold text-stone-400 uppercase tracking-wide">
+      {product.name} Documentation
+    </h5>
+    <ul class="space-y-1">
+      {nav.map(item => (
+        <li>
+          <a
+            href={item.href}
+            class={`block py-1.5 text-sm transition-colors ${
+              isActive(item.href)
+                ? 'text-primary-400 font-medium'
+                : 'text-stone-400 hover:text-stone-300'
+            }`}
+          >
+            {item.title}
+          </a>
+          {item.items && isActive(item.href) && (
+            <ul class="ml-4 mt-2 space-y-1">
+              {item.items.map(subItem => (
+                <li>
+                  <a
+                    href={subItem.href}
+                    class={`block py-1.5 text-sm transition-colors ${
+                      isActive(subItem.href)
+                        ? 'text-primary-400 font-medium'
+                        : 'text-stone-400 hover:text-stone-300'
+                    }`}
+                  >
+                    {subItem.title}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )}
+        </li>
+      ))}
+    </ul>
+  </div>
+</div>

@@ -1,0 +1,140 @@
+---
+import DocsLayout from '../../../../layouts/DocsLayout.astro';
+import Navigation from '../../../../components/Navigation.astro';
+
+const storefrontsContext = {
+  id: "storefronts",
+  name: "Storefronts",
+  description: "Build and deploy high-performance commerce experiences",
+  icon: "/icons/storefronts.svg",
+  quickLinks: [
+    {
+      title: "Components",
+      href: "/docs/storefronts/components",
+      description: "Browse our component libraries"
+    },
+    {
+      title: "Deployment",
+      href: "/docs/storefronts/deployment",
+      description: "Learn about deploying with Altitude"
+    }
+  ]
+};
+---
+
+<DocsLayout
+  title="Deployment Guide"
+  description="Deploy your storefront using THG Altitude"
+  product={storefrontsContext}
+>
+  <Navigation slot="sidebar" />
+  
+  <h1>Deploying with Altitude</h1>
+  <p class="lead text-xl text-stone-600 dark:text-stone-300 mt-4 mb-8">
+    THG Altitude is our edge-focused deployment platform optimized for commerce workloads. This guide will walk you through the deployment process.
+  </p>
+
+  <h2 class="text-2xl font-bold mt-12 mb-4">Prerequisites</h2>
+  <ul class="space-y-2 mb-8">
+    <li class="flex items-start">
+      <span class="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 mr-2">•</span>
+      Altitude CLI installed (<code class="text-sm bg-stone-100 dark:bg-stone-800 px-2 py-1 rounded">npm install -g @thg/altitude-cli</code>)
+    </li>
+    <li class="flex items-start">
+      <span class="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 mr-2">•</span>
+      Valid Altitude account and API credentials
+    </li>
+    <li class="flex items-start">
+      <span class="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 mr-2">•</span>
+      Project built and ready for deployment
+    </li>
+  </ul>
+
+  <h2 class="text-2xl font-bold mt-12 mb-4">Deployment Steps</h2>
+  
+  <h3 class="text-xl font-semibold mt-8 mb-4">1. Configure Your Project</h3>
+  <p class="mb-4">Create an altitude.config.js file in your project root:</p>
+  <pre class="bg-stone-900 text-stone-100 p-4 rounded-lg overflow-x-auto"><code>{`module.exports = {
+  name: 'my-storefront',
+  type: 'commerce',
+  regions: ['eu-west-1', 'us-east-1'],
+  settings: {
+    memory: 1024,
+    timeout: 30
+  }
+}`}</code></pre>
+
+  <h3 class="text-xl font-semibold mt-8 mb-4">2. Build Your Project</h3>
+  <p class="mb-4">Build your project using your framework's build command:</p>
+  <pre class="bg-stone-900 text-stone-100 p-4 rounded-lg overflow-x-auto"><code>npm run build</code></pre>
+
+  <h3 class="text-xl font-semibold mt-8 mb-4">3. Deploy to Altitude</h3>
+  <p class="mb-4">Use the Altitude CLI to deploy your project:</p>
+  <pre class="bg-stone-900 text-stone-100 p-4 rounded-lg overflow-x-auto"><code>altitude deploy</code></pre>
+
+  <h2 class="text-2xl font-bold mt-12 mb-4">Environment Variables</h2>
+  <p class="mb-4">Configure environment variables through the Altitude dashboard or CLI:</p>
+
+  <pre class="bg-stone-900 text-stone-100 p-4 rounded-lg overflow-x-auto"><code>altitude env set API_KEY=your-api-key
+altitude env set NODE_ENV=production</code></pre>
+
+  <h3 class="text-xl font-semibold mt-8 mb-4">Common Environment Variables</h3>
+  <ul class="space-y-2 mb-8">
+    <li class="flex items-start">
+      <span class="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 mr-2">•</span>
+      <strong>API_KEY</strong> - Your THG Commerce API key
+    </li>
+    <li class="flex items-start">
+      <span class="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 mr-2">•</span>
+      <strong>NODE_ENV</strong> - Environment (production/staging)
+    </li>
+    <li class="flex items-start">
+      <span class="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 mr-2">•</span>
+      <strong>REGION</strong> - Deployment region
+    </li>
+    <li class="flex items-start">
+      <span class="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 mr-2">•</span>
+      <strong>CACHE_TTL</strong> - Edge caching duration
+    </li>
+  </ul>
+
+  <h2 class="text-2xl font-bold mt-12 mb-4">Monitoring & Logs</h2>
+  
+  <h3 class="text-xl font-semibold mt-8 mb-4">View Logs</h3>
+  <p class="mb-4">Access deployment logs using the CLI:</p>
+  <pre class="bg-stone-900 text-stone-100 p-4 rounded-lg overflow-x-auto"><code>altitude logs --tail</code></pre>
+
+  <h3 class="text-xl font-semibold mt-8 mb-4">Metrics Dashboard</h3>
+  <p class="mb-4">Monitor your deployment through the Altitude dashboard:</p>
+  <ul class="space-y-2 mb-8">
+    <li class="flex items-start">
+      <span class="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 mr-2">•</span>
+      Request metrics
+    </li>
+    <li class="flex items-start">
+      <span class="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 mr-2">•</span>
+      Error rates
+    </li>
+    <li class="flex items-start">
+      <span class="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 mr-2">•</span>
+      Cache performance
+    </li>
+    <li class="flex items-start">
+      <span class="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 mr-2">•</span>
+      Resource usage
+    </li>
+  </ul>
+
+  <h2 class="text-2xl font-bold mt-12 mb-4">Next Steps</h2>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 not-prose">
+    <a href="/docs/storefronts/api" class="block p-6 bg-white dark:bg-stone-800 rounded-lg shadow-sm border border-stone-200 dark:border-stone-700 hover:shadow-md transition-shadow">
+      <h3 class="text-xl font-semibold mb-2">API Documentation →</h3>
+      <p class="text-stone-600 dark:text-stone-300">Learn about the Storefront API capabilities.</p>
+    </a>
+    
+    <a href="/resources/best-practices" class="block p-6 bg-white dark:bg-stone-800 rounded-lg shadow-sm border border-stone-200 dark:border-stone-700 hover:shadow-md transition-shadow">
+      <h3 class="text-xl font-semibold mb-2">Best Practices →</h3>
+      <p class="text-stone-600 dark:text-stone-300">Learn about deployment best practices and optimization tips.</p>
+    </a>
+  </div>
+</DocsLayout>

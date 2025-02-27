@@ -1,0 +1,61 @@
+---
+interface Props {
+  product: {
+    id: string;
+    name: string;
+    description: string;
+    icon: string;
+    quickLinks: {
+      title: string;
+      href: string;
+    }[];
+  };
+}
+
+const { product } = Astro.props;
+---
+
+<div class="sticky top-[70px] z-30" data-product-context>
+  <div class="bg-stone-950/75 backdrop-blur supports-backdrop-blur:bg-stone-950/60">
+    <!-- Product Navigation -->
+    <div class="max-w-[90rem] mx-auto">
+      <div class="flex items-center gap-2 px-4 sm:px-6 lg:px-8 py-4 border-b border-stone-800">
+        <a href="/products" class="text-stone-400 hover:text-stone-300">Products</a>
+        <svg class="w-4 h-4 text-stone-600" viewBox="0 0 16 16" fill="none">
+          <path d="M6 12l4-4-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div class="flex items-center gap-2">
+          <img src={product.icon} alt="" class="w-5 h-5" />
+          <span class="font-medium text-stone-200">{product.name}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Links -->
+  <div class="bg-stone-950/75 backdrop-blur supports-backdrop-blur:bg-stone-950/60 border-b border-stone-800">
+    <div class="max-w-[90rem] mx-auto">
+      <nav class="flex items-center gap-4 px-4 sm:px-6 lg:px-8 py-1">
+        {product.quickLinks.map(link => (
+          <a
+            href={link.href}
+            class:list={[
+              "px-1 py-3 text-sm border-b-2 transition-colors",
+              Astro.url.pathname === link.href || Astro.url.pathname.startsWith(`${link.href}/`)
+                ? "border-stone-500 text-stone-400"
+                : "border-transparent text-stone-400 hover:text-stone-300 hover:border-stone-700"
+            ]}
+          >
+            {link.title}
+          </a>
+        ))}
+      </nav>
+    </div>
+  </div>
+</div>
+
+<style>
+  .backdrop-blur {
+    backdrop-filter: blur(8px);
+  }
+</style>

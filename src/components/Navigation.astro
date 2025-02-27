@@ -1,0 +1,170 @@
+---
+interface NavItem {
+  title: string;
+  href: string;
+  items?: NavItem[];
+}
+
+interface NavSection {
+  section: string;
+  items: NavItem[];
+}
+
+const navigation: NavSection[] = [
+  {
+    section: "Getting Started",
+    items: [
+      { title: "Introduction", href: "/" },
+      { title: "Quick Start", href: "/getting-started" },
+    ],
+  },
+  {
+    section: "Products",
+    items: [
+      {
+        title: "Storefronts",
+        href: "/products/storefronts",
+        items: [
+          { title: "Overview", href: "/docs/storefronts" },
+          { title: "Components", href: "/docs/storefronts/components" },
+          { title: "Deployment", href: "/docs/storefronts/deployment" },
+        ],
+      },
+      {
+        title: "Search",
+        href: "/products/search",
+        items: [
+          { title: "Overview", href: "/docs/search" },
+          { title: "Integration", href: "/docs/search/integration" },
+          { title: "API Reference", href: "/docs/search/api" },
+          { title: "Best Practices", href: "/docs/search/best-practices" },
+        ],
+      },
+      {
+        title: "PIM",
+        href: "/products/pim",
+        items: [
+          { title: "Overview", href: "/docs/pim" },
+          { title: "Data Models", href: "/docs/pim/data-models" },
+          { title: "Integration", href: "/docs/pim/integration" },
+          { title: "Migration Guide", href: "/docs/pim/migration" },
+        ],
+      },
+      {
+        title: "Insights",
+        href: "/products/insights",
+        items: [
+          { title: "Overview", href: "/docs/insights" },
+          { title: "Setup Guide", href: "/docs/insights/setup" },
+          { title: "Analytics", href: "/docs/insights/analytics" },
+          { title: "API Reference", href: "/docs/insights/api" },
+        ],
+      },
+      {
+        title: "Account",
+        href: "/products/account",
+        items: [
+          { title: "Overview", href: "/docs/account" },
+          { title: "Integration", href: "/docs/account/integration" },
+          { title: "API Reference", href: "/docs/account/api" },
+        ],
+      },
+      {
+        title: "Checkout",
+        href: "/products/checkout",
+        items: [
+          { title: "Overview", href: "/docs/checkout" },
+          { title: "Integration", href: "/docs/checkout/integration" },
+          { title: "Payment Methods", href: "/docs/checkout/payments" },
+          { title: "API Reference", href: "/docs/checkout/api" },
+        ],
+      },
+    ],
+  },
+  {
+    section: "Resources",
+    items: [
+      { title: "Case Studies", href: "/resources/case-studies" },
+      { title: "Best Practices", href: "/resources/best-practices" },
+      { title: "Integration Guides", href: "/resources/integration-guides" },
+    ],
+  },
+];
+
+const currentPath = Astro.url.pathname;
+
+function isActive(href: string) {
+  if (href === '/') {
+    return currentPath === href;
+  }
+  
+  // Handle product routes
+  if (href.startsWith('/products/')) {
+    const productPath = href.split('/')[2]; // e.g., "storefronts"
+    return currentPath.includes(`/${productPath}/`) || currentPath === href;
+  }
+  
+  // Handle doc routes
+  if (href.startsWith('/docs/')) {
+    const docPath = href.split('/')[2]; // e.g., "storefronts"
+    return currentPath.includes(`/${docPath}/`) || currentPath === href;
+  }
+  
+  return currentPath === href || currentPath.startsWith(`${href}/`);
+}
+
+function isExpanded(item: NavItem) {
+  if (item.items) {
+    return item.items.some(subItem => isActive(subItem.href)) || isActive(item.href);
+  }
+  return false;
+}
+---
+
+<nav class="py-4">
+  {
+    navigation.map((section) => (
+      <div class="mb-8">
+        <h2 class="px-3 mb-2 text-sm font-semibold tracking-wider text-stone-400 dark:text-stone-500 uppercase">
+          {section.section}
+        </h2>
+        <ul class="space-y-1">
+          {section.items.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                class:list={[
+                  'block py-2 px-3 text-sm rounded-md transition-colors',
+                  isActive(item.href)
+                    ? 'bg-primary-50 text-primary-700 dark:bg-primary-900/20 dark:text-primary-400'
+                    : 'text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800'
+                ]}
+              >
+                {item.title}
+              </a>
+              {item.items && (isActive(item.href) || isExpanded(item)) && (
+                <ul class="mt-1 ml-4 pl-2 border-l border-stone-200 dark:border-stone-800 space-y-1">
+                  {item.items.map((subItem) => (
+                    <li>
+                      <a
+                        href={subItem.href}
+                        class:list={[
+                          'block py-2 px-3 text-sm rounded-md transition-colors',
+                          isActive(subItem.href)
+                            ? 'text-primary-700 dark:text-primary-400 font-medium'
+                            : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200'
+                        ]}
+                      >
+                        {subItem.title}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))
+  }
+</nav>

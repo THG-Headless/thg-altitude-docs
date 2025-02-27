@@ -1,0 +1,33 @@
+---
+interface Props {
+  title?: string;
+  lang: string;
+  code: string;
+}
+
+const { title, lang, code } = Astro.props;
+---
+
+<div class="relative my-6">
+  {title && (
+    <div class="absolute top-0 right-0 bg-stone-800 text-stone-300 px-3 py-1 text-sm rounded-bl font-mono">
+      {title}
+    </div>
+  )}
+  <pre class={`language-${lang} ${title ? 'pt-8' : ''}`}><code class={`language-${lang}`}>{code.trim()}</code></pre>
+</div>
+
+<style>
+  pre {
+    @apply rounded-lg overflow-hidden bg-stone-900;
+  }
+
+  code {
+    @apply font-mono text-sm block p-4;
+  }
+
+  /* Remove default padding when title is present */
+  pre[class*="language-"].pt-8 code {
+    @apply pt-0;
+  }
+</style>

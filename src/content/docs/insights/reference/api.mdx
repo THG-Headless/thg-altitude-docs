@@ -1,0 +1,185 @@
+---
+title: API Reference
+description: Complete API documentation for THG Commerce Insights
+---
+
+This page documents the core APIs available in @thg-commerce/insights.
+
+## Core Types
+
+### BeaconConfig
+
+Configuration options for creating a new Beacon instance:
+
+```typescript
+interface BeaconConfig {
+  endpoint: string;              // API endpoint to send events to
+  debug?: boolean;              // Enable debug logging
+  source?: string;              // Static source identifier
+  sourceResolver?: SourceResolver; // Dynamic source resolution
+}
+```
+
+### PageViewEvent
+
+Structure of a page view event:
+
+```typescript
+interface PageViewEvent {
+  type: 'page_view';
+  path: string;    // Current page/screen path
+  source: string;  // Event source identifier
+}
+```
+
+## Core Classes
+
+### Beacon
+
+The main class for event tracking:
+
+```typescript
+class Beacon {
+  constructor(config: BeaconConfig);
+  
+  // Send an event to the tracking endpoint
+  send(event: PageViewEvent): Promise<void>;
+}
+```
+
+## Source Resolution
+
+### SourceResolver
+
+Interface for custom source resolution:
+
+```typescript
+interface SourceResolver {
+  getCurrentSource(): string;
+}
+```
+
+Built-in resolvers:
+
+```typescript
+// Web domains
+class WebDomainResolver implements SourceResolver {
+  getCurrentSource(): string; // Returns window.location.hostname
+}
+
+// React Native
+class RNSourceResolver implements SourceResolver {
+  constructor(domain: string);
+  getCurrentSource(): string; // Returns configured domain
+}
+
+// THG Altitude
+class AltitudeSourceResolver implements SourceResolver {
+  getCurrentSource(): string; // Returns altitude.runtime.config.domain
+}
+
+// Static source
+class StaticSourceResolver implements SourceResolver {
+  constructor(source: string);
+  getCurrentSource(): string; // Returns configured source
+}
+```
+
+## Framework-specific APIs
+
+### Astro Integration
+
+```typescript
+function createIntegration(config: InsightsConfig): AstroIntegration;
+
+interface InsightsConfig {
+  endpoint: string;
+  debug?: boolean;
+  sourceResolver?: SourceResolver;
+}
+```
+
+### Next.js Integration
+
+```typescript
+// Middleware approach
+function createMiddleware(config: MiddlewareConfig): NextMiddleware;
+
+interface MiddlewareConfig {
+  endpoint: string;
+  debug?: boolean;
+  sourceResolver?: SourceResolver;
+  matcher?: string | string[];
+}
+
+// Hook approach
+function createTracker(config: TrackerConfig): Beacon;
+function usePageViewTracking(tracker: Beacon): void;
+
+interface TrackerConfig {
+  endpoint: string;
+  debug?: boolean;
+  sourceResolver?: SourceResolver;
+}
+```
+
+### React Native Integration
+
+```typescript
+function createTracker(config: RNTrackerConfig): RNTracker;
+
+interface RNTrackerConfig {
+  endpoint: string;
+  domain: string;
+  debug?: boolean;
+  sourceResolver?: SourceResolver;
+}
+
+interface RNTracker {
+  trackScreenView(path: string): Promise<void>;
+}
+```
+
+## Error Handling
+
+The package throws typed errors for common scenarios:
+
+```typescript
+class NetworkError extends Error {
+  readonly isNetworkError = true;
+}
+
+class ConfigurationError extends Error {
+  readonly isConfigError = true;
+}
+```
+
+## Event Queue Types
+
+Internal types for offline support:
+
+```typescript
+interface QueuedEvent {
+  event: PageViewEvent;
+  timestamp: number;
+  retryCount: number;
+}
+
+interface QueueConfig {
+  maxRetries: number;
+  retryDelay: number;
+}
+```
+
+## Constants
+
+```typescript
+const DEFAULT_RETRY_DELAY = 1000;  // 1 second
+const MAX_RETRY_ATTEMPTS = 5;      // Maximum retry attempts
+const QUEUE_STORAGE_KEY = 'thg-commerce-insights-queue';
+```
+
+For framework-specific implementation details, refer to:
+- [Astro Integration](/astro/integration/)
+- [Next.js Integration](/next/integration/)
+- [React Native Integration](/react-native/tracking/)

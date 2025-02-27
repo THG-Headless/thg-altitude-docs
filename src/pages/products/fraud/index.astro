@@ -1,0 +1,173 @@
+---
+import PageLayout from '../../../layouts/PageLayout.astro';
+import ContentSection from '../../../components/ContentSection.astro';
+
+const product = {
+  id: "fraud",
+  name: "Fraud Protection",
+  description: "AI-powered fraud detection and prevention",
+  icon: "/icons/detect.svg",
+  quickLinks: [
+    {
+      title: "Overview",
+      href: "/products/fraud"
+    },
+    {
+      title: "Documentation",
+      href: "/docs/fraud"
+    },
+    {
+      title: "API Reference",
+      href: "/docs/fraud/api"
+    }
+  ]
+};
+
+const features = [
+  {
+    title: "Advanced AI Detection",
+    description: "Machine learning algorithms that adapt to new fraud patterns",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>`
+  },
+  {
+    title: "Real-time Monitoring",
+    description: "Instant alerts and automated responses to suspicious activities",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>`
+  },
+  {
+    title: "Customizable Rule Engine",
+    description: "Create and modify rules based on your business requirements",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>`
+  },
+  {
+    title: "Comprehensive Reporting",
+    description: "Detailed insights into attempted fraud and prevention metrics",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>`
+  }
+];
+
+const highlights = [
+  {
+    title: "Real-time detection",
+    description: "Identify fraud attempts as they happen"
+  },
+  {
+    title: "AI & Machine Learning",
+    description: "Continuously improving detection algorithms"
+  },
+  {
+    title: "Customizable rules",
+    description: "Tailor protection to your business needs"
+  },
+  {
+    title: "Minimal false positives",
+    description: "Reduce legitimate transaction rejections"
+  }
+];
+
+const businessValues = [
+  {
+    title: "Reduce Chargebacks",
+    description: "Minimize financial losses from fraudulent transactions and chargebacks"
+  },
+  {
+    title: "Increase Customer Trust",
+    description: "Build confidence with secure transactions while maintaining a smooth checkout experience"
+  }
+];
+---
+
+<PageLayout
+  title="Fraud Protection"
+  description="AI-powered fraud detection and prevention"
+  {product}
+>
+  <div class="prose dark:prose-invert max-w-none">
+    <!-- Hero -->
+    <div class="not-prose bg-gradient-to-b from-stone-900 to-stone-800 -mx-4 sm:-mx-6 lg:-mx-8 p-8 sm:p-12 lg:p-16 rounded-xl mb-12">
+      <div class="max-w-3xl mx-auto text-center mb-12">
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6">THG Detect Fraud Protection</h1>
+        <p class="text-xl text-stone-300">Protect your business and customers with our advanced fraud detection system. Using AI and machine learning, we identify suspicious activities in real-time while minimizing false positives.</p>
+      </div>
+      <div class="flex justify-center gap-4 mt-8">
+        <a href="/docs/fraud" class="inline-flex items-center gap-2 px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors">
+          Get Started
+          <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+          </svg>
+        </a>
+        <a href="/docs/fraud/api" class="inline-flex items-center gap-2 px-6 py-3 border border-stone-600 hover:border-stone-500 text-stone-300 hover:text-white rounded-lg transition-colors">
+          View API Reference
+          <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+          </svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- Highlights -->
+    <div class="not-prose grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+      {highlights.map(highlight => (
+        <div class="bg-stone-900/50 rounded-xl p-6">
+          <h3 class="text-lg font-semibold text-stone-200 mb-2">{highlight.title}</h3>
+          <p class="text-stone-400">{highlight.description}</p>
+        </div>
+      ))}
+    </div>
+
+    <!-- Key Features -->
+    <div class="grid sm:grid-cols-2 gap-8 mb-12">
+      {features.map(feature => (
+        <div class="not-prose bg-stone-900/50 rounded-xl p-6">
+          <div class="text-primary-400 mb-4" set:html={feature.icon} />
+          <h3 class="text-xl font-semibold text-stone-200 mb-2">{feature.title}</h3>
+          <p class="text-stone-400">{feature.description}</p>
+        </div>
+      ))}
+    </div>
+
+    <!-- Business Value -->
+    <ContentSection title="Business Value" description="Protect your business and enhance customer experience:">
+      <div class="grid sm:grid-cols-2 gap-6">
+        {businessValues.map(value => (
+          <div class="bg-stone-800/50 rounded-xl p-6">
+            <h3 class="text-lg font-semibold text-stone-200 mb-2">{value.title}</h3>
+            <p class="text-stone-400">{value.description}</p>
+          </div>
+        ))}
+      </div>
+    </ContentSection>
+
+    <!-- Resources -->
+    <ContentSection title="Resources">
+      <div class="grid sm:grid-cols-3 gap-6">
+        <a href="/docs/fraud" class="block bg-stone-800/50 rounded-xl p-6 hover:bg-stone-800/70 transition-colors">
+          <h3 class="text-lg font-semibold text-stone-200 mb-2">Documentation</h3>
+          <p class="text-stone-400">Learn how to implement fraud protection</p>
+        </a>
+        <a href="/docs/fraud/quickstart" class="block bg-stone-800/50 rounded-xl p-6 hover:bg-stone-800/70 transition-colors">
+          <h3 class="text-lg font-semibold text-stone-200 mb-2">Quick Start</h3>
+          <p class="text-stone-400">Set up basic fraud protection in minutes</p>
+        </a>
+        <a href="/docs/fraud/api" class="block bg-stone-800/50 rounded-xl p-6 hover:bg-stone-800/70 transition-colors">
+          <h3 class="text-lg font-semibold text-stone-200 mb-2">API Reference</h3>
+          <p class="text-stone-400">Explore the Fraud Protection API</p>
+        </a>
+      </div>
+    </ContentSection>
+
+    <!-- Getting Started -->
+    <div class="not-prose bg-stone-900/50 rounded-xl p-8 text-center mt-12">
+      <h2 class="text-2xl font-bold text-stone-200 mb-4">Ready to protect your business?</h2>
+      <p class="text-stone-400 mb-6">Get started with THG Detect Fraud Protection today.</p>
+      <div class="flex justify-center gap-4">
+        <a href="/docs/fraud" class="inline-flex items-center gap-2 px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors">
+          Get Started
+          <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</PageLayout>

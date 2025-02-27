@@ -1,0 +1,68 @@
+---
+import DocsLayout from '../../../../layouts/DocsLayout.astro';
+import DocsSidebar from '../../../../components/DocsSidebar.astro';
+import { getCollection, type CollectionEntry } from 'astro:content';
+import { products } from '../../../../config/products';
+import { isVersionFolder } from '../../../../utils/versions';
+
+export async function getStaticPaths() {
+  const docs = await getCollection('docs');
+  
+  // Filter only index files
+  const indexDocs = docs.filter(doc => doc.id.endsWith('/index.mdx') || doc.id.endsWith('/index.md'));
+  
+  // Define the type for paths
+  type PathItem = {
+    params: { product: string; version: string };
+    props: { doc: CollectionEntry<'docs'> };
+  };
+  
+  const paths: PathItem[] = [];
+  
+  indexDocs.forEach(doc => {
+    // Get the path parts
+    const pathParts = doc.id.split('/');
+    
+    // We need at least product/version/index
+    if (pathParts.length >= 3) {
+      const product = pathParts[0];
+      const version = pathParts[1];
+      
+      // Only process if the second part is a version folder and the last part is index
+      if (isVersionFolder(version) && (pathParts[pathParts.length - 1] === 'index.mdx' || pathParts[pathParts.length - 1] === 'index.md')) {
+        paths.push({
+          params: { product, version },
+          props: { doc }
+        });
+      }
+    }
+  });
+  
+  return paths;
+}
+
+const { product: productId, version } = Astro.params;
+const { doc } = Astro.props;
+
+// Get product info from config
+const product = products[productId] || {
+  id: productId,
+  name: productId.charAt(0).toUpperCase() + productId.slice(1).replace(/-/g, ' '),
+  description: "",
+  icon: "/icons/altitude.svg",
+  status: "live",
+  quickLinks: []
+};
+
+const { Content, headings } = await doc.render();
+---
+
+<DocsLayout
+  title={doc.data.title}
+  description={doc.data.description}
+  product={product}
+  headings={headings}
+>
+  <DocsSidebar slot="sidebar" product={product} />
+  <Content />
+</DocsLayout>

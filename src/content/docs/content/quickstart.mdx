@@ -1,0 +1,55 @@
+---
+title: Quick Start Guide
+description: Get started with Altitude Altitude Platform in minutes
+---
+
+# Quick Start Guide
+
+Get your website running on Altitude Altitude Platform in just a few minutes.
+
+## Prerequisites
+
+Before you begin, make sure you have:
+
+- A GitHub account
+- A front-end repository to deploy
+- Access to Altitude Altitude Platform
+
+## Step 1: Connect to GitHub
+
+1. Log in to Altitude Altitude Platform
+2. Click "Create Site"
+3. Select GitHub as your Git provider
+4. Connect to your organization
+5. Choose your repository
+
+## Step 2: Configure Your Site
+
+```javascript
+// altitude.config.js
+module.exports = {
+  name: 'my-site',
+  framework: 'next', // or 'react', 'vue', etc.
+  buildCommand: 'npm run build',
+  outputDirectory: 'dist',
+  environmentVariables: {
+    API_URL: process.env.API_URL
+  }
+};
+```
+
+## Step 3: Deploy
+
+Once configured, Altitude will:
+
+1. Build your site (≈ 1 minute)
+2. Optimize assets (≈ 1 minute)
+3. Deploy globally (≈ 1 minute)
+
+Your site will be live at `https://your-site.altitude.thg.com` in approximately 3 minutes.
+
+## Next Steps
+
+- [Configure your custom domain](/docs/cloud/configuration)
+- [Set up environment variables](/docs/cloud/deployment/env)
+- [Learn about edge functions](/docs/cloud/features/functions)

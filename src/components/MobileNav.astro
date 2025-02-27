@@ -1,0 +1,197 @@
+---
+interface NavItem {
+  title: string;
+  href: string;
+  items?: NavItem[];
+}
+
+interface NavSection {
+  section: string;
+  items: NavItem[];
+}
+
+const navigation: NavSection[] = [
+  {
+    section: "Getting Started",
+    items: [
+      { title: "Introduction", href: "/" },
+      { title: "Quick Start", href: "/getting-started" },
+    ],
+  },
+  {
+    section: "Products",
+    items: [
+      {
+        title: "Storefronts",
+        href: "/products/storefronts",
+        items: [
+          { title: "Overview", href: "/docs/storefronts" },
+          { title: "Components", href: "/docs/storefronts/components" },
+          { title: "Deployment", href: "/docs/storefronts/deployment" },
+        ],
+      },
+      {
+        title: "Search",
+        href: "/products/search",
+        items: [
+          { title: "Overview", href: "/docs/search" },
+          { title: "Integration", href: "/docs/search/integration" },
+          { title: "API Reference", href: "/docs/search/api" },
+          { title: "Best Practices", href: "/docs/search/best-practices" },
+        ],
+      },
+      {
+        title: "PIM",
+        href: "/products/pim",
+        items: [
+          { title: "Overview", href: "/docs/pim" },
+          { title: "Data Models", href: "/docs/pim/data-models" },
+          { title: "Integration", href: "/docs/pim/integration" },
+          { title: "Migration Guide", href: "/docs/pim/migration" },
+        ],
+      },
+      {
+        title: "Insights",
+        href: "/products/insights",
+        items: [
+          { title: "Overview", href: "/docs/insights" },
+          { title: "Setup Guide", href: "/docs/insights/setup" },
+          { title: "Analytics", href: "/docs/insights/analytics" },
+          { title: "API Reference", href: "/docs/insights/api" },
+        ],
+      },
+      {
+        title: "Account",
+        href: "/products/account",
+        items: [
+          { title: "Overview", href: "/docs/account" },
+          { title: "Integration", href: "/docs/account/integration" },
+          { title: "API Reference", href: "/docs/account/api" },
+        ],
+      },
+      {
+        title: "Checkout",
+        href: "/products/checkout",
+        items: [
+          { title: "Overview", href: "/docs/checkout" },
+          { title: "Integration", href: "/docs/checkout/integration" },
+          { title: "Payment Methods", href: "/docs/checkout/payments" },
+          { title: "API Reference", href: "/docs/checkout/api" },
+        ],
+      },
+    ],
+  },
+  {
+    section: "Resources",
+    items: [
+      { title: "Case Studies", href: "/resources/case-studies" },
+      { title: "Best Practices", href: "/resources/best-practices" },
+      { title: "Integration Guides", href: "/resources/integration-guides" },
+    ],
+  },
+];
+
+const currentPath = Astro.url.pathname;
+
+function isActive(href: string) {
+  if (href === '/') {
+    return currentPath === href;
+  }
+  
+  // Handle product routes
+  if (href.startsWith('/products/')) {
+    const productPath = href.split('/')[2]; // e.g., "storefronts"
+    return currentPath.includes(`/${productPath}/`) || currentPath === href;
+  }
+  
+  // Handle doc routes
+  if (href.startsWith('/docs/')) {
+    const docPath = href.split('/')[2]; // e.g., "storefronts"
+    return currentPath.includes(`/${docPath}/`) || currentPath === href;
+  }
+  
+  return currentPath === href || currentPath.startsWith(`${href}/`);
+}
+
+function isExpanded(item: NavItem) {
+  if (item.items) {
+    return item.items.some(subItem => isActive(subItem.href)) || isActive(item.href);
+  }
+  return false;
+}
+---
+
+<div class="hs-accordion-group">
+  {
+    navigation.map((section) => (
+      <div class="hs-accordion-group pb-3">
+        <div class="px-4">
+          <h3 class="text-xs font-semibold tracking-wide text-stone-900 uppercase dark:text-stone-200">
+            {section.section}
+          </h3>
+        </div>
+        <div class="mt-3">
+          {section.items.map((item) => (
+            <div class="hs-accordion">
+              {item.items ? (
+                <>
+                  <button
+                    type="button"
+                    class:list={[
+                      'hs-accordion-toggle w-full flex items-center gap-x-3 py-2 px-4 text-sm text-stone-800 rounded-lg hover:bg-stone-100 dark:hover:bg-stone-900 dark:text-stone-200 dark:hover:text-stone-200 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-stone-600',
+                      isActive(item.href) && 'bg-stone-100 dark:bg-stone-900'
+                    ]}
+                  >
+                    {item.title}
+                    <svg
+                      class="hs-accordion-active:rotate-180 ms-auto w-4 h-4 transition-transform"
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path d="m6 9 6 6 6-6" />
+                    </svg>
+                  </button>
+
+                  <div class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300">
+                    <ul class="pt-2 ps-2">
+                      {item.items.map((subItem) => (
+                        <li>
+                          <a
+                            class:list={[
+                              'flex items-center gap-x-3 py-2 px-4 text-sm text-stone-800 rounded-lg hover:bg-stone-100 dark:hover:bg-stone-900 dark:text-stone-200 dark:hover:text-stone-200',
+                              isActive(subItem.href) && 'bg-stone-100 dark:bg-stone-900'
+                            ]}
+                            href={subItem.href}
+                          >
+                            {subItem.title}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </>
+              ) : (
+                <a
+                  class:list={[
+                    'w-full flex items-center gap-x-3 py-2 px-4 text-sm text-stone-800 rounded-lg hover:bg-stone-100 dark:hover:bg-stone-900 dark:text-stone-200 dark:hover:text-stone-200',
+                    isActive(item.href) && 'bg-stone-100 dark:bg-stone-900'
+                  ]}
+                  href={item.href}
+                >
+                  {item.title}
+                </a>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    ))
+  }
+</div>

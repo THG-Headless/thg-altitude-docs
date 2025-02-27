@@ -1,0 +1,140 @@
+---
+title: React Native Tracking
+description: Screen view tracking for React Native apps
+---
+
+The React Native integration provides automatic screen view tracking and manual tracking capabilities.
+
+## Installation
+
+```bash
+npm install @thg-commerce/insights
+```
+
+## Configuration
+
+```typescript
+import createTracker from '@thg-commerce/insights/react-native';
+
+const tracker = createTracker({
+  endpoint: 'https://api.example.com/events',
+  domain: 'shopping-app',  // Unique identifier for your app
+  debug: true
+});
+```
+
+### Configuration Options
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `endpoint` | `string` | Required. API endpoint to send events to |
+| `domain` | `string` | Required. Default source identifier for your app |
+| `debug` | `boolean` | Optional. Enable debug logging |
+| `sourceResolver` | `SourceResolver` | Optional. Custom source resolution |
+
+## Source Resolution
+
+By default, the tracker uses the provided domain as the source. You can customize this by implementing a source resolver:
+
+```typescript
+class CustomSourceResolver implements SourceResolver {
+  getCurrentSource() {
+    return 'custom-source';
+  }
+}
+
+const tracker = createTracker({
+  endpoint: 'https://api.example.com/events',
+  sourceResolver: new CustomSourceResolver()
+});
+```
+
+## Automatic Screen Tracking
+
+The tracker automatically captures screen views when your app becomes active:
+
+```typescript
+// Automatically tracks when app becomes active
+// Sends: { type: 'page_view', path: '/', source: 'shopping-app' }
+```
+
+## Manual Screen Tracking
+
+You can manually track screen views:
+
+```typescript
+// Track a specific screen
+tracker.trackScreenView('/settings');
+
+// Track a product page
+tracker.trackScreenView('/products/123');
+```
+
+## Event Structure
+
+Screen view events follow this structure:
+
+```typescript
+{
+  type: 'page_view',
+  path: string,    // Screen path (e.g., '/settings')
+  source: string   // Your configured source identifier
+}
+```
+
+## Offline Support
+
+Events are automatically queued when offline and sent when connectivity is restored. The tracker handles this internally.
+
+## Debug Output
+
+When debug mode is enabled, you'll see logs like:
+
+```
+[THG Commerce Insights] Event queued: { type: 'page_view', path: '/settings' }
+[THG Commerce Insights] Event sent successfully
+[THG Commerce Insights] Device is offline, keeping events in queue
+```
+
+## THG Altitude Integration (Optional)
+
+If you're using THG Altitude, you can use the built-in Altitude source resolver:
+
+```typescript
+import { AltitudeSourceResolver } from '@thg-commerce/insights/core';
+
+const tracker = createTracker({
+  endpoint: 'https://api.example.com/events',
+  sourceResolver: new AltitudeSourceResolver()
+});
+```
+
+This will automatically use your Altitude domain as the event source.
+
+## Example Integration with React Navigation
+
+```typescript
+// App.tsx
+import createTracker from '@thg-commerce/insights/react-native';
+import { NavigationContainer } from '@react-navigation/native';
+
+const tracker = createTracker({
+  endpoint: 'https://api.example.com/events',
+  domain: 'shopping-app',
+  debug: true
+});
+
+function App() {
+  return (
+    <NavigationContainer
+      onStateChange={(state) => {
+        const currentRoute = state?.routes[state.routes.length - 1];
+        if (currentRoute) {
+          tracker.trackScreenView(currentRoute.name);
+        }
+      }}
+    >
+      {/* Your app content */}
+    </NavigationContainer>
+  );
+}

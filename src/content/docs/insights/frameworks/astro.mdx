@@ -1,0 +1,120 @@
+---
+title: Astro Integration
+description: Automatic page view tracking for Astro sites
+---
+
+The Astro integration provides automatic page view tracking for your Astro sites.
+
+## Installation
+
+```bash
+npm install @thg-commerce/insights
+```
+
+## Configuration
+
+```typescript
+// astro.config.mjs
+import { defineConfig } from 'astro';
+import insights from '@thg-commerce/insights/astro';
+
+export default defineConfig({
+  integrations: [
+    insights({
+      endpoint: 'https://api.example.com/events',
+      debug: true
+    })
+  ]
+});
+```
+
+### Configuration Options
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `endpoint` | `string` | Required. API endpoint to send events to |
+| `debug` | `boolean` | Optional. Enable debug logging |
+| `sourceResolver` | `SourceResolver` | Optional. Custom source resolution |
+
+## Automatic Page Tracking
+
+The integration automatically tracks:
+- Initial page load
+- Page visibility changes (when tab becomes visible)
+
+No manual configuration is needed - the integration handles everything automatically.
+
+### Event Structure
+
+```typescript
+{
+  type: 'page_view',
+  path: string,    // Page path (e.g., '/blog/post-1')
+  source: string   // Domain or custom source identifier
+}
+```
+
+## Source Resolution
+
+By default, the integration uses `window.location.hostname` as the source. This means:
+- In development: The source will be 'localhost'
+- In production: The source will be your site's domain
+
+You can customize this by providing a source resolver:
+
+```typescript
+import { WebSourceResolver } from '@thg-commerce/insights/astro';
+
+class CustomSourceResolver extends WebSourceResolver {
+  getCurrentSource() {
+    // Add custom logic here
+    return 'custom-source';
+  }
+}
+
+insights({
+  endpoint: 'https://api.example.com/events',
+  sourceResolver: new CustomSourceResolver()
+});
+```
+
+### Using with THG Altitude
+
+If you're using THG Altitude, you can create a custom resolver that uses Altitude's domain:
+
+```typescript
+class AltitudeSourceResolver implements SourceResolver {
+  getCurrentSource() {
+    if (typeof altitude === 'undefined' || !altitude.runtime?.config?.domain) {
+      return window.location.hostname;
+    }
+    return altitude.runtime.config.domain;
+  }
+}
+
+insights({
+  endpoint: 'https://api.example.com/events',
+  sourceResolver: new AltitudeSourceResolver()
+});
+```
+
+## Offline Support
+
+Events are automatically queued when offline and sent when connectivity is restored. This ensures no page views are lost, even when users have intermittent connectivity.
+
+## Debug Output
+
+When debug mode is enabled, you'll see logs in the browser console:
+
+```
+[THG Commerce Insights] Event queued: { type: 'page_view', path: '/blog/post-1' }
+[THG Commerce Insights] Event sent successfully
+[THG Commerce Insights] Device is offline, keeping events in queue
+```
+
+## Error Handling
+
+The integration includes comprehensive error handling:
+- Retries on failed sends
+- Graceful handling of offline states
+- Fallbacks for missing configuration

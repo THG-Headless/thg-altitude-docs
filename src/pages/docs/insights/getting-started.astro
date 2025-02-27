@@ -1,0 +1,26 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro';
+import DocsSidebar from '../../../components/DocsSidebar.astro';
+import { getCollection, type CollectionEntry } from 'astro:content';
+import { getProduct } from '../../../config/products';
+
+const docs = await getCollection('docs');
+const gettingStartedDoc = docs.find((doc: CollectionEntry<'docs'>) => doc.id === 'insights/getting-started.mdx');
+
+if (!gettingStartedDoc) {
+  throw new Error('Getting started documentation not found');
+}
+
+const product = getProduct('insights');
+const { Content, headings } = await gettingStartedDoc.render();
+---
+
+<DocsLayout
+  title={gettingStartedDoc.data.title}
+  description={gettingStartedDoc.data.description}
+  product={product}
+  headings={headings}
+>
+  <DocsSidebar slot="sidebar" product={product} />
+  <Content />
+</DocsLayout>

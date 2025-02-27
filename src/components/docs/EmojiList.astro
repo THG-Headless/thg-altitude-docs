@@ -1,0 +1,23 @@
+---
+interface Props {
+  items: string | {
+    emoji: string;
+    title: string;
+    description: string;
+  }[];
+}
+
+const { items: rawItems = [] } = Astro.props;
+const items = typeof rawItems === 'string' ? JSON.parse(rawItems) : rawItems;
+---
+
+<ul class="list-none pl-0 space-y-3">
+  {Array.isArray(items) && items.map((item) => (
+    <li class="flex items-start gap-3">
+      <span class="text-xl flex-shrink-0">{item.emoji}</span>
+      <span>
+        <strong>{item.title}</strong>: {item.description}
+      </span>
+    </li>
+  ))}
+</ul>

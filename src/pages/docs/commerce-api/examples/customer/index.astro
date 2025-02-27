@@ -1,0 +1,62 @@
+---
+import DocsLayout from '../../../../../layouts/DocsLayout.astro';
+import DocsSidebar from '../../../../../components/DocsSidebar.astro';
+import { getCollection, type CollectionEntry } from 'astro:content';
+
+const docs = await getCollection('docs');
+const customerDoc = docs.find((doc: CollectionEntry<'docs'>) => doc.id === 'commerce-api/examples/customer/index.mdx');
+
+const product = {
+  id: "commerce-api",
+  name: "Commerce API",
+  description: "Build commerce experiences with our powerful GraphQL API",
+  icon: "/icons/commerce-api.svg",
+  quickLinks: [
+    {
+      title: "Overview",
+      href: "/products/commerce-api"
+    },
+    {
+      title: "Documentation",
+      href: "/docs/commerce-api"
+    },
+    {
+      title: "Examples",
+      href: "/docs/commerce-api/examples"
+    }
+  ]
+};
+
+const { Content, headings } = customerDoc ? await customerDoc.render() : { Content: null, headings: [] };
+---
+
+{customerDoc ? (
+  <DocsLayout
+    title={customerDoc.data.title}
+    description={customerDoc.data.description}
+    product={product}
+    headings={headings}
+  >
+    <DocsSidebar slot="sidebar" product={product} />
+    <Content />
+  </DocsLayout>
+) : (
+  <DocsLayout
+    title="Customer Examples"
+    description="Examples for customer-related functionality in Commerce API"
+    product={product}
+  >
+    <DocsSidebar slot="sidebar" product={product} />
+    <h1>Customer Examples</h1>
+    <p>This section contains examples for customer-related functionality in Commerce API.</p>
+    
+    <h2>Available Examples</h2>
+    <ul>
+      <li><a href="/docs/commerce-api/examples/customer/account-creation">Account Creation</a></li>
+      <li><a href="/docs/commerce-api/examples/customer/account-data">Account Data</a></li>
+      <li><a href="/docs/commerce-api/examples/customer/customer-referrals">Customer Referrals</a></li>
+      <li><a href="/docs/commerce-api/examples/customer/customer-services">Customer Services</a></li>
+      <li><a href="/docs/commerce-api/examples/customer/login">Login</a></li>
+    </ul>
+  </DocsLayout>
+)}

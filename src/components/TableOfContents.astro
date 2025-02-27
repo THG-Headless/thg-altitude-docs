@@ -1,0 +1,119 @@
+---
+interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+interface Props {
+  headings: Heading[];
+}
+
+const { headings } = Astro.props;
+
+// Filter headings to only include h2 and h3
+const toc = headings.filter(heading => heading.depth > 1 && heading.depth < 4);
+---
+
+<div class="h-full">
+  <div class="mb-4">
+    <h5 class="mb-3 text-sm font-semibold text-stone-400 uppercase tracking-wide">
+      On this page
+    </h5>
+    <ul class="space-y-1 text-sm" id="table-of-contents">
+      {toc.map(heading => (
+        <li>
+          <a
+            href={`#${heading.slug}`}
+            class={`block py-1 ${
+              heading.depth === 2
+                ? 'text-stone-400 hover:text-stone-300'
+                : 'pl-3 text-stone-500 hover:text-stone-400'
+            } transition-colors`}
+            data-heading={heading.slug}
+          >
+            {heading.text}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</div>
+
+<script>
+  // Get all the headings that we want to track
+  const headings = Array.from(document.querySelectorAll('h2, h3'));
+  const tocLinks = document.querySelectorAll('#table-of-contents a');
+
+  // Create an IntersectionObserver
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        const slug = entry.target.id;
+        const link = document.querySelector(`a[data-heading="${slug}"]`);
+
+        // When a heading enters the viewport
+        if (entry.isIntersecting) {
+          // Remove active class from all links
+          tocLinks.forEach(link => {
+            link.classList.remove('text-primary-400', 'font-medium');
+            if (link.classList.contains('pl-3')) {
+              link.classList.add('text-stone-500');
+            } else {
+              link.classList.add('text-stone-400');
+            }
+          });
+
+          // Add active class to the current link
+          if (link) {
+            link.classList.remove(link.classList.contains('pl-3') ? 'text-stone-500' : 'text-stone-400');
+            link.classList.add('text-primary-400', 'font-medium');
+          }
+        }
+      });
+    },
+    {
+      rootMargin: '-100px 0px -66%',
+      threshold: 1.0
+    }
+  );
+
+  // Observe each heading
+  headings.forEach((heading) => {
+    observer.observe(heading);
+  });
+
+  // Smooth scroll to heading when clicking on TOC links
+  tocLinks.forEach((link) => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const href = link.getAttribute('href');
+      if (href) {
+        const heading = document.querySelector(href);
+        if (heading) {
+          heading.scrollIntoView({ behavior: 'smooth' });
+        }
+      }
+    });
+  });
+</script>
+
+<style>
+  .overflow-y-auto {
+    scrollbar-width: thin;
+    scrollbar-color: theme('colors.gray.700') transparent;
+  }
+
+  .overflow-y-auto::-webkit-scrollbar {
+    width: 3px;
+  }
+
+  .overflow-y-auto::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .overflow-y-auto::-webkit-scrollbar-thumb {
+    background-color: theme('colors.gray.700');
+    border-radius: 3px;
+  }
+</style>

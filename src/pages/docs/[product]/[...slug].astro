@@ -1,0 +1,66 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro';
+import DocsSidebar from '../../../components/DocsSidebar.astro';
+import { getCollection, type CollectionEntry } from 'astro:content';
+import { products } from '../../../config/products';
+import { getProductVersions, getLatestVersion, isVersionFolder } from '../../../utils/versions';
+
+export async function getStaticPaths() {
+  const docs = await getCollection('docs');
+  
+  // Filter out index files as they are handled by their own routes
+  const nonIndexDocs = docs.filter(doc => !doc.id.endsWith('/index.mdx') && !doc.id.endsWith('/index.md'));
+  
+  return nonIndexDocs.map(doc => {
+    // Split the path to get product and slug
+    const pathParts = doc.id.split('/');
+    const product = pathParts[0];
+    
+    // Remove the product from the path and join the rest to form the slug
+    const slugParts = pathParts.slice(1);
+    
+    // Remove file extension from the last part
+    if (slugParts.length > 0) {
+      const lastPart = slugParts[slugParts.length - 1];
+      if (lastPart) {
+        slugParts[slugParts.length - 1] = lastPart.replace(/\.(md|mdx)$/, '');
+      }
+    }
+    
+    const slug = slugParts.join('/');
+    
+    return {
+      params: { product, slug },
+      props: { doc }
+    };
+  });
+}
+
+const { product: productId, slug } = Astro.params;
+const { doc } = Astro.props;
+
+// We should NOT redirect non-root pages like /docs/cloud/changelog/
+// Only redirect if this is a direct access to a product root page
+
+// Get product info from config
+const product = products[productId] || {
+  id: productId,
+  name: productId.charAt(0).toUpperCase() + productId.slice(1).replace(/-/g, ' '),
+  description: "",
+  icon: "/icons/altitude.svg",
+  status: "live",
+  quickLinks: []
+};
+
+const { Content, headings } = await doc.render();
+---
+
+<DocsLayout
+  title={doc.data.title}
+  description={doc.data.description}
+  product={product}
+  headings={headings}
+>
+  <DocsSidebar slot="sidebar" product={product} />
+  <Content />
+</DocsLayout>

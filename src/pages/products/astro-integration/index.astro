@@ -1,0 +1,169 @@
+---
+import PageLayout from '../../../layouts/PageLayout.astro';
+import ProductHero from '../../../components/ProductHero.astro';
+
+const features = [
+  {
+    title: "Internationalization",
+    description: "Built-in i18n support for multi-language commerce sites",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/></svg>`
+  },
+  {
+    title: "Commerce API",
+    description: "Seamless integration with THG Commerce API",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>`
+  },
+  {
+    title: "Blog API",
+    description: "Easy integration with content management systems",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9.5a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>`
+  },
+  {
+    title: "Seamless Integration",
+    description: "Easy setup and configuration with Astro projects",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>`
+  }
+];
+
+const resources = [
+  {
+    title: "Documentation",
+    description: "Learn how to use Astro Integration",
+    href: "/docs/astro-integration",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>`
+  },
+  {
+    title: "API Reference",
+    description: "Explore the integration APIs",
+    href: "/docs/astro-integration/api",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>`
+  },
+  {
+    title: "Quick Start",
+    description: "Get started with integration",
+    href: "/docs/astro-integration/quickstart",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>`
+  }
+];
+
+const highlights = [
+  {
+    title: "i18n",
+    description: "Multi-language support"
+  },
+  {
+    title: "Commerce",
+    description: "API integration"
+  },
+  {
+    title: "Content",
+    description: "Blog API support"
+  },
+  {
+    title: "Simple",
+    description: "Easy integration"
+  }
+];
+---
+
+<PageLayout
+  title="Astro Integration"
+  description="i18N, Commerce API, and Blog API abstractions for Astro projects"
+>
+  <ProductHero
+    title="Astro Integration"
+    description="Enhance your Astro projects with powerful integrations for internationalization, commerce, and content management. Built specifically for Astro, these integrations provide seamless functionality with minimal setup."
+    icon="/icons/altitude.svg"
+    primaryAction={{
+      text: "Get Started",
+      href: "/docs/astro-integration"
+    }}
+    secondaryAction={{
+      text: "View API Reference",
+      href: "/docs/astro-integration/api"
+    }}
+    highlights={highlights}
+  />
+
+  <!-- Features -->
+  <div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 items-center gap-12">
+      {features.map(feature => (
+        <div class="text-center">
+          <div class="flex justify-center items-center w-12 h-12 bg-primary-500/10 rounded-xl mx-auto text-primary-600 dark:text-primary-400">
+            <div set:html={feature.icon} />
+          </div>
+          <div class="mt-3">
+            <h3 class="text-lg font-semibold text-stone-800 dark:text-stone-200">
+              {feature.title}
+            </h3>
+            <p class="mt-1 text-stone-600 dark:text-stone-400">
+              {feature.description}
+            </p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <!-- Business Value -->
+  <div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
+    <div class="max-w-2xl mx-auto text-center mb-10">
+      <h2 class="text-2xl font-bold md:text-3xl dark:text-white">Why Astro Integration?</h2>
+      <p class="mt-3 text-stone-600 dark:text-stone-400">Add powerful features to your Astro projects with minimal configuration.</p>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-8 lg:gap-12">
+      <div class="flex flex-col h-full bg-white border shadow-sm rounded-xl dark:bg-stone-900 dark:border-stone-800">
+        <div class="p-4 md:p-6">
+          <h3 class="text-xl font-semibold text-stone-800 dark:text-stone-200">Built for Astro</h3>
+          <p class="mt-3 text-stone-600 dark:text-stone-400">
+            Our integrations are specifically designed for Astro, ensuring seamless compatibility and optimal performance with your projects.
+          </p>
+        </div>
+      </div>
+
+      <div class="flex flex-col h-full bg-white border shadow-sm rounded-xl dark:bg-stone-900 dark:border-stone-800">
+        <div class="p-4 md:p-6">
+          <h3 class="text-xl font-semibold text-stone-800 dark:text-stone-200">Powerful Features</h3>
+          <p class="mt-3 text-stone-600 dark:text-stone-400">
+            From internationalization to commerce API integration, add powerful features to your Astro projects with minimal setup required.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Resources -->
+  <div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
+    <div class="max-w-2xl mx-auto text-center mb-10">
+      <h2 class="text-2xl font-bold md:text-3xl dark:text-white">Resources</h2>
+      <p class="mt-3 text-stone-600 dark:text-stone-400">Everything you need to get started with Astro Integration.</p>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {resources.map(resource => (
+        <a class="group flex flex-col h-full bg-white border shadow-sm rounded-xl hover:shadow-md transition dark:bg-stone-900 dark:border-stone-800" href={resource.href}>
+          <div class="p-4 md:p-5">
+            <div class="flex items-center gap-4">
+              <div class="flex justify-center items-center w-8 h-8 bg-primary-500/10 rounded-lg text-primary-600 dark:text-primary-400">
+                <div set:html={resource.icon} />
+              </div>
+              <div class="grow">
+                <h3 class="group-hover:text-primary-600 font-semibold text-stone-800 dark:group-hover:text-primary-500 dark:text-stone-200">
+                  {resource.title}
+                </h3>
+                <p class="text-sm text-stone-600 dark:text-stone-400">
+                  {resource.description}
+                </p>
+              </div>
+              <div class="flex-shrink-0 text-stone-400 group-hover:text-primary-600 dark:group-hover:text-primary-500">
+                <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+              </div>
+            </div>
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+</PageLayout>

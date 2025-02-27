@@ -1,0 +1,65 @@
+---
+import DocsLayout from '../../../../../layouts/DocsLayout.astro';
+import DocsSidebar from '../../../../../components/DocsSidebar.astro';
+import { getCollection, type CollectionEntry } from 'astro:content';
+
+const docs = await getCollection('docs');
+const checkoutDoc = docs.find((doc: CollectionEntry<'docs'>) => doc.id === 'commerce-api/examples/checkout/index.mdx');
+
+const product = {
+  id: "commerce-api",
+  name: "Commerce API",
+  description: "Build commerce experiences with our powerful GraphQL API",
+  icon: "/icons/commerce-api.svg",
+  quickLinks: [
+    {
+      title: "Overview",
+      href: "/products/commerce-api"
+    },
+    {
+      title: "Documentation",
+      href: "/docs/commerce-api"
+    },
+    {
+      title: "Examples",
+      href: "/docs/commerce-api/examples"
+    }
+  ]
+};
+
+const { Content, headings } = checkoutDoc ? await checkoutDoc.render() : { Content: null, headings: [] };
+---
+
+{checkoutDoc ? (
+  <DocsLayout
+    title={checkoutDoc.data.title}
+    description={checkoutDoc.data.description}
+    product={product}
+    headings={headings}
+  >
+    <DocsSidebar slot="sidebar" product={product} />
+    <Content />
+  </DocsLayout>
+) : (
+  <DocsLayout
+    title="Checkout Examples"
+    description="Examples for implementing checkout flows with Commerce API"
+    product={product}
+  >
+    <DocsSidebar slot="sidebar" product={product} />
+    <h1>Checkout Examples</h1>
+    <p>This section contains examples for implementing checkout flows with Commerce API.</p>
+    
+    <h2>Checkout Process</h2>
+    <p>The checkout process typically involves several steps:</p>
+    <ol>
+      <li>Converting a basket to a checkout</li>
+      <li>Collecting shipping information</li>
+      <li>Selecting shipping method</li>
+      <li>Collecting payment information</li>
+      <li>Placing the order</li>
+    </ol>
+    
+    <p>The examples in this section demonstrate how to implement these steps using Commerce API.</p>
+  </DocsLayout>
+)}

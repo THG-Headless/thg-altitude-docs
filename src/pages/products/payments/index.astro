@@ -1,0 +1,190 @@
+---
+import PageLayout from '../../../layouts/PageLayout.astro';
+import ContentSection from '../../../components/ContentSection.astro';
+
+const product = {
+  id: "payments",
+  name: "Payments Platform",
+  description: "Global payment processing solution",
+  icon: "/icons/payments.svg",
+  quickLinks: [
+    {
+      title: "Overview",
+      href: "/products/payments"
+    },
+    {
+      title: "Documentation",
+      href: "/docs/payments"
+    },
+    {
+      title: "API Reference",
+      href: "/docs/payments/api"
+    }
+  ]
+};
+
+const features = [
+  {
+    title: "Unified Payment Gateway",
+    description: "Single integration for all payment methods worldwide",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>`
+  },
+  {
+    title: "Intelligent Routing",
+    description: "Optimize for success rates and lower processing fees",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>`
+  },
+  {
+    title: "Subscription Management",
+    description: "Tools for recurring billing, dunning, and retention",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>`
+  },
+  {
+    title: "Fraud Protection",
+    description: "Integrated with our fraud detection system",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>`
+  }
+];
+
+const highlights = [
+  {
+    title: "Global Coverage",
+    description: "Support for 200+ countries and regions"
+  },
+  {
+    title: "Multiple Payment Methods",
+    description: "All major credit cards and digital wallets"
+  },
+  {
+    title: "Buy Now Pay Later",
+    description: "Integrated BNPL options"
+  },
+  {
+    title: "Subscription Ready",
+    description: "Built for recurring billing"
+  }
+];
+
+const businessValues = [
+  {
+    title: "Increase Conversion",
+    description: "Offer preferred payment methods to boost checkout completion"
+  },
+  {
+    title: "Global Expansion",
+    description: "Easily enter new markets with localized payment options"
+  }
+];
+
+const paymentMethods = [
+  "VISA", "Mastercard", "Maestro", "AMEX", "JCB", "PayPal", 
+  "Klarna", "Apple Pay", "Alipay", "WeChat Pay", "Google Pay"
+];
+---
+
+<PageLayout
+  title="Payments Platform"
+  description="Global payment processing solution"
+  {product}
+>
+  <div class="prose dark:prose-invert max-w-none">
+    <!-- Hero -->
+    <div class="not-prose bg-gradient-to-b from-stone-900 to-stone-800 -mx-4 sm:-mx-6 lg:-mx-8 p-8 sm:p-12 lg:p-16 rounded-xl mb-12">
+      <div class="max-w-3xl mx-auto text-center mb-12">
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6">THG Commerce Payments</h1>
+        <p class="text-xl text-stone-300">Our global payments platform supports 200+ countries and all major payment methods including VISA, Mastercard, Maestro, AMEX, JCB, PayPal, Klarna, Apple Pay, Alipay, WeChat Pay, and Google Pay.</p>
+      </div>
+      <div class="flex justify-center gap-4 mt-8">
+        <a href="/docs/payments" class="inline-flex items-center gap-2 px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors">
+          Get Started
+          <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+          </svg>
+        </a>
+        <a href="/docs/payments/api" class="inline-flex items-center gap-2 px-6 py-3 border border-stone-600 hover:border-stone-500 text-stone-300 hover:text-white rounded-lg transition-colors">
+          View API Reference
+          <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+          </svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- Payment Methods -->
+    <div class="not-prose bg-stone-900/50 rounded-xl p-8 mb-12">
+      <h2 class="text-2xl font-bold text-stone-200 mb-6 text-center">Supported Payment Methods</h2>
+      <div class="flex flex-wrap justify-center gap-4">
+        {paymentMethods.map(method => (
+          <div class="bg-stone-800 px-4 py-2 rounded-lg text-stone-300">
+            {method}
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Highlights -->
+    <div class="not-prose grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+      {highlights.map(highlight => (
+        <div class="bg-stone-900/50 rounded-xl p-6">
+          <h3 class="text-lg font-semibold text-stone-200 mb-2">{highlight.title}</h3>
+          <p class="text-stone-400">{highlight.description}</p>
+        </div>
+      ))}
+    </div>
+
+    <!-- Key Features -->
+    <div class="grid sm:grid-cols-2 gap-8 mb-12">
+      {features.map(feature => (
+        <div class="not-prose bg-stone-900/50 rounded-xl p-6">
+          <div class="text-primary-400 mb-4" set:html={feature.icon} />
+          <h3 class="text-xl font-semibold text-stone-200 mb-2">{feature.title}</h3>
+          <p class="text-stone-400">{feature.description}</p>
+        </div>
+      ))}
+    </div>
+
+    <!-- Business Value -->
+    <ContentSection title="Business Value" description="Enhance your payment experience and expand globally:">
+      <div class="grid sm:grid-cols-2 gap-6">
+        {businessValues.map(value => (
+          <div class="bg-stone-800/50 rounded-xl p-6">
+            <h3 class="text-lg font-semibold text-stone-200 mb-2">{value.title}</h3>
+            <p class="text-stone-400">{value.description}</p>
+          </div>
+        ))}
+      </div>
+    </ContentSection>
+
+    <!-- Resources -->
+    <ContentSection title="Resources">
+      <div class="grid sm:grid-cols-3 gap-6">
+        <a href="/docs/payments" class="block bg-stone-800/50 rounded-xl p-6 hover:bg-stone-800/70 transition-colors">
+          <h3 class="text-lg font-semibold text-stone-200 mb-2">Documentation</h3>
+          <p class="text-stone-400">Learn how to implement payment processing</p>
+        </a>
+        <a href="/docs/payments/quickstart" class="block bg-stone-800/50 rounded-xl p-6 hover:bg-stone-800/70 transition-colors">
+          <h3 class="text-lg font-semibold text-stone-200 mb-2">Quick Start</h3>
+          <p class="text-stone-400">Accept your first payment in minutes</p>
+        </a>
+        <a href="/docs/payments/api" class="block bg-stone-800/50 rounded-xl p-6 hover:bg-stone-800/70 transition-colors">
+          <h3 class="text-lg font-semibold text-stone-200 mb-2">API Reference</h3>
+          <p class="text-stone-400">Explore the Payments API</p>
+        </a>
+      </div>
+    </ContentSection>
+
+    <!-- Getting Started -->
+    <div class="not-prose bg-stone-900/50 rounded-xl p-8 text-center mt-12">
+      <h2 class="text-2xl font-bold text-stone-200 mb-4">Ready to accept payments globally?</h2>
+      <p class="text-stone-400 mb-6">Get started with THG Commerce Payments today.</p>
+      <div class="flex justify-center gap-4">
+        <a href="/docs/payments" class="inline-flex items-center gap-2 px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors">
+          Get Started
+          <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</PageLayout>

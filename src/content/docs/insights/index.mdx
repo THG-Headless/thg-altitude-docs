@@ -1,0 +1,165 @@
+---
+title: THG Commerce Insights
+description: Cross-platform analytics solution for tracking page views and user interactions
+---
+
+import { Tip, Warning, Note, EmojiList, Table, BulletList } from '@components/docs';
+
+# THG Commerce Insights
+
+<Tip title="Key Benefits">
+  <EmojiList items={[
+    {
+      emoji: "📊",
+      title: "Real-time Analytics",
+      description: "Track user interactions as they happen"
+    },
+    {
+      emoji: "🌐",
+      title: "Cross-Platform",
+      description: "One solution for web and mobile"
+    },
+    {
+      emoji: "💪",
+      title: "Built for Scale",
+      description: "Handle millions of events with ease"
+    }
+  ]} />
+</Tip>
+
+## Features
+
+### Automatic View Tracking
+
+Built-in support for tracking page and screen views across all platforms:
+
+```typescript
+// Web Example (Astro or Next.js)
+import insights from '@thg-commerce/insights/astro'; // or /next
+
+// Initialize with framework-specific integration
+insights({
+  endpoint: 'https://api.example.com/events',
+  debug: true
+});
+```
+
+### Framework Support
+
+Works seamlessly with multiple frameworks:
+
+<Table
+  headers={["Framework", "Integration Type", "Auto-tracking"]}
+  rows={[
+    ["Astro", "Integration", "✅"],
+    ["Next.js", "Middleware/Hook", "✅"],
+    ["React Native", "SDK", "✅"]
+  ]}
+/>
+
+### Offline Support
+
+Never lose an event with automatic queueing and retries:
+
+```typescript
+// Events are automatically queued when offline
+const tracker = createTracker({
+  endpoint: 'https://api.example.com/events',
+  domain: 'my-app',
+  debug: true
+});
+
+// Queued events are sent when connectivity is restored
+```
+
+<Note title="Offline Handling">
+  <EmojiList items={[
+    {
+      emoji: "1️⃣",
+      title: "Queue",
+      description: "Automatically queued when offline"
+    },
+    {
+      emoji: "2️⃣",
+      title: "Persist",
+      description: "Persisted across app restarts"
+    },
+    {
+      emoji: "3️⃣",
+      title: "Send",
+      description: "Sent in order when connectivity returns"
+    },
+    {
+      emoji: "4️⃣",
+      title: "Deduplicate",
+      description: "Deduplicated to prevent double-counting"
+    }
+  ]} />
+</Note>
+
+### Lightweight Implementation
+
+Minimal impact on application performance:
+
+<BulletList items={[
+  "Smart batching of events",
+  "Automatic sampling for high-traffic sites",
+  "Tiny bundle size (<5KB gzipped)",
+  "No external dependencies"
+]} />
+
+### Configurable Options
+
+Customize tracking behavior with flexible options:
+
+```typescript
+insights({
+  endpoint: 'https://api.example.com/events',
+  debug: true,
+  sampling: {
+    enabled: true,
+    rate: 0.1 // Sample 10% of events
+  },
+  batch: {
+    size: 50,
+    interval: 5000 // Send every 5 seconds
+  }
+});
+```
+
+### TypeScript Support
+
+Full type definitions for enhanced development experience:
+
+```typescript
+interface InsightsConfig {
+  endpoint: string;
+  debug?: boolean;
+  sampling?: {
+    enabled: boolean;
+    rate: number;
+  };
+  batch?: {
+    size: number;
+    interval: number;
+  };
+}
+```
+
+<Warning title="Production Usage">
+<BulletList items={[
+  "Set appropriate sampling rates for high-traffic sites",
+  "Configure batch settings based on your needs",
+  "Disable debug mode in production"
+]} />
+</Warning>
+
+## Getting Started
+
+Ready to add analytics to your application? Check out our framework-specific guides:
+
+- [Astro Integration](/docs/insights/frameworks/astro)
+- [Next.js Integration](/docs/insights/frameworks/nextjs)
+- [React Native Integration](/docs/insights/frameworks/react-native)
+
+Or dive into our [core concepts](/docs/insights/core/beacon) to learn more about how THG Commerce Insights works.

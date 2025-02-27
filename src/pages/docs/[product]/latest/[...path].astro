@@ -1,0 +1,30 @@
+---
+import { getProductVersions, getLatestVersion } from '../../../../utils/versions';
+
+export async function getStaticPaths() {
+  // This is a catch-all route that will match any path under /docs/[product]/latest/
+  // We'll generate a minimal set of paths here, and handle the actual redirection at runtime
+  return [
+    { params: { product: 'cloud', path: undefined } },
+    { params: { product: 'cloud', path: 'edge/functions' } },
+  ];
+}
+
+const { product, path } = Astro.params;
+
+// Get all versions for this product
+const versions = await getProductVersions(product);
+const latestVersion = getLatestVersion(versions);
+
+// If no versions exist, redirect to the product docs home
+if (!latestVersion) {
+  return Astro.redirect(`/docs/${product}`);
+}
+
+// Construct the redirect URL
+const pathSegment = path ? `/${path}` : '';
+const redirectUrl = `/docs/${product}/${latestVersion}${pathSegment}`;
+
+// Redirect to the latest version
+return Astro.redirect(redirectUrl);
+---

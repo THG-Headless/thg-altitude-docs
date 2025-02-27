@@ -1,0 +1,242 @@
+---
+import PageLayout from '../../../layouts/PageLayout.astro';
+import ContentSection from '../../../components/ContentSection.astro';
+
+const product = {
+  id: "omni-channel",
+  name: "Omni-channel",
+  description: "Unified commerce across all channels",
+  icon: "/icons/storefronts.svg",
+  quickLinks: [
+    {
+      title: "Overview",
+      href: "/products/omni-channel"
+    },
+    {
+      title: "Documentation",
+      href: "/docs/omni-channel"
+    },
+    {
+      title: "API Reference",
+      href: "/docs/omni-channel/api"
+    }
+  ]
+};
+
+const features = [
+  {
+    title: "Inventory Synchronization",
+    description: "Real-time inventory updates across all sales channels",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/></svg>`
+  },
+  {
+    title: "Order Management",
+    description: "Process and fulfill orders from any channel in one system",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>`
+  },
+  {
+    title: "In-store Technology",
+    description: "POS integration and store fulfillment tools",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>`
+  },
+  {
+    title: "Customer Recognition",
+    description: "Identify customers across channels for personalized experiences",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>`
+  }
+];
+
+const highlights = [
+  {
+    title: "Unified Inventory",
+    description: "Real-time stock across all channels"
+  },
+  {
+    title: "Click & Collect",
+    description: "Buy online, pick up in-store capabilities"
+  },
+  {
+    title: "Store Locator",
+    description: "Help customers find your physical locations"
+  },
+  {
+    title: "Unified Customer Profiles",
+    description: "Single view of customer across channels"
+  }
+];
+
+const businessValues = [
+  {
+    title: "Increased Sales Opportunities",
+    description: "Capture sales wherever customers prefer to shop"
+  },
+  {
+    title: "Improved Customer Experience",
+    description: "Provide a consistent experience across all touchpoints"
+  }
+];
+
+const channels = [
+  {
+    title: "E-commerce Website",
+    description: "Your primary online storefront"
+  },
+  {
+    title: "Mobile App",
+    description: "Native shopping experience on iOS and Android"
+  },
+  {
+    title: "Physical Stores",
+    description: "Brick-and-mortar retail locations"
+  },
+  {
+    title: "Marketplaces",
+    description: "Third-party platforms like Amazon and eBay"
+  },
+  {
+    title: "Social Commerce",
+    description: "Selling directly through social media platforms"
+  },
+  {
+    title: "B2B Portal",
+    description: "Wholesale and business customer ordering"
+  }
+];
+---
+
+<PageLayout
+  title="Omni-channel"
+  description="Unified commerce across all channels"
+  {product}
+>
+  <div class="prose dark:prose-invert max-w-none">
+    <!-- Hero -->
+    <div class="not-prose bg-gradient-to-b from-stone-900 to-stone-800 -mx-4 sm:-mx-6 lg:-mx-8 p-8 sm:p-12 lg:p-16 rounded-xl mb-12">
+      <div class="max-w-3xl mx-auto text-center mb-12">
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6">THG Commerce Omni-channel</h1>
+        <p class="text-xl text-stone-300">Connect with your customers wherever they are with our omni-channel commerce solution. Provide a seamless experience across online, mobile, and in-store touchpoints with unified inventory, orders, and customer data.</p>
+      </div>
+      <div class="flex justify-center gap-4 mt-8">
+        <a href="/docs/omni-channel" class="inline-flex items-center gap-2 px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors">
+          Get Started
+          <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+          </svg>
+        </a>
+        <a href="/docs/omni-channel/api" class="inline-flex items-center gap-2 px-6 py-3 border border-stone-600 hover:border-stone-500 text-stone-300 hover:text-white rounded-lg transition-colors">
+          View API Reference
+          <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+          </svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- Highlights -->
+    <div class="not-prose grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+      {highlights.map(highlight => (
+        <div class="bg-stone-900/50 rounded-xl p-6">
+          <h3 class="text-lg font-semibold text-stone-200 mb-2">{highlight.title}</h3>
+          <p class="text-stone-400">{highlight.description}</p>
+        </div>
+      ))}
+    </div>
+
+    <!-- Key Features -->
+    <div class="grid sm:grid-cols-2 gap-8 mb-12">
+      {features.map(feature => (
+        <div class="not-prose bg-stone-900/50 rounded-xl p-6">
+          <div class="text-primary-400 mb-4" set:html={feature.icon} />
+          <h3 class="text-xl font-semibold text-stone-200 mb-2">{feature.title}</h3>
+          <p class="text-stone-400">{feature.description}</p>
+        </div>
+      ))}
+    </div>
+
+    <!-- Sales Channels -->
+    <ContentSection title="Connected Sales Channels" description="Manage all your sales channels from a single platform:">
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {channels.map(channel => (
+          <div class="bg-stone-800/50 rounded-xl p-6">
+            <h3 class="text-lg font-semibold text-stone-200 mb-2">{channel.title}</h3>
+            <p class="text-stone-400">{channel.description}</p>
+          </div>
+        ))}
+      </div>
+    </ContentSection>
+
+    <!-- Unified Commerce -->
+    <ContentSection title="Unified Commerce Experience" description="Create seamless customer journeys across channels:">
+      <div class="grid sm:grid-cols-2 gap-6">
+        <div class="bg-stone-800/50 rounded-xl p-6">
+          <h3 class="text-lg font-semibold text-stone-200 mb-2">Buy Online, Pick Up In-Store (BOPIS)</h3>
+          <p class="text-stone-400">Allow customers to purchase online and collect their orders from a physical store</p>
+        </div>
+        <div class="bg-stone-800/50 rounded-xl p-6">
+          <h3 class="text-lg font-semibold text-stone-200 mb-2">Ship From Store</h3>
+          <p class="text-stone-400">Fulfill online orders from your retail locations to optimize delivery times</p>
+        </div>
+        <div class="bg-stone-800/50 rounded-xl p-6">
+          <h3 class="text-lg font-semibold text-stone-200 mb-2">Return Anywhere</h3>
+          <p class="text-stone-400">Accept returns from any channel regardless of where the purchase was made</p>
+        </div>
+        <div class="bg-stone-800/50 rounded-xl p-6">
+          <h3 class="text-lg font-semibold text-stone-200 mb-2">Save the Sale</h3>
+          <p class="text-stone-400">Order out-of-stock items in-store for home delivery or later pickup</p>
+        </div>
+        <div class="bg-stone-800/50 rounded-xl p-6">
+          <h3 class="text-lg font-semibold text-stone-200 mb-2">Endless Aisle</h3>
+          <p class="text-stone-400">Access your entire product catalog from in-store kiosks or staff devices</p>
+        </div>
+        <div class="bg-stone-800/50 rounded-xl p-6">
+          <h3 class="text-lg font-semibold text-stone-200 mb-2">Cross-channel Cart</h3>
+          <p class="text-stone-400">Start shopping on one device and continue on another without losing your cart</p>
+        </div>
+      </div>
+    </ContentSection>
+
+    <!-- Business Value -->
+    <ContentSection title="Business Value" description="Transform your retail operations with omni-channel commerce:">
+      <div class="grid sm:grid-cols-2 gap-6">
+        {businessValues.map(value => (
+          <div class="bg-stone-800/50 rounded-xl p-6">
+            <h3 class="text-lg font-semibold text-stone-200 mb-2">{value.title}</h3>
+            <p class="text-stone-400">{value.description}</p>
+          </div>
+        ))}
+      </div>
+    </ContentSection>
+
+    <!-- Resources -->
+    <ContentSection title="Resources">
+      <div class="grid sm:grid-cols-3 gap-6">
+        <a href="/docs/omni-channel" class="block bg-stone-800/50 rounded-xl p-6 hover:bg-stone-800/70 transition-colors">
+          <h3 class="text-lg font-semibold text-stone-200 mb-2">Documentation</h3>
+          <p class="text-stone-400">Learn how to implement omni-channel commerce</p>
+        </a>
+        <a href="/docs/omni-channel/quickstart" class="block bg-stone-800/50 rounded-xl p-6 hover:bg-stone-800/70 transition-colors">
+          <h3 class="text-lg font-semibold text-stone-200 mb-2">Quick Start</h3>
+          <p class="text-stone-400">Connect your first sales channel</p>
+        </a>
+        <a href="/docs/omni-channel/api" class="block bg-stone-800/50 rounded-xl p-6 hover:bg-stone-800/70 transition-colors">
+          <h3 class="text-lg font-semibold text-stone-200 mb-2">API Reference</h3>
+          <p class="text-stone-400">Explore the Omni-channel API</p>
+        </a>
+      </div>
+    </ContentSection>
+
+    <!-- Getting Started -->
+    <div class="not-prose bg-stone-900/50 rounded-xl p-8 text-center mt-12">
+      <h2 class="text-2xl font-bold text-stone-200 mb-4">Ready to unify your commerce experience?</h2>
+      <p class="text-stone-400 mb-6">Get started with THG Commerce Omni-channel today.</p>
+      <div class="flex justify-center gap-4">
+        <a href="/docs/omni-channel" class="inline-flex items-center gap-2 px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors">
+          Get Started
+          <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</PageLayout>

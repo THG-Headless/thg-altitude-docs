@@ -1,0 +1,106 @@
+---
+interface Props {
+  productGroups: Array<{
+    title: string;
+    description: string;
+    products: any[];
+  }>;
+}
+
+const { productGroups } = Astro.props;
+---
+
+<div class="sticky top-24 h-[calc(100vh-6rem)] overflow-y-auto pr-4">
+  <div class="mb-6">
+    <h5 class="mb-4 text-base font-semibold text-stone-300 uppercase tracking-wide">
+      Product Categories
+    </h5>
+    <ul class="space-y-3" id="product-sidebar">
+      {productGroups.map((group, index) => (
+        <li>
+          <a
+            href={`#product-group-${index}`}
+            class="block px-4 py-3 text-base font-medium rounded-lg border-l-4 border-transparent hover:bg-stone-800/50 text-stone-400 hover:text-stone-200 transition-all duration-200"
+            data-section={`product-group-${index}`}
+          >
+            {group.title}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</div>
+
+<script>
+  // Get all the product group sections
+  const productSections = Array.from(document.querySelectorAll('section[id^="product-group-"]'));
+  const sidebarLinks = document.querySelectorAll('#product-sidebar a');
+
+  // Create an IntersectionObserver
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        const id = entry.target.id;
+        const link = document.querySelector(`a[data-section="${id}"]`);
+
+        // When a section enters the viewport
+        if (entry.isIntersecting) {
+          // Remove active class from all links
+          sidebarLinks.forEach(link => {
+            link.classList.remove('bg-white/10', 'text-white', 'border-primary-500');
+            link.classList.add('border-transparent', 'text-stone-400');
+          });
+
+          // Add active class to the current link
+          if (link) {
+            link.classList.remove('border-transparent', 'text-stone-400');
+            link.classList.add('bg-white/10', 'text-white', 'border-primary-500');
+          }
+        }
+      });
+    },
+    {
+      rootMargin: '-100px 0px -70%',
+      threshold: 0
+    }
+  );
+
+  // Observe each product section
+  productSections.forEach((section) => {
+    observer.observe(section);
+  });
+
+  // Smooth scroll to section when clicking on sidebar links
+  sidebarLinks.forEach((link) => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const href = link.getAttribute('href');
+      if (href) {
+        const section = document.querySelector(href);
+        if (section) {
+          section.scrollIntoView({ behavior: 'smooth' });
+        }
+      }
+    });
+  });
+</script>
+
+<style>
+  .overflow-y-auto {
+    scrollbar-width: thin;
+    scrollbar-color: theme('colors.gray.700') transparent;
+  }
+
+  .overflow-y-auto::-webkit-scrollbar {
+    width: 3px;
+  }
+
+  .overflow-y-auto::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .overflow-y-auto::-webkit-scrollbar-thumb {
+    background-color: theme('colors.gray.700');
+    border-radius: 3px;
+  }
+</style>

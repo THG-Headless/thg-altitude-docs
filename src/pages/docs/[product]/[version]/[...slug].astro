@@ -1,0 +1,81 @@
+---
+import DocsLayout from '../../../../layouts/DocsLayout.astro';
+import DocsSidebar from '../../../../components/DocsSidebar.astro';
+import { getCollection, type CollectionEntry } from 'astro:content';
+import { products } from '../../../../config/products';
+import { isVersionFolder } from '../../../../utils/versions';
+
+export async function getStaticPaths() {
+  const docs = await getCollection('docs');
+  
+  // Filter out index files as they are handled by their own routes
+  const nonIndexDocs = docs.filter(doc => !doc.id.endsWith('/index.mdx') && !doc.id.endsWith('/index.md'));
+  
+  // Define the type for paths
+  type PathItem = {
+    params: { product: string; version: string; slug: string };
+    props: { doc: CollectionEntry<'docs'> };
+  };
+  
+  const paths: PathItem[] = [];
+  
+  nonIndexDocs.forEach(doc => {
+    // Split the path to get product, version, and slug
+    const pathParts = doc.id.split('/');
+    
+    // We need at least product/version/file
+    if (pathParts.length >= 3) {
+      const product = pathParts[0];
+      const version = pathParts[1];
+      
+      // Only process if the second part is a version folder
+      if (isVersionFolder(version)) {
+        // Remove the product and version from the path and join the rest to form the slug
+        const slugParts = pathParts.slice(2);
+        
+        // Remove file extension from the last part
+        if (slugParts.length > 0) {
+          const lastPart = slugParts[slugParts.length - 1];
+          if (lastPart) {
+            slugParts[slugParts.length - 1] = lastPart.replace(/\.(md|mdx)$/, '');
+          }
+        }
+        
+        const slug = slugParts.join('/');
+        
+        paths.push({
+          params: { product, version, slug },
+          props: { doc }
+        });
+      }
+    }
+  });
+  
+  return paths;
+}
+
+const { product: productId, version, slug } = Astro.params;
+const { doc } = Astro.props;
+
+// Get product info from config
+const product = products[productId] || {
+  id: productId,
+  name: productId.charAt(0).toUpperCase() + productId.slice(1).replace(/-/g, ' '),
+  description: "",
+  icon: "/icons/altitude.svg",
+  status: "live",
+  quickLinks: []
+};
+
+const { Content, headings } = await doc.render();
+---
+
+<DocsLayout
+  title={doc.data.title}
+  description={doc.data.description}
+  product={product}
+  headings={headings}
+>
+  <DocsSidebar slot="sidebar" product={product} />
+  <Content />
+</DocsLayout>

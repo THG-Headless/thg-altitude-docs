@@ -1,0 +1,42 @@
+---
+import ProductContext from '../components/ProductContext.astro';
+import HeaderNav from '../components/HeaderNav.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  product?: {
+    id: string;
+    name: string;
+    description: string;
+    icon: string;
+    quickLinks: {
+      title: string;
+      href: string;
+    }[];
+  };
+}
+
+const { title, description, product } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title} - THG Commerce</title>
+    {description && <meta name="description" content={description} />}
+  </head>
+  <body class="min-h-screen bg-stone-950 text-stone-100">
+    <HeaderNav />
+    {product && <ProductContext {product} />}
+    <main>
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

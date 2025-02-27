@@ -1,0 +1,17 @@
+---
+interface Props {
+  src: string;
+  alt: string;
+}
+
+const { src, alt } = Astro.props;
+---
+
+<div class="relative w-full aspect-[16/9] overflow-hidden rounded-xl">
+  <img 
+    src={src} 
+    alt={alt}
+    class="absolute inset-0 w-full h-full object-cover"
+  />
+  <div class="absolute inset-0 bg-gradient-to-t from-stone-900/50 to-transparent"></div>
+</div>

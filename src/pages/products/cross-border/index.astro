@@ -1,0 +1,220 @@
+---
+import PageLayout from '../../../layouts/PageLayout.astro';
+import ContentSection from '../../../components/ContentSection.astro';
+
+const product = {
+  id: "cross-border",
+  name: "Cross-border Selling",
+  description: "Global commerce made simple",
+  icon: "/icons/cloud.svg",
+  quickLinks: [
+    {
+      title: "Overview",
+      href: "/products/cross-border"
+    },
+    {
+      title: "Documentation",
+      href: "/docs/cross-border"
+    },
+    {
+      title: "API Reference",
+      href: "/docs/cross-border/api"
+    }
+  ]
+};
+
+const features = [
+  {
+    title: "Currency Management",
+    description: "Display and accept payments in local currencies",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`
+  },
+  {
+    title: "Global Shipping Options",
+    description: "Optimize shipping routes and costs for international orders",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" /></svg>`
+  },
+  {
+    title: "Tax Automation",
+    description: "Calculate and collect the right taxes for each jurisdiction",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>`
+  },
+  {
+    title: "Localization Tools",
+    description: "Adapt your store for different markets and languages",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" /></svg>`
+  }
+];
+
+const highlights = [
+  {
+    title: "Multi-currency",
+    description: "Display prices in local currencies"
+  },
+  {
+    title: "International Shipping",
+    description: "Optimized global logistics"
+  },
+  {
+    title: "Tax Compliance",
+    description: "Automated tax calculations for 40+ countries"
+  },
+  {
+    title: "Language Support",
+    description: "Translate your store into multiple languages"
+  }
+];
+
+const businessValues = [
+  {
+    title: "Expand Market Reach",
+    description: "Tap into new customer bases worldwide"
+  },
+  {
+    title: "Compliance Confidence",
+    description: "Navigate international regulations with ease"
+  }
+];
+
+const supportedRegions = [
+  "North America", "Europe", "Asia Pacific", "Latin America", 
+  "Middle East", "Africa", "Oceania"
+];
+---
+
+<PageLayout
+  title="Cross-border Selling"
+  description="Global commerce made simple"
+  {product}
+>
+  <div class="prose dark:prose-invert max-w-none">
+    <!-- Hero -->
+    <div class="not-prose bg-gradient-to-b from-stone-900 to-stone-800 -mx-4 sm:-mx-6 lg:-mx-8 p-8 sm:p-12 lg:p-16 rounded-xl mb-12">
+      <div class="max-w-3xl mx-auto text-center mb-12">
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6">THG Commerce Cross-border</h1>
+        <p class="text-xl text-stone-300">Expand your business globally with our comprehensive cross-border selling solution. Handle multiple currencies, international shipping, tax compliance, and localization in one integrated platform.</p>
+      </div>
+      <div class="flex justify-center gap-4 mt-8">
+        <a href="/docs/cross-border" class="inline-flex items-center gap-2 px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors">
+          Get Started
+          <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+          </svg>
+        </a>
+        <a href="/docs/cross-border/api" class="inline-flex items-center gap-2 px-6 py-3 border border-stone-600 hover:border-stone-500 text-stone-300 hover:text-white rounded-lg transition-colors">
+          View API Reference
+          <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+          </svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- Global Coverage -->
+    <div class="not-prose bg-stone-900/50 rounded-xl p-8 mb-12">
+      <h2 class="text-2xl font-bold text-stone-200 mb-6 text-center">Global Coverage</h2>
+      <div class="flex flex-wrap justify-center gap-4">
+        {supportedRegions.map(region => (
+          <div class="bg-stone-800 px-4 py-2 rounded-lg text-stone-300">
+            {region}
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Highlights -->
+    <div class="not-prose grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+      {highlights.map(highlight => (
+        <div class="bg-stone-900/50 rounded-xl p-6">
+          <h3 class="text-lg font-semibold text-stone-200 mb-2">{highlight.title}</h3>
+          <p class="text-stone-400">{highlight.description}</p>
+        </div>
+      ))}
+    </div>
+
+    <!-- Key Features -->
+    <div class="grid sm:grid-cols-2 gap-8 mb-12">
+      {features.map(feature => (
+        <div class="not-prose bg-stone-900/50 rounded-xl p-6">
+          <div class="text-primary-400 mb-4" set:html={feature.icon} />
+          <h3 class="text-xl font-semibold text-stone-200 mb-2">{feature.title}</h3>
+          <p class="text-stone-400">{feature.description}</p>
+        </div>
+      ))}
+    </div>
+
+    <!-- Localization Features -->
+    <ContentSection title="Comprehensive Localization" description="Provide a truly local experience for international customers:">
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="bg-stone-800/50 rounded-xl p-6">
+          <h3 class="text-lg font-semibold text-stone-200 mb-2">Language Translation</h3>
+          <p class="text-stone-400">Translate your storefront, product descriptions, and checkout process</p>
+        </div>
+        <div class="bg-stone-800/50 rounded-xl p-6">
+          <h3 class="text-lg font-semibold text-stone-200 mb-2">Currency Conversion</h3>
+          <p class="text-stone-400">Display prices in local currencies with real-time exchange rates</p>
+        </div>
+        <div class="bg-stone-800/50 rounded-xl p-6">
+          <h3 class="text-lg font-semibold text-stone-200 mb-2">Payment Methods</h3>
+          <p class="text-stone-400">Offer preferred local payment options for each market</p>
+        </div>
+        <div class="bg-stone-800/50 rounded-xl p-6">
+          <h3 class="text-lg font-semibold text-stone-200 mb-2">Address Formats</h3>
+          <p class="text-stone-400">Support country-specific address formats and validation</p>
+        </div>
+        <div class="bg-stone-800/50 rounded-xl p-6">
+          <h3 class="text-lg font-semibold text-stone-200 mb-2">Date & Time Formats</h3>
+          <p class="text-stone-400">Display dates and times in locally preferred formats</p>
+        </div>
+        <div class="bg-stone-800/50 rounded-xl p-6">
+          <h3 class="text-lg font-semibold text-stone-200 mb-2">Content Adaptation</h3>
+          <p class="text-stone-400">Customize content and promotions for different markets</p>
+        </div>
+      </div>
+    </ContentSection>
+
+    <!-- Business Value -->
+    <ContentSection title="Business Value" description="Unlock global growth opportunities:">
+      <div class="grid sm:grid-cols-2 gap-6">
+        {businessValues.map(value => (
+          <div class="bg-stone-800/50 rounded-xl p-6">
+            <h3 class="text-lg font-semibold text-stone-200 mb-2">{value.title}</h3>
+            <p class="text-stone-400">{value.description}</p>
+          </div>
+        ))}
+      </div>
+    </ContentSection>
+
+    <!-- Resources -->
+    <ContentSection title="Resources">
+      <div class="grid sm:grid-cols-3 gap-6">
+        <a href="/docs/cross-border" class="block bg-stone-800/50 rounded-xl p-6 hover:bg-stone-800/70 transition-colors">
+          <h3 class="text-lg font-semibold text-stone-200 mb-2">Documentation</h3>
+          <p class="text-stone-400">Learn how to sell internationally</p>
+        </a>
+        <a href="/docs/cross-border/quickstart" class="block bg-stone-800/50 rounded-xl p-6 hover:bg-stone-800/70 transition-colors">
+          <h3 class="text-lg font-semibold text-stone-200 mb-2">Quick Start</h3>
+          <p class="text-stone-400">Set up your first international market</p>
+        </a>
+        <a href="/docs/cross-border/api" class="block bg-stone-800/50 rounded-xl p-6 hover:bg-stone-800/70 transition-colors">
+          <h3 class="text-lg font-semibold text-stone-200 mb-2">API Reference</h3>
+          <p class="text-stone-400">Explore the Cross-border API</p>
+        </a>
+      </div>
+    </ContentSection>
+
+    <!-- Getting Started -->
+    <div class="not-prose bg-stone-900/50 rounded-xl p-8 text-center mt-12">
+      <h2 class="text-2xl font-bold text-stone-200 mb-4">Ready to expand globally?</h2>
+      <p class="text-stone-400 mb-6">Get started with THG Commerce Cross-border today.</p>
+      <div class="flex justify-center gap-4">
+        <a href="/docs/cross-border" class="inline-flex items-center gap-2 px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors">
+          Get Started
+          <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</PageLayout>

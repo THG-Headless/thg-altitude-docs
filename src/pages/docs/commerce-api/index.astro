@@ -1,0 +1,54 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro';
+import DocsSidebar from '../../../components/DocsSidebar.astro';
+import { getCollection, type CollectionEntry } from 'astro:content';
+
+const docs = await getCollection('docs');
+const commerceApiDoc = docs.find((doc: CollectionEntry<'docs'>) => doc.id === 'commerce-api/index.mdx');
+
+const product = {
+  id: "commerce-api",
+  name: "Commerce API",
+  description: "Build commerce experiences with our powerful GraphQL API",
+  icon: "/icons/commerce-api.svg",
+  quickLinks: [
+    {
+      title: "Overview",
+      href: "/products/commerce-api"
+    },
+    {
+      title: "Documentation",
+      href: "/docs/commerce-api"
+    },
+    {
+      title: "Examples",
+      href: "/docs/commerce-api/examples"
+    }
+  ]
+};
+
+const { Content, headings } = commerceApiDoc ? await commerceApiDoc.render() : { Content: null, headings: [] };
+---
+
+{commerceApiDoc ? (
+  <DocsLayout
+    title={commerceApiDoc.data.title}
+    description={commerceApiDoc.data.description}
+    product={product}
+    headings={headings}
+  >
+    <DocsSidebar slot="sidebar" product={product} />
+    <Content />
+  </DocsLayout>
+) : (
+  <DocsLayout
+    title="Documentation Not Found"
+    description="The requested documentation could not be found"
+    product={product}
+  >
+    <DocsSidebar slot="sidebar" product={product} />
+    <h1>Documentation Not Found</h1>
+    <p>Sorry, the requested documentation could not be found.</p>
+    <p><a href="/docs">Return to Documentation</a></p>
+  </DocsLayout>
+)}

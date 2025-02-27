@@ -1,0 +1,201 @@
+---
+title: THG Altitude Integration
+description: Optional integration with THG Altitude platform
+---
+
+THG Commerce Insights includes optional support for THG Altitude integration. This guide explains how to use this integration if your application uses the Altitude platform.
+
+## Overview
+
+The Altitude integration provides:
+- Automatic domain resolution from Altitude runtime
+- Consistent source tracking across platforms
+- Graceful fallbacks when Altitude is not available
+
+## Prerequisites
+
+- THG Altitude runtime configured in your application
+- `altitude.runtime.config.domain` available in your environment
+
+## Using the Altitude Source Resolver
+
+The package provides a built-in resolver for Altitude integration:
+
+```typescript
+import { AltitudeSourceResolver } from '@thg-commerce/insights/core';
+
+const resolver = new AltitudeSourceResolver();
+```
+
+### Platform-specific Setup
+
+#### Astro
+
+```typescript
+// astro.config.mjs
+import { defineConfig } from 'astro';
+import insights from '@thg-commerce/insights/astro';
+import { AltitudeSourceResolver } from '@thg-commerce/insights/core';
+
+export default defineConfig({
+  integrations: [
+    insights({
+      endpoint: 'https://api.example.com/events',
+      sourceResolver: new AltitudeSourceResolver()
+    })
+  ]
+});
+```
+
+#### Next.js
+
+```typescript
+// Middleware approach
+import { createMiddleware } from '@thg-commerce/insights/next';
+import { AltitudeSourceResolver } from '@thg-commerce/insights/core';
+
+export const middleware = createMiddleware({
+  endpoint: 'https://api.example.com/events',
+  sourceResolver: new AltitudeSourceResolver()
+});
+
+// Hook approach
+import { createTracker } from '@thg-commerce/insights/next';
+import { AltitudeSourceResolver } from '@thg-commerce/insights/core';
+
+const tracker = createTracker({
+  endpoint: 'https://api.example.com/events',
+  sourceResolver: new AltitudeSourceResolver()
+});
+```
+
+#### React Native
+
+```typescript
+import createTracker from '@thg-commerce/insights/react-native';
+import { AltitudeSourceResolver } from '@thg-commerce/insights/core';
+
+const tracker = createTracker({
+  endpoint: 'https://api.example.com/events',
+  sourceResolver: new AltitudeSourceResolver()
+});
+```
+
+## How It Works
+
+The `AltitudeSourceResolver` automatically:
+
+1. Waits for Altitude runtime to be ready
+2. Retrieves the domain from `altitude.runtime.config`
+3. Uses the domain as the event source
+4. Provides fallbacks if Altitude is not available
+
+```typescript
+class AltitudeSourceResolver implements SourceResolver {
+  getCurrentSource() {
+    if (typeof altitude === 'undefined' || !altitude.runtime?.config?.domain) {
+      throw new Error('Altitude runtime not properly initialized');
+    }
+    return altitude.runtime.config.domain;
+  }
+}
+```
+
+## Initialization Timing
+
+The package handles Altitude initialization timing:
+
+```typescript
+function initializeBeacon() {
+  if (typeof altitude === 'undefined' || !altitude.runtime?.config?.domain) {
+    // Retry after a short delay
+    setTimeout(initializeBeacon, 100);
+    return;
+  }
+  // Initialize tracking once Altitude is ready
+}
+```
+
+## Error Handling
+
+The integration includes comprehensive error handling:
+
+```typescript
+try {
+  const source = resolver.getCurrentSource();
+} catch (error) {
+  if (error.message.includes('Altitude runtime')) {
+    // Handle Altitude not ready
+    console.warn('[THG Commerce Insights] Waiting for Altitude...');
+  }
+}
+```
+
+## Testing with Altitude
+
+When testing with Altitude integration:
+
+```typescript
+// Mock Altitude runtime
+(global as any).altitude = {
+  runtime: {
+    config: {
+      domain: 'test.example.com'
+    }
+  }
+};
+
+describe('Altitude Integration', () => {
+  it('uses Altitude domain', () => {
+    const resolver = new AltitudeSourceResolver();
+    expect(resolver.getCurrentSource()).toBe('test.example.com');
+  });
+});
+```
+
+## Best Practices
+
+1. **Fallback Strategy**: Consider providing a fallback source resolver
+2. **Error Handling**: Handle cases where Altitude might not be available
+3. **Testing**: Include tests both with and without Altitude available
+4. **Initialization**: Account for Altitude initialization timing
+
+## Common Issues
+
+### Altitude Not Available
+
+If Altitude is not available, you'll see:
+```
+[THG Commerce Insights] Waiting for Altitude runtime...
+```
+
+Solution: Ensure Altitude is properly initialized before tracking starts.
+
+### Domain Not Available
+
+If the domain is not configured:
+```
+[THG Commerce Insights] Error: Altitude domain not configured
+```
+
+Solution: Verify your Altitude configuration includes the domain.
+
+## Alternative Approaches
+
+If you're not using Altitude, consider:
+
+1. Using the default hostname-based resolution
+2. Implementing a custom source resolver
+3. Providing a static domain configuration
+
+```typescript
+// Example custom resolver with fallback
+class CustomResolver implements SourceResolver {
+  getCurrentSource() {
+    try {
+      return altitude.runtime.config.domain;
+    } catch {
+      return window.location.hostname;
+    }
+  }
+}

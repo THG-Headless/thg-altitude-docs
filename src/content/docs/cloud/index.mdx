@@ -1,0 +1,180 @@
+---
+title: Altitude Altitude Platform
+description: Edge-first delivery of headless front-ends
+---
+
+# Altitude Altitude Platform
+
+Altitude is THG Commerce's edge-first delivery platform for headless front-ends. It helps you bring a fast, scalable, and secure website to the Edge in minutes with an ecosystem of integrations to connect you to best-of-breed vendors in Commerce, Analytics, Content and more.
+
+## Key Features
+
+### Blazing Fast Performance
+
+Altitude uses V8 Isolate Edge SSR to deliver lightning-fast performance for your commerce website:
+
+- **Sub-100ms TTFB**: Time to First Byte under 100ms from anywhere in the world
+- **Optimized Asset Delivery**: Smart caching and compression
+- **Automatic Image Optimization**: Resize, format, and compress images on-the-fly
+- **HTTP/3 and QUIC Support**: Latest protocols for faster connections
+- **Edge Compute**: Run dynamic logic at the edge to minimize latency
+
+### Seamless Deployment
+
+Deploy your front-end globally in just 3 minutes:
+
+- **GitHub Integration**: Connect directly to your GitHub repositories
+- **Automated CI/CD Pipeline**: From commit to global availability in minutes
+- **Build Optimization**: Automatic asset compression and optimization
+- **Global CDN Distribution**: Content delivery from 200+ edge locations
+- **SSL and DNS Management**: Automatic certificate provisioning and DNS configuration
+
+### Customizable and Flexible
+
+Build the perfect commerce website for your business:
+
+- **Framework Support**: Works with popular frameworks and libraries
+- **Custom Domains**: Use your own domains with automatic SSL
+- **Environment Variables**: Configure your application for different environments
+- **Edge Functions**: Run serverless functions at the edge
+- **Flexible Caching**: Configure caching rules for optimal performance
+- **A/B Testing**: Test new features with a subset of users
+
+### Edge Capabilities
+
+Powerful edge computing features:
+
+- **Caching**: Intelligent caching at the edge for optimal performance
+- **Custom Domains**: Use your own domains with automatic SSL
+- **Functions**: Run serverless functions at the edge
+- **Rules**: Configure routing and request handling
+- **Render Types**: Support for various rendering strategies
+- **KV Store**: Key-value storage at the edge
+- **BQ Logging**: Advanced logging capabilities
+
+## Getting Started
+
+### Prerequisites
+
+- A GitHub repository with your front-end code
+- Access to the Altitude platform
+
+### Creating a Website
+
+1. **Connect to GitHub**:
+   - Inside the main sites list page, click "Create Site"
+   - Configure a connection to your Git provider
+   - Connect to an organization (not user account)
+   - Select repositories to access
+
+2. **Configure Your Site**:
+   - Select your repository
+   - Configure build settings
+   - Set environment variables
+   - Configure domains (optional)
+
+3. **Deploy Your Site**:
+   - Commit changes to your repository
+   - Altitude automatically builds and deploys your site
+   - Your site is available globally in approximately 3 minutes
+
+### Configuration Options
+
+Altitude provides several configuration options:
+
+#### Edge Configuration
+
+```javascript
+// altitude.config.js
+module.exports = {
+  // Edge caching configuration
+  cache: {
+    patterns: [
+      { pattern: '/static/*', duration: '1y' },
+      { pattern: '/api/*', duration: '0s' },
+      { pattern: '/images/*', duration: '1d' }
+    ]
+  },
+  
+  // Custom domains
+  domains: ['www.example.com'],
+  
+  // Environment variables
+  env: {
+    API_URL: 'https://api.example.com'
+  }
+};
+```
+
+#### Edge Functions
+
+Create serverless functions that run at the edge:
+
+```javascript
+// functions/api.js
+export async function onRequest(context) {
+  return new Response(JSON.stringify({ hello: 'world' }), {
+    headers: { 'Content-Type': 'application/json' }
+  });
+}
+```
+
+## Edge Features
+
+### Caching
+
+Altitude provides powerful caching capabilities:
+
+- **Static Asset Caching**: Automatically cache static assets
+- **Custom Cache Rules**: Define custom caching rules for different paths
+- **Cache Invalidation**: Invalidate cache when deploying new versions
+
+### Custom Domains
+
+Add custom domains to your Altitude site:
+
+- **Automatic SSL**: SSL certificates are automatically provisioned
+- **DNS Configuration**: Simple DNS configuration with CNAME records
+- **Multiple Domains**: Support for multiple domains per site
+
+### Functions
+
+Run serverless functions at the edge:
+
+- **Edge Compute**: Execute code at the edge for minimal latency
+- **API Routes**: Create API endpoints with edge functions
+- **Middleware**: Process requests before they reach your application
+
+### Rules
+
+Configure routing and request handling:
+
+- **Redirects**: Set up redirects for URLs
+- **Rewrites**: Rewrite URLs internally
+- **Headers**: Add or modify HTTP headers
+
+## Security and Reliability
+
+Altitude uses the latest security best practices:
+
+- **SSL Everywhere**: All sites use HTTPS by default
+- **DDoS Protection**: Built-in protection against DDoS attacks
+- **WAF**: Web Application Firewall for additional security
+- **99.99% Uptime**: Enterprise-grade reliability
+- **Automatic Scaling**: Handles traffic spikes automatically
+
+## Integrations
+
+Altitude integrates with best-of-breed vendors:
+
+- **Commerce**: Connect to commerce platforms and services
+- **Analytics**: Integrate with analytics providers
+- **Content**: Connect to content management systems
+- **Marketing**: Integrate with marketing tools and platforms
+
+## Support
+
+For additional help, contact THG Commerce support:
+
+- **Documentation**: [https://docs.altitude.thg.com](https://docs.altitude.thg.com)
+- **GitHub Repository**: Connect your repositories for deployment
