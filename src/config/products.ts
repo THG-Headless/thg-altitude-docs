@@ -163,8 +163,8 @@ export const products: Record<string, Product> = {
         href: "/docs/cloud"
       },
       {
-        title: "Quick Start",
-        href: "/docs/cloud/quickstart"
+        title: "Changelog",
+        href: "/docs/cloud/changelog"
       }
     ]
   }

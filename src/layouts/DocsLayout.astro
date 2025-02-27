@@ -28,10 +28,10 @@ const { title, description, product, headings = [] } = Astro.props;
 ---
 
 <BaseLayout {title} {description} {product}>
-  <div class="max-w-[90rem] mx-auto">
-    <div class="relative lg:flex">
+  <div class="docs-layout max-w-[90rem] mx-auto">
+    <div class="docs-grid">
       <!-- Left Sidebar -->
-      <aside class="hidden lg:block w-[19.5rem] flex-none">
+      <aside class="docs-sidebar">
         <div class="sticky top-[7.5rem] overflow-y-auto">
           <nav class="h-[calc(100vh-7.5rem)] py-6 px-8">
             <slot name="sidebar" />
@@ -40,8 +40,8 @@ const { title, description, product, headings = [] } = Astro.props;
       </aside>
 
       <!-- Main content -->
-      <main class="min-w-0 w-full flex-auto">
-        <div class="mx-auto max-w-3xl xl:max-w-none xl:ml-0 xl:pr-16">
+      <main class="docs-main">
+        <div class="docs-content">
           <article class="pt-10 pb-24 prose prose-slate dark:prose-invert max-w-none">
             <slot />
           </article>
@@ -49,7 +49,7 @@ const { title, description, product, headings = [] } = Astro.props;
       </main>
 
       <!-- Right sidebar - Table of Contents -->
-      <aside class="hidden xl:block w-[15.5rem] flex-none">
+      <aside class="docs-toc">
         <div class="sticky top-[7.5rem] overflow-y-auto">
           <nav class="h-[calc(100vh-7.5rem)] py-6 px-8">
             <TableOfContents headings={headings} />
@@ -63,6 +63,67 @@ const { title, description, product, headings = [] } = Astro.props;
 <style is:global>
   /* Import Prism.js theme */
   @import 'prismjs/themes/prism-tomorrow.css';
+
+  /* Layout styles */
+  .docs-grid {
+    display: grid;
+    grid-template-columns: 0fr minmax(0, 1fr) 0fr;
+    grid-template-areas: "sidebar main toc";
+  }
+  
+  .docs-sidebar {
+    grid-area: sidebar;
+    width: 19.5rem;
+    display: none;
+  }
+  
+  .docs-main {
+    grid-area: main;
+    min-width: 0;
+    width: 100%;
+  }
+  
+  .docs-toc {
+    grid-area: toc;
+    width: 15.5rem;
+    display: none;
+  }
+  
+  .docs-content {
+    margin: 0 auto;
+    max-width: 48rem;
+    padding: 0 1rem;
+  }
+  
+  /* Show sidebar and TOC on large screens */
+  @media (min-width: 1024px) {
+    .docs-sidebar {
+      display: block;
+    }
+    
+    /* Hide sidebar if it has no content */
+    .docs-sidebar:has(.docs-sidebar.no-content) {
+      display: none;
+    }
+    
+    /* When sidebar is hidden, adjust the grid */
+    .docs-grid:has(.docs-sidebar.no-content) {
+      grid-template-columns: 0fr minmax(0, 1fr) 0fr;
+    }
+  }
+  
+  @media (min-width: 1280px) {
+    .docs-toc {
+      display: block;
+    }
+    
+    .docs-content {
+      max-width: none;
+      margin-left: 0;
+      padding-left: 2.25rem;
+      padding-right: 2.25rem;
+    }
+  }
 
   /* Custom typography styles */
   .prose {

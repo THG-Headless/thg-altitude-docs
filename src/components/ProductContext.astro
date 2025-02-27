@@ -1,4 +1,6 @@
 ---
+import { getProductVersions, getLatestVersion, extractVersionFromPath, generateVersionLinks } from '../utils/versions';
+
 interface Props {
   product: {
     id: string;
@@ -13,6 +15,30 @@ interface Props {
 }
 
 const { product } = Astro.props;
+const currentPath = Astro.url.pathname;
+
+// Check if the current path contains a version
+const versionInfo = extractVersionFromPath(currentPath, product.id);
+let versions: string[] = [];
+let versionLinks: { version: string; url: string; isLatest: boolean; isCurrent: boolean }[] = [];
+
+if (versionInfo) {
+  // Get all versions for this product
+  versions = await getProductVersions(product.id);
+  
+  if (versions.length > 0) {
+    // Generate version links
+    versionLinks = generateVersionLinks(
+      currentPath,
+      product.id,
+      versionInfo.version,
+      versions,
+      versionInfo.basePath
+    );
+  }
+}
+
+const hasVersions = versions.length > 0;
 ---
 
 <div class="sticky top-[70px] z-30" data-product-context>
@@ -28,14 +54,47 @@ const { product } = Astro.props;
           <img src={product.icon} alt="" class="w-5 h-5" />
           <span class="font-medium text-stone-200">{product.name}</span>
         </div>
+        
+        {versionInfo && hasVersions && (
+          <>
+            <svg class="w-4 h-4 text-stone-600" viewBox="0 0 16 16" fill="none">
+              <path d="M6 12l4-4-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <div class="version-dropdown relative">
+              <button class="flex items-center gap-1 text-stone-200 hover:text-stone-100">
+                <span>{versionInfo.version}</span>
+                <svg class="w-4 h-4 text-stone-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+              </button>
+              <div class="version-dropdown-menu overflow-hidden">
+                {versionLinks.map(link => (
+                  <a 
+                    href={link.url} 
+                    class:list={[
+                      "version-dropdown-item",
+                      { "active": link.isCurrent }
+                    ]}
+                  >
+                    {link.version} {link.isLatest && <span class="latest-badge">Latest</span>}
+                  </a>
+                ))}
+                <div class="version-dropdown-divider"></div>
+                <a href={`/docs/${product.id}/latest${currentPath.substring((versionInfo.basePath + '/' + versionInfo.version).length)}`} class="version-dropdown-item">
+                  Always use latest
+                </a>
+              </div>
+            </div>
+          </>
+        )}
       </div>
     </div>
   </div>
 
   <!-- Quick Links -->
-  <div class="bg-stone-950/75 backdrop-blur supports-backdrop-blur:bg-stone-950/60 border-b border-stone-800">
+  <div class="bg-stone-950/75 backdrop-blur supports-backdrop-blur:bg-stone-950/60 border-b border-stone-800 relative -z-10">
     <div class="max-w-[90rem] mx-auto">
-      <nav class="flex items-center gap-4 px-4 sm:px-6 lg:px-8 py-1">
+      <nav class="flex items-center gap-4 px-4 sm:px-6 lg:px-8">
         {product.quickLinks.map(link => (
           <a
             href={link.href}
@@ -57,5 +116,86 @@ const { product } = Astro.props;
 <style>
   .backdrop-blur {
     backdrop-filter: blur(8px);
+  }
+  
+  .version-dropdown {
+    position: relative;
+  }
+  
+  .version-dropdown-menu {
+    position: absolute;
+    border-radius: 0.375rem;
+    top: calc(100% - 2px); /* Reduce the gap between trigger and dropdown */
+    left: 0;
+    z-index: 100; /* Higher z-index to appear above the quick links bar */
+    min-width: 180px;
+    margin-top: 0;
+    overflow: hidden;
+    background-color: #1c1917;
+    border: 1px solid #292524;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  }
+  
+  .version-dropdown-menu::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px; /* Same as padding-top */
+  }
+  
+  .version-dropdown-menu::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+  }
+  
+  .version-dropdown:hover .version-dropdown-menu {
+    display: block;
+  }
+  
+  .version-dropdown-menu {
+    display: none;
+  }
+  
+  .version-dropdown-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 1rem;
+    color: #e7e5e4;
+    text-decoration: none;
+    transition: background-color 0.2s;
+    position: relative;
+    z-index: 1;
+  }
+  
+  .version-dropdown-item:hover {
+    background-color: #292524;
+  }
+  
+  .version-dropdown-item.active {
+    background-color: #44403c;
+    color: #ffffff;
+  }
+  
+  .version-dropdown-divider {
+    height: 1px;
+    background-color: #292524;
+    margin: 0.25rem 0;
+    position: relative;
+    z-index: 1;
+  }
+  
+  .latest-badge {
+    font-size: 0.75rem;
+    padding: 0.125rem 0.375rem;
+    background-color: #059669;
+    color: white;
+    border-radius: 0.25rem;
   }
 </style>

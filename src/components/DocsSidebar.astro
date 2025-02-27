@@ -1,8 +1,15 @@
 ---
+import { getCollection } from 'astro:content';
+import { isVersionFolder, extractVersionFromPath } from '../utils/versions';
+
 interface NavItem {
   title: string;
-  href: string;
+  href?: string;
+  isDirectory?: boolean;
   items?: NavItem[];
+  processed?: boolean;
+  order?: number;
+  data?: any;
 }
 
 interface Props {
@@ -13,182 +20,481 @@ interface Props {
 }
 
 const { product } = Astro.props;
-
-const cloudNav: NavItem[] = [
-  {
-    title: "Getting Started",
-    href: "/docs/cloud",
-    items: [
-      { title: "Quick Start", href: "/docs/cloud/quickstart" },
-      { title: "Installation", href: "/docs/cloud/installation" },
-      { title: "Configuration", href: "/docs/cloud/configuration" }
-    ]
-  },
-  {
-    title: "Core Concepts",
-    href: "/docs/cloud/concepts",
-    items: [
-      { title: "Edge Computing", href: "/docs/cloud/concepts/edge" },
-      { title: "Global Distribution", href: "/docs/cloud/concepts/distribution" },
-      { title: "Performance", href: "/docs/cloud/concepts/performance" }
-    ]
-  },
-  {
-    title: "Features",
-    href: "/docs/cloud/features",
-    items: [
-      { title: "Caching", href: "/docs/cloud/features/caching" },
-      { title: "Custom Domains", href: "/docs/cloud/features/domains" },
-      { title: "Edge Functions", href: "/docs/cloud/features/functions" },
-      { title: "Rules", href: "/docs/cloud/features/rules" }
-    ]
-  },
-  {
-    title: "Deployment",
-    href: "/docs/cloud/deployment",
-    items: [
-      { title: "GitHub Integration", href: "/docs/cloud/deployment/github" },
-      { title: "CI/CD", href: "/docs/cloud/deployment/cicd" },
-      { title: "Environment Variables", href: "/docs/cloud/deployment/env" }
-    ]
-  },
-  {
-    title: "Monitoring",
-    href: "/docs/cloud/monitoring",
-    items: [
-      { title: "Metrics", href: "/docs/cloud/monitoring/metrics" },
-      { title: "Logging", href: "/docs/cloud/monitoring/logging" },
-      { title: "Alerts", href: "/docs/cloud/monitoring/alerts" }
-    ]
-  }
-];
-
-const commerceApiNav: NavItem[] = [
-  {
-    title: "Overview",
-    href: "/docs/commerce-api",
-  },
-  {
-    title: "Examples",
-    href: "/docs/commerce-api/examples",
-    items: [
-      { title: "Basket", href: "/docs/commerce-api/examples/basket" },
-      { title: "Checkout", href: "/docs/commerce-api/examples/checkout" },
-      { title: "Customer", href: "/docs/commerce-api/examples/customer" },
-      { title: "Features", href: "/docs/commerce-api/examples/features" },
-      { title: "Navigation", href: "/docs/commerce-api/examples/navigation" },
-      { title: "Product", href: "/docs/commerce-api/examples/product" }
-    ]
-  },
-  {
-    title: "API Types",
-    href: "/docs/commerce-api#api-types",
-  },
-  {
-    title: "Feature Switching",
-    href: "/docs/commerce-api#feature-switching",
-  },
-  {
-    title: "Rate Limiting",
-    href: "/docs/commerce-api#rate-limiting-and-captcha",
-  },
-  {
-    title: "Automated Persisted Queries",
-    href: "/docs/commerce-api#automated-persisted-queries",
-  }
-];
-
-const insightsNav: NavItem[] = [
-  {
-    title: "Overview",
-    href: "/docs/insights",
-  },
-  {
-    title: "Getting Started",
-    href: "/docs/insights/getting-started",
-  },
-  {
-    title: "Framework Integrations",
-    href: "/docs/insights/frameworks",
-    items: [
-      { title: "Astro", href: "/docs/insights/frameworks/astro" },
-      { title: "Next.js", href: "/docs/insights/frameworks/nextjs" },
-      { title: "React Native", href: "/docs/insights/frameworks/react-native" }
-    ]
-  },
-  {
-    title: "Core Concepts",
-    href: "/docs/insights/core/beacon",
-  },
-  {
-    title: "Guides",
-    href: "/docs/insights/guides",
-    items: [
-      { title: "Altitude Integration", href: "/docs/insights/guides/altitude" },
-      { title: "Offline Support", href: "/docs/insights/guides/offline-support" },
-      { title: "Source Resolution", href: "/docs/insights/guides/source-resolution" },
-      { title: "Troubleshooting", href: "/docs/insights/guides/troubleshooting" }
-    ]
-  },
-  {
-    title: "API Reference",
-    href: "/docs/insights/reference/api",
-  }
-];
-
-const productNavs = {
-  cloud: cloudNav,
-  "commerce-api": commerceApiNav,
-  insights: insightsNav
-  // Add other product navs here
-};
-
 const currentPath = Astro.url.pathname;
-const nav = productNavs[product.id as keyof typeof productNavs] || [];
+
+// Get all docs
+const allDocs = await getCollection('docs');
+
+// Check if the current path contains a version
+const versionInfo = extractVersionFromPath(currentPath, product.id);
+const currentVersion = versionInfo?.version;
+
+// Function to generate navigation structure from content collection
+async function generateNavFromContent(productId: string) {
+  // Filter docs for this product
+  let productDocs = allDocs.filter(doc => doc.id.startsWith(`${productId}/`));
+  
+  // If we're viewing a versioned page, only show docs for that version
+  if (currentVersion) {
+    productDocs = productDocs.filter(doc => doc.id.startsWith(`${productId}/${currentVersion}/`));
+    
+    // Skip the main index file
+    productDocs = productDocs.filter(doc => !(doc.id === `${productId}/${currentVersion}/index.mdx` || doc.id === `${productId}/${currentVersion}/index.md`));
+  } else {
+    // If we're not viewing a versioned page, filter out all versioned docs
+    productDocs = productDocs.filter(doc => {
+      // Skip the main index file
+      if (doc.id === `${productId}/index.mdx` || doc.id === `${productId}/index.md`) {
+        return false;
+      }
+      
+      // Skip versioned docs
+      const parts = doc.id.split('/');
+      if (parts.length >= 2 && isVersionFolder(parts[1])) {
+        return false;
+      }
+      
+      return true;
+    });
+  }
+  
+  // Create a map of directory paths to their NavItem
+  const directoryMap: Record<string, NavItem> = {};
+  
+  // First pass: create directory entries
+  productDocs.forEach(doc => {
+    const pathParts = doc.id.split('/');
+    // Skip the product ID (first part)
+    pathParts.shift();
+    
+    // If we're viewing a versioned page, also skip the version part
+    if (currentVersion) {
+      pathParts.shift();
+    }
+    
+    // Create directory entries for each level
+    let currentPath = `/docs/${productId}`;
+    
+    // If we're viewing a versioned page, include the version in the path
+    if (currentVersion) {
+      currentPath += `/${currentVersion}`;
+    }
+    
+    for (let i = 0; i < pathParts.length - 1; i++) {
+      const part = pathParts[i];
+      currentPath += `/${part}`;
+      
+      if (!directoryMap[currentPath]) {
+        directoryMap[currentPath] = {
+          title: part.charAt(0).toUpperCase() + part.slice(1).replace(/-/g, ' '),
+          href: currentPath,
+          isDirectory: true,
+          items: []
+        };
+      }
+    }
+  });
+  
+  // Second pass: add files to their parent directories
+  productDocs.forEach(doc => {
+    const pathParts = doc.id.split('/');
+    // Skip the product ID
+    pathParts.shift();
+    
+    // If we're viewing a versioned page, also skip the version part
+    if (currentVersion) {
+      pathParts.shift();
+    }
+    
+    const fileName = pathParts[pathParts.length - 1];
+    const fileNameWithoutExt = fileName.replace(/\.(md|mdx)$/, '');
+    
+    // Build the full path to this file
+    let filePath = `/docs/${productId}`;
+    
+    // If we're viewing a versioned page, include the version in the path
+    if (currentVersion) {
+      filePath += `/${currentVersion}`;
+    }
+    
+    for (let i = 0; i < pathParts.length - 1; i++) {
+      filePath += `/${pathParts[i]}`;
+    }
+    
+    const parentPath = filePath;
+    filePath += `/${fileNameWithoutExt}`;
+    
+    // Create the file nav item with order from frontmatter
+    const fileNavItem: NavItem = {
+      title: doc.data.title,
+      href: filePath,
+      order: doc.data.order,
+      data: doc.data
+    };
+    
+    // Add to parent directory if it exists
+    if (pathParts.length > 1 && directoryMap[parentPath]) {
+      directoryMap[parentPath].items = directoryMap[parentPath].items || [];
+      directoryMap[parentPath].items?.push(fileNavItem);
+      
+      // Update directory order based on the minimum order of its children
+      if (fileNavItem.order !== undefined) {
+        if (directoryMap[parentPath].order === undefined || fileNavItem.order < directoryMap[parentPath].order!) {
+          directoryMap[parentPath].order = fileNavItem.order;
+        }
+      }
+    } else {
+      // This is a top-level file, add it directly to the root items
+      directoryMap[filePath] = fileNavItem;
+    }
+  });
+  
+  // Third pass: build the hierarchy
+  Object.keys(directoryMap).forEach(path => {
+    const pathParts = path.split('/');
+    // Skip /docs/productId or /docs/productId/version
+    const skipCount = currentVersion ? 4 : 3;
+    pathParts.splice(0, skipCount);
+    
+    if (pathParts.length > 1) {
+      // This is a nested directory, add it to its parent
+      const parentPathParts = [...pathParts];
+      parentPathParts.pop();
+      
+      let parentPath = `/docs/${productId}`;
+      if (currentVersion) {
+        parentPath += `/${currentVersion}`;
+      }
+      
+      if (parentPathParts.length > 0) {
+        parentPath += `/${parentPathParts.join('/')}`;
+      }
+      
+      if (directoryMap[parentPath] && directoryMap[path].isDirectory) {
+        directoryMap[parentPath].items = directoryMap[parentPath].items || [];
+        directoryMap[parentPath].items?.push(directoryMap[path]);
+        
+        // Propagate order up to parent directory
+        if (directoryMap[path].order !== undefined) {
+          if (directoryMap[parentPath].order === undefined || directoryMap[path].order! < directoryMap[parentPath].order!) {
+            directoryMap[parentPath].order = directoryMap[path].order;
+          }
+        }
+        
+        // Mark this directory as processed so we don't add it to the root
+        directoryMap[path].processed = true;
+      }
+    }
+  });
+  
+  // Final step: collect root level items
+  const rootItems: NavItem[] = [];
+  Object.keys(directoryMap).forEach(path => {
+    const item = directoryMap[path];
+    if (!item.processed) {
+      const pathParts = path.split('/');
+      // Only include items directly under the product or version
+      const expectedLength = currentVersion ? 5 : 4;
+      if (pathParts.length === expectedLength || !item.isDirectory) {
+        rootItems.push(item);
+      }
+    }
+  });
+  
+  // Sort the items with priority on order
+  const sortItems = (items: NavItem[]) => {
+    items.sort((a, b) => {
+      // First sort by order if available
+      if (a.order !== undefined && b.order !== undefined) {
+        return a.order - b.order;
+      }
+      if (a.order !== undefined) return -1; // Items with order come first
+      if (b.order !== undefined) return 1;
+      
+      // Then sort directories first
+      if (a.isDirectory && !b.isDirectory) return -1;
+      if (!a.isDirectory && b.isDirectory) return 1;
+      
+      // Finally sort by title
+      return a.title.localeCompare(b.title);
+    });
+    
+    // Sort nested items
+    items.forEach(item => {
+      if (item.items && item.items.length > 0) {
+        sortItems(item.items);
+      }
+    });
+    
+    return items;
+  };
+  
+  return sortItems(rootItems);
+}
+
+// Generate navigation for the current product
+const nav = await generateNavFromContent(product.id);
+
+// Check if there's content for the sidebar
+// If there's only one item and it's the current page, consider it as having no content
+const hasOnlyCurrentPage = nav.length === 1 && nav[0].href === currentPath;
+const hasContent = nav.length > 0 && !hasOnlyCurrentPage;
 
 function isActive(href: string): boolean {
   return currentPath === href || currentPath.startsWith(`${href}/`);
 }
+
+function isSectionActive(items: NavItem[] | undefined): boolean {
+  if (!items) return false;
+  return items.some(item => {
+    if (isActive(item.href || '')) return true;
+    if (item.items) return isSectionActive(item.items);
+    return false;
+  });
+}
 ---
 
-<div class="pb-10">
-  <div class="mb-8">
-    <h5 class="mb-3 text-sm font-semibold text-stone-400 uppercase tracking-wide">
-      {product.name} Documentation
-    </h5>
-    <ul class="space-y-1">
-      {nav.map(item => (
+{hasContent && (
+  <div class="pb-10">
+    {currentVersion && (
+      <div class="mb-4">
+        <div class="text-sm font-medium text-stone-400">
+          Version: <span class="text-stone-300">{currentVersion}</span>
+        </div>
+      </div>
+    )}
+    
+    <ul class="space-y-1">      
+      {nav.map((item, index) => (
         <li>
-          <a
-            href={item.href}
-            class={`block py-1.5 text-sm transition-colors ${
-              isActive(item.href)
-                ? 'text-primary-400 font-medium'
-                : 'text-stone-400 hover:text-stone-300'
-            }`}
-          >
-            {item.title}
-          </a>
-          {item.items && isActive(item.href) && (
-            <ul class="ml-4 mt-2 space-y-1">
-              {item.items.map(subItem => (
-                <li>
-                  <a
-                    href={subItem.href}
-                    class={`block py-1.5 text-sm transition-colors ${
-                      isActive(subItem.href)
-                        ? 'text-primary-400 font-medium'
-                        : 'text-stone-400 hover:text-stone-300'
-                    }`}
-                  >
-                    {subItem.title}
-                  </a>
-                </li>
-              ))}
-            </ul>
+          {item.isDirectory ? (
+            <div class="accordion-item">
+              <button
+                type="button"
+                class={`accordion-button flex items-center justify-between w-full py-1.5 text-sm transition-colors ${
+                  isSectionActive(item.items)
+                    ? 'text-primary-400 font-medium'
+                    : 'text-stone-400 hover:text-stone-300'
+                }`}
+                aria-expanded="true"
+                data-index={index}
+                onclick="toggleAccordion(this)"
+              >
+                <span>{item.title}</span>
+                <svg 
+                  class="w-4 h-4 transition-transform rotate-90" 
+                  fill="none" 
+                  viewBox="0 0 24 24" 
+                  stroke="currentColor"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+              <ul class="accordion-content ml-4 mt-2 space-y-1 block">
+                {item.items && item.items.map(subItem => (
+                  <li>
+                    {subItem.isDirectory ? (
+                      <div class="accordion-item">
+                        <button
+                          type="button"
+                          class={`accordion-button flex items-center justify-between w-full py-1.5 text-sm transition-colors ${
+                            isSectionActive(subItem.items)
+                              ? 'text-primary-400 font-medium'
+                              : 'text-stone-400 hover:text-stone-300'
+                          }`}
+                          aria-expanded="true"
+                          onclick="toggleAccordion(this)"
+                        >
+                          <span>{subItem.title}</span>
+                          <svg 
+                            class="w-4 h-4 transition-transform rotate-90" 
+                            fill="none" 
+                            viewBox="0 0 24 24" 
+                            stroke="currentColor"
+                          >
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                          </svg>
+                        </button>
+                        <ul class="accordion-content ml-4 mt-2 space-y-1 block">
+                          {subItem.items && subItem.items.map(subSubItem => (
+                            <li>
+                              {subSubItem.isDirectory ? (
+                                <div class="accordion-item">
+                                  <button
+                                    type="button"
+                                    class={`accordion-button flex items-center justify-between w-full py-1.5 text-sm transition-colors ${
+                                      isSectionActive(subSubItem.items)
+                                        ? 'text-primary-400 font-medium'
+                                        : 'text-stone-400 hover:text-stone-300'
+                                    }`}
+                                    aria-expanded="true"
+                                    onclick="toggleAccordion(this)"
+                                  >
+                                    <span>{subSubItem.title}</span>
+                                    <svg 
+                                      class="w-4 h-4 transition-transform rotate-90" 
+                                      fill="none" 
+                                      viewBox="0 0 24 24" 
+                                      stroke="currentColor"
+                                    >
+                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                                    </svg>
+                                  </button>
+                                  <ul class="accordion-content ml-4 mt-2 space-y-1 block">
+                                    {subSubItem.items && subSubItem.items.map(level4Item => (
+                                      <li>
+                                        {level4Item.isDirectory ? (
+                                          <div class="accordion-item">
+                                            <button
+                                              type="button"
+                                              class={`accordion-button flex items-center justify-between w-full py-1.5 text-sm transition-colors ${
+                                                isSectionActive(level4Item.items)
+                                                  ? 'text-primary-400 font-medium'
+                                                  : 'text-stone-400 hover:text-stone-300'
+                                              }`}
+                                              aria-expanded="true"
+                                              onclick="toggleAccordion(this)"
+                                            >
+                                              <span>{level4Item.title}</span>
+                                              <svg 
+                                                class="w-4 h-4 transition-transform rotate-90" 
+                                                fill="none" 
+                                                viewBox="0 0 24 24" 
+                                                stroke="currentColor"
+                                              >
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                                              </svg>
+                                            </button>
+                                            <ul class="accordion-content ml-4 mt-2 space-y-1 block">
+                                              {level4Item.items && level4Item.items.map(level5Item => (
+                                                <li>
+                                                  <a
+                                                    href={level5Item.href}
+                                                    class={`block py-1.5 text-sm transition-colors ${
+                                                      isActive(level5Item.href || '')
+                                                        ? 'text-primary-400 font-medium'
+                                                        : 'text-stone-400 hover:text-stone-300'
+                                                    }`}
+                                                  >
+                                                    {level5Item.title}
+                                                  </a>
+                                                </li>
+                                              ))}
+                                            </ul>
+                                          </div>
+                                        ) : (
+                                          <a
+                                            href={level4Item.href}
+                                            class={`block py-1.5 text-sm transition-colors ${
+                                              isActive(level4Item.href || '')
+                                                ? 'text-primary-400 font-medium'
+                                                : 'text-stone-400 hover:text-stone-300'
+                                            }`}
+                                          >
+                                            {level4Item.title}
+                                          </a>
+                                        )}
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              ) : (
+                                <a
+                                  href={subSubItem.href}
+                                  class={`block py-1.5 text-sm transition-colors ${
+                                    isActive(subSubItem.href || '')
+                                      ? 'text-primary-400 font-medium'
+                                      : 'text-stone-400 hover:text-stone-300'
+                                  }`}
+                                >
+                                  {subSubItem.title}
+                                </a>
+                              )}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ) : (
+                      <a
+                        href={subItem.href}
+                        class={`block py-1.5 text-sm transition-colors ${
+                          isActive(subItem.href || '')
+                            ? 'text-primary-400 font-medium'
+                            : 'text-stone-400 hover:text-stone-300'
+                        }`}
+                      >
+                        {subItem.title}
+                      </a>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : (
+            <a
+              href={item.href}
+              class={`block py-1.5 text-sm transition-colors ${
+                isActive(item.href || '')
+                  ? 'text-primary-400 font-medium'
+                  : 'text-stone-400 hover:text-stone-300'
+              }`}
+            >
+              {item.title}
+            </a>
           )}
         </li>
       ))}
     </ul>
   </div>
-</div>
+)}
+
+<script is:inline>
+  // Function to toggle accordion
+  function toggleAccordion(button) {
+    const expanded = button.getAttribute('aria-expanded') === 'true';
+    button.setAttribute('aria-expanded', (!expanded).toString());
+    
+    // Find the content element
+    const content = button.nextElementSibling;
+    if (content && content.classList.contains('accordion-content')) {
+      if (expanded) {
+        content.classList.add('hidden');
+        content.classList.remove('block');
+      } else {
+        content.classList.remove('hidden');
+        content.classList.add('block');
+      }
+    }
+    
+    // Toggle the rotation of the arrow
+    const arrow = button.querySelector('svg');
+    if (arrow) {
+      if (expanded) {
+        arrow.classList.remove('rotate-90');
+      } else {
+        arrow.classList.add('rotate-90');
+      }
+    }
+  }
+</script>
+
+<style>
+  /* Ensure accordions are open by default */
+  .accordion-content {
+    display: block;
+  }
+  
+  /* Add smooth transitions */
+  .accordion-content {
+    transition: all 0.3s ease;
+  }
+  
+  /* Utility classes for JavaScript */
+  .hidden {
+    display: none !important;
+  }
+  
+  .block {
+    display: block !important;
+  }
+</style>
