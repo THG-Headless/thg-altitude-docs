@@ -1,0 +1,180 @@
+---
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import Pagination from '../../../../components/Pagination.astro';
+import { getCollection } from 'astro:content';
+import type { GetStaticPathsOptions, Page } from 'astro';
+
+export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
+  const allPosts = await getCollection('blog');
+  
+  // Get all unique tags
+  const uniqueTags = [...new Set(allPosts.flatMap(post => post.data.tags || []))];
+  
+  // For each tag, paginate the posts
+  return uniqueTags.flatMap((tag: string) => {
+    // Filter posts that have this tag
+    const filteredPosts = allPosts.filter(post => 
+      post.data.tags?.includes(tag) && 
+      (!import.meta.env.PROD || !post.data.draft)
+    );
+    
+    // Sort posts by date
+    const sortedPosts = filteredPosts.sort((a, b) => 
+      b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+    );
+    
+    // Paginate the posts for this tag
+    return paginate(sortedPosts, {
+      params: { tag },
+      pageSize: 10,
+    });
+  });
+}
+
+interface Props {
+  page: Page<any>;
+  tag: string;
+}
+
+const { page, tag } = Astro.props;
+const { data: posts, currentPage, lastPage } = page;
+
+// Format date
+function formatDate(date: Date) {
+  return new Intl.DateTimeFormat('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  }).format(date);
+}
+---
+
+<BaseLayout title={`#${tag} | Blog | THG Altitude ${currentPage > 1 ? `- Page ${currentPage}` : ''}`} description={`Blog posts tagged with #${tag}`}>
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <header class="mb-12">
+      <div class="flex items-center gap-2 mb-4">
+        <a href="/blog" class="text-stone-500 dark:text-stone-400 hover:text-stone-700 dark:hover:text-stone-300">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+        </a>
+        <span class="text-stone-500 dark:text-stone-400">Back to all posts</span>
+      </div>
+      
+      <h1 class="text-4xl font-bold text-stone-900 dark:text-white mb-4 flex items-center gap-2">
+        <span class="inline-block px-4 py-1 bg-stone-200 dark:bg-stone-800 text-stone-700 dark:text-stone-300 rounded-full">
+          #{tag}
+        </span>
+      </h1>
+      
+      <p class="text-xl text-stone-600 dark:text-stone-400">
+        {posts.length} {posts.length === 1 ? 'post' : 'posts'} tagged with #{tag}
+      </p>
+      
+      {currentPage > 1 && (
+        <div class="mt-4 text-stone-500 dark:text-stone-400">
+          Page {currentPage} of {lastPage}
+        </div>
+      )}
+    </header>
+
+    <div class="space-y-12">
+      {posts && posts.map((post: any) => (
+        <article class="flex flex-col md:flex-row bg-stone-50 dark:bg-stone-900 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+          {post.data.image ? (
+            <div class="md:w-1/3 h-64 md:h-auto overflow-hidden">
+              <img 
+                src={post.data.image} 
+                alt={post.data.title} 
+                class="w-full h-full object-cover transition-transform hover:scale-105"
+              />
+            </div>
+          ) : (
+            <div class="hidden md:flex md:w-1/3 h-64 md:h-auto bg-gradient-to-br from-stone-100 to-stone-200 dark:from-stone-800 dark:to-stone-900 items-center justify-center">
+              <div class="text-center p-6">
+                <svg class="w-16 h-16 mx-auto text-stone-400 dark:text-stone-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                </svg>
+                <p class="mt-2 text-sm text-stone-500 dark:text-stone-400">Altitude Blog</p>
+              </div>
+            </div>
+          )}
+          
+          <div class={`flex-1 p-6 md:p-8 flex flex-col ${!post.data.image ? 'md:border-l border-stone-200 dark:border-stone-800' : ''}`}>
+            <div class="flex items-center text-sm text-stone-500 dark:text-stone-400 mb-2">
+              <time datetime={post.data.pubDate.toISOString()}>
+                {formatDate(post.data.pubDate)}
+              </time>
+              
+              {post.data.author && (
+                <>
+                  <span class="mx-2">•</span>
+                  <span>{post.data.author}</span>
+                </>
+              )}
+            </div>
+            
+            <h2 class="text-2xl font-semibold text-stone-900 dark:text-white mb-3">
+              <a href={`/blog/${post.id.split('/').pop()}`} class="hover:text-primary-600 dark:hover:text-primary-400">
+                {post.data.title}
+              </a>
+            </h2>
+            
+            <p class="text-stone-600 dark:text-stone-400 mb-6 line-clamp-3">
+              {post.data.description}
+            </p>
+            
+            <div class="mt-auto flex flex-wrap items-center justify-between">
+              {post.data.tags && post.data.tags.length > 0 && (
+                <div class="flex flex-wrap gap-2 mb-4 md:mb-0">
+                  {post.data.tags.map((t: string) => (
+                    <a 
+                      href={`/blog/tag/${t}`} 
+                      class:list={[
+                        "inline-block px-2 py-1 text-xs font-medium rounded-full transition-colors",
+                        t === tag 
+                          ? "bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400" 
+                          : "bg-stone-200 dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:bg-stone-300 dark:hover:bg-stone-700"
+                      ]}
+                    >
+                      #{t}
+                    </a>
+                  ))}
+                </div>
+              )}
+              
+              <a href={`/blog/${post.id.split('/').pop()}`} class="inline-flex items-center text-primary-600 dark:text-primary-400 font-medium hover:underline">
+                Read more
+                <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+              </a>
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+    
+    {posts && posts.length === 0 && (
+      <div class="text-center py-12">
+        <h2 class="text-2xl font-semibold text-stone-900 dark:text-white mb-2">No posts found</h2>
+        <p class="text-stone-600 dark:text-stone-400">
+          There are no posts with the tag #{tag}.
+        </p>
+      </div>
+    )}
+    
+    {lastPage > 1 && (
+      <Pagination currentPage={currentPage} totalPages={lastPage} baseUrl={`/blog/tag/${tag}`} />
+    )}
+  </div>
+</BaseLayout>
+
+<style>
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>

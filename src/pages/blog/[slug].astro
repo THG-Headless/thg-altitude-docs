@@ -1,0 +1,32 @@
+---
+import BlogLayout from '../../layouts/BlogLayout.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const blogEntries = await getCollection('blog');
+  
+  return blogEntries.map(entry => {
+    const slug = entry.id.split('/').pop() || '';
+    return {
+      params: { slug },
+      props: { entry },
+    };
+  });
+}
+
+const { entry } = Astro.props;
+
+// @ts-ignore - Astro content collections typing issue
+const { Content } = await entry.render();
+---
+
+<BlogLayout
+  title={entry.data.title}
+  description={entry.data.description}
+  pubDate={entry.data.pubDate}
+  author={entry.data.author}
+  image={entry.data.image}
+  tags={entry.data.tags}
+>
+  <Content />
+</BlogLayout>
