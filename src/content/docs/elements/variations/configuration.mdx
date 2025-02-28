@@ -1,0 +1,415 @@
+---
+title: 'Configuration'
+---
+import VariationProduct from "@components/variationsProduct.vue";
+import Variations from "../../../components/variations/Variations.vue";
+import VariationsAstro from "../../../components/variations/VariationsAstro.astro";
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+import Preview from "@components/preview.astro";
+
+The variation component takes in props which heavily influence the behaviour of the component.
+
+#### ID
+
+**Type:** `String` \
+**Required: True**
+
+The prop `id` must always be passed and must be unique if there are multiple instances of this component on a page. The id will be attached to a container which will hydrate the interactive variations into the container.
+
+#### Mode
+
+**Type:** `'async'` \
+**Required: False**
+
+The `mode` prop dicatates whether the hydration should occur immediately or whether it should be deferred. By default, the absence of this prop signals that hydration should occur immediately and the component itself will trigger the hydration. This can be overriden by providing `async` as a value to the prop.
+
+When no mode prop has been passed, product data **must** be sent to the component within the [options](/packages/elements/#options) prop. This will be used to display a presentational layer before interactive elements are hydrated, which reduces Cumulative Layout Shift (CLS). Components using `async` mode can utilise a named slot `elements-variations-loading` to apply a custom loading state.
+
+## Vue
+
+For applications using the Vue variations component, a `ref` containing the value of the product data should always be passed to the options block regardless of `mode` as the component will be reactive to this ref being updated, such as an api call to retrieve data on the client. The package will trigger hydration as soon as product data is recieved.
+
+  <Tabs>
+    <TabItem label="Preview">
+      <Preview>
+        <Variations sku="10530943" client:visible />
+      </Preview>
+    </TabItem>
+    <TabItem label="async">
+    ```vue
+    <script setup>
+      import { VariationVue } from "@thg-altitude/elements/vue";
+      import { ref, onMounted } from 'vue'
+      const props = defineProps({
+        sku: String
+      })
+      const productData = ref(null)
+
+      onMounted(async () => {
+        productData.value = await fetch(...)
+      })
+    </script>
+
+    <template>
+      <VariationVue
+          :id="sku"
+          mode='async'
+          :options="{
+            product: productData,
+            layout: {
+              button: ['Size', 'Colour']
+            }
+          }"
+      >
+        <template #elements-variations-loading>
+          <p>Loading...</p>
+        </template>
+      </VariationVue>
+    </template>
+    ```
+    </TabItem>
+    <TabItem label="default">
+    ```vue
+    <script setup>
+      import { VariationVue } from "@thg-altitude/elements/vue";
+      import { ref } from 'vue'
+      const props = defineProps({
+        product: Object
+      })
+      const productData = ref(props.product)
+    </script>
+
+    <template>
+      <VariationVue
+          :id="productData.sku.toString()"
+          :options="{
+            product: productData,
+            layout: {
+              button: ['Size', 'Colour']
+            }
+          }"
+      />
+    </template>
+    ```
+    </TabItem>
+
+  </Tabs>
+
+## Astro
+
+For applications using the Astro variation component, there is required setup on the client side to define a custom class named `elements-variations`.
+
+For `mode: async` an application is required to invoke hydration by importing the `Variation` helper function. This function requires the following fields:
+
+- `id: String` - This should be the same ID as attached to the variation instance and can easily obtained from the custom class attribute `data-id`.
+- `Object.config: Object` - This contains the `payload` from the client side call including fields listed in the schema outlined in the [options](/packages/elements/#options) section, `layout` options and the `activeVariant` sku.
+
+The `Variation` function returns back an observer, which can be used to [subscribe to channels](/packages/elements/#event-subscription)
+
+For non-async modes, the custom element must still be defined, but the Astro variation component will hydrate the interactive elements in. The observer to be used to [subscribe to channels](/packages/elements/#event-subscription) will be added to the window object as `window.elements[id]`.
+
+
+<Tabs>
+    <TabItem label="Preview">
+      <Preview>
+        <VariationsAstro sku="10530943" />
+      </Preview>
+    </TabItem>
+    <TabItem label="async">
+    ```astro
+    ---
+      import { VariationAstro } from "@thg-altitude/elements/astro";
+      const sku = Astro.props.sku
+    ---
+
+    <VariationAstro id={sku} mode='async'><p slot="elements-variations-loading">Loading...</p></VariationAstro>
+
+    <script>
+    import { Variation } from '@thg-altitude/elements/variations'
+    class ElementsVariations extends HTMLElement {
+      constructor() {
+        super()
+      }
+      async connectedCallback() {
+        const id = this.getAttribute('data-id')
+
+        const resp = await fetch(...)
+
+        const activeVariant = resp.data.product.defaultVariant.sku
+
+        const observer = new Variation(id, {
+          config: {
+            payload: resp.data.product,
+            layout: {
+              button: ['Size', 'Colour']
+            },
+            activeVariant
+          }
+        })
+      }
+    }
+    customElements.get('elements-variations') ||
+      customElements.define('elements-variations', ElementsVariations)
+    </script>
+    ```
+    </TabItem>
+    <TabItem label="default">
+    ```astro
+    ---
+    import { VariationAstro } from "@thg-altitude/elements/astro";
+    const sku = Astro.props.sku
+    ---
+    <VariationAstro id={sku} options={{
+      product: Astro.props.productData,
+      activeVariant: Astro.props.productData.defaultVariant,
+      layout: {
+        button: ['Size', 'Colour']
+      }
+    }} />
+
+    <script>
+      class ElementsVariations extends HTMLElement {
+      constructor() {
+        super()
+      }
+      const id = this.getAttribute('data-id')
+      async connectedCallback() {
+        window.addEventListener(`variation-${id}`, extractSSRContext)
+        function extractSSRContext() {
+          const observer = window.elements[id].observer
+          window.removeEventListener(`variation-${id}`, extractSSRContext)
+        }
+      }
+    }
+    customElements.get('elements-variations') ||
+      customElements.define('elements-variations', ElementsVariations)
+    </script>
+    ```
+    </TabItem>
+
+  </Tabs>
+
+#### Options
+
+The `options` prop will contain additional fields which allows customisability as to how the variations should be displayed in the presentational layer.
+
+##### options.layout
+
+**Type:** `Object` \
+**Required: False**
+
+The Variations component supports two variation styles, dropdowns and buttons. By default, all variations will display as a dropdown. If this is not desired, an optional prop `layout` can be supplied to `options` to specify what "Option Keys" should be displayed as buttons.
+
+Layout options will only take effect when `productData` is supplied through component props, or passed through the `config.layout` key to the [Variations](/packages/elements/#astro) helper function depending on the mode.
+
+##### options.activeVariant
+
+**Type:** `Number` \
+**Required: False**
+
+The active variant sku will be used to pre select a specific product variation. If no active variant sku has been supplied, the elements package will default to the first in stock product in the variants array, if no products are in stock the first variant will be used.
+
+##### options.product
+
+**Type:** `Object` \
+**Required: Framework Dependant - see [mode](/packages/elements/#mode)**
+
+When the `mode` prop is **not** set to `async` (or no mode is supplied), a product block must be sent to the component using the fields provided in the below schema. This product block will be used to render the presentational layer before the interactive elements are hydrated in.
+
+<Tabs>
+  <TabItem label="Vue">
+    ```vue
+      <VariationVue
+        :id="productData.sku.toString()"
+        :options="{
+          layout: {
+            button: ['Colour', 'Size'],
+          },
+          activeVariant: productData.defaultVariant,
+          product: productData
+        }"
+      />
+    ```
+  </TabItem>
+  <TabItem label="Astro">
+  ```astro
+    <VariationAstro
+        id={Astro.props.productData.sku.toString()}
+        options={
+          {
+            layout: { button: ['Size', 'Colour'] },
+            activeVariant: Astro.props.productData.defaultVariant,
+            product: Astro.props.productData
+          }
+        }
+    />
+  ```
+  </TabItem>
+  <TabItem label="Schema">
+  ```gql
+    product(sku: $sku, strict: false) {
+    sku
+    linkedOn
+    options {
+      key
+      choices {
+        optionKey
+        key
+        colour
+        title
+      }
+    }
+    variants {
+      sku
+      inStock
+      choices {
+        optionKey
+        key
+        colour
+        title
+      }
+    }
+    defaultVariant(
+      options: {
+        currency: $currency
+        shippingDestination: $shippingDestination
+      }
+    ) {
+      sku
+      inStock
+      choices {
+        optionKey
+        key
+        colour
+        title
+      }
+    }
+  }
+  ```
+  </TabItem>
+</Tabs>
+
+## Event Subscription
+
+When variations are interacted with, the variation component will publish data relating to that variation. The data published will contain the `sku` and `stock` of the given product. Applications can then opt in to make any relavant presentational updates when variations change.
+
+This data will be retrieved differently dependant on the framework used as seen in the examples below.
+
+<Tabs>
+  <TabItem label="Preview">
+    <Preview>
+      <VariationProduct client:load />
+    </Preview>
+  </TabItem>
+  <TabItem label="Vue">
+  ```vue
+  <script setup>
+import { ref } from "vue";
+import { VariationVue } from "@thg-altitude/elements";
+
+const props = defineProps({
+productData: Object,
+});
+
+const activeVariant = ref(
+props.productData.defaultVariant.sku
+? props.productData.defaultVariant
+: props.productData.variants.find((variant) => variant.inStock) || props.productData.variants?.[0]
+);
+
+function handleVariationUpdate(data) {
+activeVariant.value = props.productData.variants.find(
+(variant) => variant.sku == data.sku
+);
+}
+
+</script>
+
+<template>
+  <h3>{{ activeVariant.title }}</h3>  
+  <VariationVue
+    :id="productData.sku.toString()"
+    :options="{
+      activeVariant: activeVariant.sku.toString()
+      product: productData,
+      layout: { button: ['Size', 'Colour'] },
+    }"
+    @variationUpdated="handleVariationUpdate"
+    @linkedVariationUpdated="handleVariationUpdate"
+  />
+</template>
+  ```
+  </TabItem>
+  <TabItem label="Astro">
+    ```astro
+    ---
+    import { VariationAstro } from "@thg-altitude/elements/astro";
+    const sku = Astro.props.sku
+    ---
+    <VariationAstro id={sku} options={{
+      product: Astro.props.productData,
+      activeVariant: Astro.props.productData.defaultVariant,
+      layout: {
+        button: ['Size', 'Colour']
+      }
+    }} />
+
+    <script>
+      class ElementsVariations extends HTMLElement {
+      constructor() {
+        super()
+      }
+
+      const id = this.getAttribute('data-id')
+      const variationMode = this.getAttribute('data-mode')
+
+      async connectedCallback() {
+        if(variationMode === 'async') {
+
+          const resp = await fetch(...)
+
+          const observer = new Variation(id, {
+          config: {
+            payload: resp.data?.product,
+            layout: {
+              button: ['Size', 'Colour']
+            },
+            activeVariant: resp?.data?.defaultVariant
+          }
+
+          observer.subscribe('variation_updated', (data) => updateVariation(data))
+          observer.subscribe('linked_variation_updated', (data) => updateVariation(data))
+        })
+        } else {
+          function extractSSRContext() {
+            const observer = window.elements[id].observer
+            window.removeEventListener(`variation-${id}`, extractSSRContext)
+
+            observer.subscribe('variation_updated', (data) => updateVariation(data))
+            observer.subscribe('linked_variation_updated', (data) => updateVariation(data))
+          }
+          window.addEventListener(`variation-${id}`, extractSSRContext)
+        }
+
+        function updateVariation(data) {
+          ...
+        }
+      }
+    }
+    customElements.get('elements-variations') ||
+      customElements.define('elements-variations', ElementsVariations)
+    </script>
+    ```
+
+  </TabItem>
+</Tabs>
+
+## Custom Styling
+
+Components that the elements package exports all contain default styling using vanilla CSS. The styles can be overriden per application by using class based css selectors. The default styling uses lowest specificity possible. To override a specific class, the container class for the element i.e `.elements-variations-container` should prefix all selectors in your stylesheet.
+
+```css
+.elements-variations-container .elements-variant-button-selected {
+  border-color: red;
+}
+```

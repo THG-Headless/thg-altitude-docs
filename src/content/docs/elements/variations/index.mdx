@@ -1,0 +1,52 @@
+---
+title: Get Started
+description: Framework agnostic components for core commerce functionality.
+---
+
+Variations offers an abstraction from verbose business logic to render the variations of a given product, offering flexibility on presentational layers whilst providing out the box rehydration.
+
+import VariationProduct from "@components/variationsProduct.vue";
+import Variations from "../../../components/variations/Variations.vue";
+import VariationsAstro from "../../../components/variations/VariationsAstro.astro";
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+import Preview from "@components/preview.astro";
+
+## Installation
+
+```sh
+npm install @thg-altitude/elements
+```
+
+## Setup
+
+The elements package exports framework specific components which can be imported into your application.
+
+<div class="not-content">
+<Tabs>
+    <TabItem label="Preview">
+        <Preview>
+          <VariationsAstro sku="10530943" />
+        </Preview>
+    </TabItem>
+  <TabItem label="Vue">
+    ```vue
+    <script setup>
+      import { VariationVue } from "@thg-altitude/elements/vue"; 
+    </script>
+
+    <template>
+      <VariationVue />
+    </template>
+    ```
+
+  </TabItem>
+  <TabItem label="Astro">
+    ```astro
+      ---
+      import { VariationAstro } from "@thg-altitude/elements/astro"; 
+      ---
+      <VariationAstro />
+    ``` 
+  </TabItem>
+</Tabs>
+</div>
