@@ -122,12 +122,18 @@ async function generateNavFromContent(productId: string) {
     }
     
     const parentPath = filePath;
-    filePath += `/${fileNameWithoutExt}`;
+    
+    // Check if this is an index file
+    const isIndexFile = fileNameWithoutExt === 'index';
+    
+    // For index files, use the parent directory as the href
+    // For regular files, append the filename to the path
+    const href = isIndexFile ? parentPath : `${parentPath}/${fileNameWithoutExt}`;
     
     // Create the file nav item with order from frontmatter
     const fileNavItem: NavItem = {
       title: doc.data.title,
-      href: filePath,
+      href,
       order: doc.data.order,
       data: doc.data
     };
@@ -145,7 +151,7 @@ async function generateNavFromContent(productId: string) {
       }
     } else {
       // This is a top-level file, add it directly to the root items
-      directoryMap[filePath] = fileNavItem;
+      directoryMap[href] = fileNavItem;
     }
   });
   
@@ -273,7 +279,7 @@ function isSectionActive(items: NavItem[] | undefined): boolean {
                 type="button"
                 class={`accordion-button flex items-center justify-between w-full py-1.5 text-sm transition-colors ${
                   isSectionActive(item.items)
-                    ? 'text-primary-400 font-medium'
+                    ? 'font-medium'
                     : 'text-stone-400 hover:text-stone-300'
                 }`}
                 aria-expanded="true"
@@ -299,7 +305,7 @@ function isSectionActive(items: NavItem[] | undefined): boolean {
                           type="button"
                           class={`accordion-button flex items-center justify-between w-full py-1.5 text-sm transition-colors ${
                             isSectionActive(subItem.items)
-                              ? 'text-primary-400 font-medium'
+                              ? 'font-medium'
                               : 'text-stone-400 hover:text-stone-300'
                           }`}
                           aria-expanded="true"
@@ -324,7 +330,7 @@ function isSectionActive(items: NavItem[] | undefined): boolean {
                                     type="button"
                                     class={`accordion-button flex items-center justify-between w-full py-1.5 text-sm transition-colors ${
                                       isSectionActive(subSubItem.items)
-                                        ? 'text-primary-400 font-medium'
+                                        ? 'font-medium'
                                         : 'text-stone-400 hover:text-stone-300'
                                     }`}
                                     aria-expanded="true"
@@ -349,7 +355,7 @@ function isSectionActive(items: NavItem[] | undefined): boolean {
                                               type="button"
                                               class={`accordion-button flex items-center justify-between w-full py-1.5 text-sm transition-colors ${
                                                 isSectionActive(level4Item.items)
-                                                  ? 'text-primary-400 font-medium'
+                                                  ? 'font-medium'
                                                   : 'text-stone-400 hover:text-stone-300'
                                               }`}
                                               aria-expanded="true"
@@ -372,7 +378,7 @@ function isSectionActive(items: NavItem[] | undefined): boolean {
                                                     href={level5Item.href}
                                                     class={`block py-1.5 text-sm transition-colors ${
                                                       isActive(level5Item.href || '')
-                                                        ? 'text-primary-400 font-medium'
+                                                        ? 'text-white font-medium'
                                                         : 'text-stone-400 hover:text-stone-300'
                                                     }`}
                                                   >
@@ -387,7 +393,7 @@ function isSectionActive(items: NavItem[] | undefined): boolean {
                                             href={level4Item.href}
                                             class={`block py-1.5 text-sm transition-colors ${
                                               isActive(level4Item.href || '')
-                                                ? 'text-primary-400 font-medium'
+                                                ? 'font-medium'
                                                 : 'text-stone-400 hover:text-stone-300'
                                             }`}
                                           >
@@ -403,7 +409,7 @@ function isSectionActive(items: NavItem[] | undefined): boolean {
                                   href={subSubItem.href}
                                   class={`block py-1.5 text-sm transition-colors ${
                                     isActive(subSubItem.href || '')
-                                      ? 'text-primary-400 font-medium'
+                                      ? 'font-medium'
                                       : 'text-stone-400 hover:text-stone-300'
                                   }`}
                                 >
@@ -419,7 +425,7 @@ function isSectionActive(items: NavItem[] | undefined): boolean {
                         href={subItem.href}
                         class={`block py-1.5 text-sm transition-colors ${
                           isActive(subItem.href || '')
-                            ? 'text-primary-400 font-medium'
+                            ? 'font-medium'
                             : 'text-stone-400 hover:text-stone-300'
                         }`}
                       >
@@ -435,7 +441,7 @@ function isSectionActive(items: NavItem[] | undefined): boolean {
               href={item.href}
               class={`block py-1.5 text-sm transition-colors ${
                 isActive(item.href || '')
-                  ? 'text-primary-400 font-medium'
+                  ? 'font-medium'
                   : 'text-stone-400 hover:text-stone-300'
               }`}
             >

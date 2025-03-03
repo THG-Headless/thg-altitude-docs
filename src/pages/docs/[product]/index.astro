@@ -44,6 +44,18 @@ export async function getStaticPaths() {
           props: { doc }
         });
       }
+      
+      // Handle nested index files (e.g., "elements/variations/index.mdx")
+      if (pathParts.length > 2 && !isVersionFolder(pathParts[1])) {
+        // Create a path parameter that includes all parts except the last one (which is "index.mdx")
+        // For example, for "elements/variations/index.mdx", we want "elements/variations"
+        const nestedPath = pathParts.slice(0, -1).join('/');
+        
+        paths.push({
+          params: { product: nestedPath },
+          props: { doc }
+        });
+      }
     }
   });
   

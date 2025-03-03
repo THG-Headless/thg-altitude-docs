@@ -1,0 +1,131 @@
+---
+// src/components/bespoke/Tabs.astro
+// A bespoke implementation of the Tabs component to replace Starlight's Tabs component
+---
+
+<div class="tabs">
+  <div class="tabs-header" role="tablist">
+    {/* Tab buttons will be generated from TabItem children */}
+  </div>
+  <div class="tabs-content">
+    <slot />
+  </div>
+</div>
+
+<script>
+  // Client-side JavaScript for tab switching
+  document.addEventListener('DOMContentLoaded', () => {
+    const tabContainers = document.querySelectorAll('.tabs');
+    
+    tabContainers.forEach(container => {
+      // Find all tab items within this container
+      const tabItems = container.querySelectorAll('.tab-item');
+      
+      // Create tab buttons if they don't exist
+      const tabsHeader = container.querySelector('.tabs-header');
+      if (tabsHeader && tabsHeader.children.length === 0) {
+        tabItems.forEach((tabItem, index) => {
+          const label = tabItem.getAttribute('data-label') || `Tab ${index + 1}`;
+          const button = document.createElement('button');
+          button.className = 'tab-button';
+          button.setAttribute('role', 'tab');
+          button.setAttribute('aria-selected', index === 0 ? 'true' : 'false');
+          button.setAttribute('tabindex', index === 0 ? '0' : '-1');
+          button.setAttribute('data-index', index.toString());
+          button.textContent = label;
+          tabsHeader.appendChild(button);
+        });
+      }
+      
+      // Get all tab buttons
+      const tabButtons = container.querySelectorAll('.tab-button');
+      
+      // Set initial state
+      if (tabButtons.length > 0 && tabItems.length > 0) {
+        tabItems.forEach((panel, index) => {
+          if (index !== 0) (panel as HTMLElement).hidden = true;
+        });
+      }
+      
+      // Add click handlers to tab buttons
+      tabButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+          const selectedIndex = parseInt(button.getAttribute('data-index') || '0');
+          
+          // Update tab button states
+          tabButtons.forEach(btn => {
+            btn.setAttribute('aria-selected', 'false');
+            btn.setAttribute('tabindex', '-1');
+          });
+          button.setAttribute('aria-selected', 'true');
+          button.setAttribute('tabindex', '0');
+          
+          // Show selected panel, hide others
+          tabItems.forEach((panel, panelIndex) => {
+            (panel as HTMLElement).hidden = panelIndex !== selectedIndex;
+          });
+        });
+      });
+      
+      // Add keyboard navigation
+      container.addEventListener('keydown', (e) => {
+        // Cast event to KeyboardEvent and target to HTMLElement
+        const event = e as KeyboardEvent;
+        const target = event.target as HTMLElement;
+        if (target && target.classList.contains('tab-button')) {
+          const currentIndex = parseInt(target.getAttribute('data-index') || '0');
+          let newIndex = currentIndex;
+          
+          if (event.key === 'ArrowRight') {
+            newIndex = (currentIndex + 1) % tabButtons.length;
+          } else if (event.key === 'ArrowLeft') {
+            newIndex = (currentIndex - 1 + tabButtons.length) % tabButtons.length;
+          } else {
+            return;
+          }
+          
+          (tabButtons[newIndex] as HTMLElement).click();
+          (tabButtons[newIndex] as HTMLElement).focus();
+        }
+      });
+    });
+  });
+</script>
+
+<style is:global>
+  .tabs {
+    margin: 1.5rem 0;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    background-color: var(--color-bg-secondary, #101010);
+  }
+  
+  .tabs-header {
+    display: flex;
+    background-color: var(--color-bg-tabs-header, #101010);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 0;
+  }
+  
+  .tab-button {
+    padding: 0.75rem 1.25rem;
+    border: none;
+    background: transparent;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    font-weight: 500;
+    color: var(--color-text-secondary, #4b5563);
+    transition: all 0.2s ease;
+  }
+  
+  .tab-button[aria-selected="true"] {
+    border-bottom-color: var(--color-primary, #FFF);
+    color: var(--color-primary, #FFF);
+    background-color: var(--color-bg-tabs-active, #ffffff08);
+  }
+  
+  .tab-button:hover:not([aria-selected="true"]) {
+    background-color: var(--color-bg-tabs-hover, #ffffff10);
+    color: var(--color-text-primary, #fff);
+  }
+</style>

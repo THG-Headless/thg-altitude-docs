@@ -1,0 +1,132 @@
+---
+import '@styles/elements/facets.css';
+import facetData from "@components/docs/facets/facetData.json";
+import { FacetWrapper, FacetResults } from "@thg-altitude/elements/astro";
+import { validateFacets } from "@thg-altitude/elements/facets/helper";
+
+const validFacets = validateFacets(facetData?.productList?.facets);
+---
+<div class="not-prose">
+<FacetWrapper
+  filterName={"facetFilters"}
+  options={{
+    endpoint: "/api/graphql",
+    pageType: "search",
+    query: "blue",
+    shippingDestination: "GB",
+    currency: "GBP",
+  }}
+  ariaLabels={{
+    facetsTitle: "Filters",
+    selectedOptions: "Selected options",
+    brandSearch: "brand search",
+    options: "options",
+    minPriceInput: "minimum price input",
+    maxPriceInput: "maximum price input",
+  }}
+>
+  <div class="xl:block hidden" slot="facets-1">
+    <p class="mb-2">Try interacting with the facets below - before hydrating them they are not interactive...</p>
+    <FacetResults id="desktop" deferHydration={true} facetPayload={validFacets}>
+      <span slot="elements-facets-filter-button" class="whitespace-nowrap">+ Filters</span>
+      <span slot="elements-facets-clear">Clear</span>
+      <span slot="elements-facets-clear-all">Clear All</span>
+      <span slot="elements-facets-selected">Selected</span>
+      <span slot="elements-facets-currency-symbol">£</span>
+      <span slot="elements-facets-show-more">Show More</span>
+      <span slot="elements-facets-show-less">Show Less</span>
+      <span slot="elements-facets-apply">Apply</span>
+    </FacetResults>
+    <p class="mt-2">Clicking the Hydrate Facets button calls the hydrate function</p>
+    <button id="desktop-facet-trigger" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md mt-2">
+      Hydrate Facets
+    </button>
+  </div>
+
+  <div class="xl:hidden" slot="facets-2">
+    <button
+      id="mobile-facet-trigger"
+      class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md mt-2"
+      onclick="complexModal.showModal()"
+      aria-haspopup="dialog">Open Filters</button
+    >
+    <dialog
+      id="complexModal"
+      class="modal modal-fullscreen modal-fullscreen-mobile"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Fullscreen Modal"
+    >
+      <div class="modal-box min-h-screen h-screen bg-white">
+        <form method="dialog" class="modal-control-bar">
+          <button class="modal-close-button">
+            <span>Close</span>
+            <span aria-hidden="true">✕</span>
+          </button>
+        </form>
+        <FacetResults
+          id="mobile"
+          deferHydration={true}
+          facetPayload={validFacets}
+        >
+          <span slot="elements-facets-currency-symbol">£</span>
+          <span slot="elements-facets-show-more">Show More</span>
+          <span slot="elements-facets-show-less">Show Less</span>
+          <span slot="elements-facets-apply">Apply</span>
+        </FacetResults>
+        <form
+          method="dialog"
+          class="modal-control-bar pb-0 block mt-auto w-full"
+        >
+          <button
+            id="view-products-button"
+            class="bg-blue-950 rounded text-white w-full p-2"
+          >
+            View Products
+          </button>
+        </form>
+      </div>
+    </dialog>
+  </div>
+</FacetWrapper>
+</div>
+
+<script>
+  class ElementsFacetWrapper extends HTMLElement {
+    constructor() {
+      super();
+    }
+    async connectedCallback() {
+      window.addEventListener("elements-facet-wrapper", extractSSRContext);
+      const customElement = this;
+
+      async function extractSSRContext() {
+        const observer = window.elements.facets.observer;
+        observer.subscribe("facet-toggle", (facetOpen) => {
+          const facetToggles = customElement.querySelectorAll(
+            "[data-slot='elements-facets-filter-button']"
+          );
+          const hydrationfacetToggle = facetToggles?.[0]
+          hydrationfacetToggle.innerHTML = `<span>${facetOpen ? "+ Filters" : "- Filters"}</span>`;
+        });
+        bindFacetTriggers();
+      }
+    }
+  }
+
+  customElements.get("elements-facet-wrapper") ||
+    customElements.define("elements-facet-wrapper", ElementsFacetWrapper);
+
+  function bindFacetTriggers() {
+    const mobileFacetTrigger = document.getElementById("mobile-facet-trigger");
+    const desktopFacetTrigger = document.getElementById("desktop-facet-trigger");
+
+    mobileFacetTrigger.addEventListener("click", () => {
+      window.elements.facets.hydrate("mobile");
+    });
+
+    desktopFacetTrigger.addEventListener("click", () => {
+      window.elements.facets.hydrate("desktop");
+    });
+  }
+</script>

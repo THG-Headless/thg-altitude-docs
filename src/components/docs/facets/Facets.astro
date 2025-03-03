@@ -1,0 +1,164 @@
+---
+import '@styles/elements/facets.css';
+import facetData from "@components/docs/facets/facetData.json";
+import { FacetWrapper, FacetResults } from "@thg-altitude/elements/astro";
+import { validateFacets } from "@thg-altitude/elements/facets/helper";
+
+const validFacets = validateFacets(facetData?.productList?.facets);
+const numberOfProducts = facetData?.productList?.total;
+---
+
+<div class="no-prose">
+  <FacetWrapper
+    filterName={"facetFilters"}
+    options={{
+      endpoint: "/api/graphql",
+      pageType: "search",
+      query: "blue",
+      shippingDestination: "GB",
+      currency: "GBP",
+    }}
+    ariaLabels={{
+      facetsTitle: "Filters",
+      selectedOptions: "Selected options",
+      brandSearch: "brand search",
+      options: "options",
+      minPriceInput: "minimum price input",
+      maxPriceInput: "maximum price input",
+    }}
+  >
+    <div class="xl:block hidden" slot="facets-1">
+      <FacetResults id="desktop" facetPayload={validFacets}>
+        <span slot="elements-facets-filter-button" class="whitespace-nowrap">+ Filters</span>
+        <span slot="elements-facets-clear">Clear</span>
+        <span slot="elements-facets-clear-all">Clear All</span>
+        <span slot="elements-facets-selected">Selected</span>
+        <span slot="elements-facets-currency-symbol">£</span>
+        <span slot="elements-facets-show-more">Show More</span>
+        <span slot="elements-facets-show-less">Show Less</span>
+        <span slot="elements-facets-apply">Apply</span>
+      </FacetResults>
+    </div>
+
+    <div class="xl:hidden" slot="facets-2">
+      <button
+        id="mobile-facet-trigger"
+        class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md mt-2"
+        onclick="complexModal.showModal()"
+        aria-haspopup="dialog">Open Filters</button
+      >
+      <dialog
+        id="complexModal"
+        class="modal modal-fullscreen modal-fullscreen-mobile"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Fullscreen Modal"
+      >
+        <div class="modal-box min-h-screen h-screen bg-white">
+          <form method="dialog" class="modal-control-bar">
+            <button class="modal-close-button">
+              <span>Close</span>
+              <span aria-hidden="true">✕</span>
+            </button>
+          </form>
+          <FacetResults
+            id="mobile"
+            deferHydration={true}
+            facetPayload={validFacets}
+          >
+            <span slot="elements-facets-currency-symbol">£</span>
+            <span slot="elements-facets-show-more">Show More</span>
+            <span slot="elements-facets-show-less">Show Less</span>
+            <span slot="elements-facets-apply">Apply</span>
+          </FacetResults>
+          <form
+            method="dialog"
+            class="modal-control-bar pb-0 block mt-auto w-full"
+          >
+            <button
+              id="view-products-button"
+              class="bg-blue-950 rounded text-white w-full p-2"
+            >
+              {
+                numberOfProducts > 1
+                  ? `View ${numberOfProducts} Products`
+                  : `View ${numberOfProducts} Product`
+              }
+            </button>
+          </form>
+        </div>
+      </dialog>
+    </div>
+  </FacetWrapper>
+</div>
+
+<script>
+  import { formatQueryString } from "@thg-altitude/elements/facets/helper";
+  class ElementsFacetWrapper extends HTMLElement {
+    constructor() {
+      super();
+    }
+    async connectedCallback() {
+      window.addEventListener("elements-facet-wrapper", extractSSRContext);
+      const customElement = this;
+
+      async function extractSSRContext() {
+        const observer = window.elements.facets.observer;
+        observer.subscribe("refresh-product-list", async () => {
+          const params = new URLSearchParams(window.location.search);
+          const facetSelectionsArray =
+            params.get("facetFilters")?.split("|") ?? [];
+          const formattedFacetSelections =
+            formatQueryString(facetSelectionsArray);
+          const populatedFacetSelections = formattedFacetSelections.filter(
+            (facet) => facet.selections && facet.selections.length > 0
+          );
+
+          const url = new URL(window.location.href);
+          const searchQuery = url.searchParams.get("q") || "";
+
+          const data = await clientFetch("ProductListSearch", {
+            currency: "GBP",
+            limit: 30,
+            offset: 0,
+            sort: "RELEVANCE",
+            query: searchQuery,
+            shippingDestination: "GB",
+            facets: populatedFacetSelections,
+          });
+          const productData = data.data.search.productList;
+          updateViewProductsButton(productData.total);
+        });
+        observer.subscribe("facet-toggle", (facetOpen) => {
+          const facetToggleSlot = customElement.querySelector(
+            "[data-slot='elements-facets-filter-button']"
+          );
+          facetToggleSlot.innerHTML = `<span>${facetOpen ? "+ Filters" : "- Filters"}</span>`;
+        });
+        bindMobileFacetTrigger();
+      }
+    }
+  }
+
+  customElements.get("elements-facet-wrapper") ||
+    customElements.define("elements-facet-wrapper", ElementsFacetWrapper);
+
+  function bindMobileFacetTrigger() {
+    const mobileFacetTrigger = document.getElementById("mobile-facet-trigger");
+
+    mobileFacetTrigger.addEventListener("click", () => {
+      window.elements.facets.hydrate("mobile");
+    });
+  }
+
+  function updateViewProductsButton(numberOfProducts) {
+    const button = document.getElementById("view-products-button");
+    if (button) {
+      if (numberOfProducts > 1) {
+        button.innerText = `View ${numberOfProducts} Products`;
+      } else {
+        button.innerText = `View ${numberOfProducts} Product`;
+      }
+    }
+  }
+</script>

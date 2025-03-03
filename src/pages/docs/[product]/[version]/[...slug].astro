@@ -8,8 +8,17 @@ import { isVersionFolder } from '../../../../utils/versions';
 export async function getStaticPaths() {
   const docs = await getCollection('docs');
   
-  // Filter out index files as they are handled by their own routes
-  const nonIndexDocs = docs.filter(doc => !doc.id.endsWith('/index.mdx') && !doc.id.endsWith('/index.md'));
+  // Include all docs, including index files
+  // We'll handle both regular files and index files
+  const allDocs = docs.filter(doc => {
+    // Skip version index files as they are handled by their own routes
+    const pathParts = doc.id.split('/');
+    if (pathParts.length === 3 && (doc.id.endsWith('/index.mdx') || doc.id.endsWith('/index.md'))) {
+      return false;
+    }
+    
+    return true;
+  });
   
   // Define the type for paths
   type PathItem = {
@@ -19,7 +28,7 @@ export async function getStaticPaths() {
   
   const paths: PathItem[] = [];
   
-  nonIndexDocs.forEach(doc => {
+  allDocs.forEach(doc => {
     // Split the path to get product, version, and slug
     const pathParts = doc.id.split('/');
     
@@ -33,11 +42,19 @@ export async function getStaticPaths() {
         // Remove the product and version from the path and join the rest to form the slug
         const slugParts = pathParts.slice(2);
         
-        // Remove file extension from the last part
-        if (slugParts.length > 0) {
-          const lastPart = slugParts[slugParts.length - 1];
-          if (lastPart) {
-            slugParts[slugParts.length - 1] = lastPart.replace(/\.(md|mdx)$/, '');
+        // Check if this is an index file
+        const isIndexFile = doc.id.endsWith('/index.mdx') || doc.id.endsWith('/index.md');
+        
+        // For index files, remove the "index" part from the slug
+        if (isIndexFile) {
+          slugParts.pop();
+        } else {
+          // For regular files, remove file extension from the last part
+          if (slugParts.length > 0) {
+            const lastPart = slugParts[slugParts.length - 1];
+            if (lastPart) {
+              slugParts[slugParts.length - 1] = lastPart.replace(/\.(md|mdx)$/, '');
+            }
           }
         }
         

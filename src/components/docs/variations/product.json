@@ -1,0 +1,711 @@
+{
+    "product": {
+        "sku": 14680560,
+        "linkedOn": "Colour",
+        "options": [
+            {
+                "key": "Size",
+                "choices": [
+                    {
+                        "optionKey": "Size",
+                        "key": "XXS",
+                        "colour": null,
+                        "title": "XXS"
+                    },
+                    {
+                        "optionKey": "Size",
+                        "key": "XS",
+                        "colour": null,
+                        "title": "XS"
+                    },
+                    {
+                        "optionKey": "Size",
+                        "key": "S",
+                        "colour": null,
+                        "title": "S"
+                    },
+                    {
+                        "optionKey": "Size",
+                        "key": "M",
+                        "colour": null,
+                        "title": "M"
+                    },
+                    {
+                        "optionKey": "Size",
+                        "key": "L",
+                        "colour": null,
+                        "title": "L"
+                    },
+                    {
+                        "optionKey": "Size",
+                        "key": "XL",
+                        "colour": null,
+                        "title": "XL"
+                    },
+                    {
+                        "optionKey": "Size",
+                        "key": "XXL",
+                        "colour": null,
+                        "title": "XXL"
+                    },
+                    {
+                        "optionKey": "Size",
+                        "key": "XXXL",
+                        "colour": null,
+                        "title": "XXXL"
+                    }
+                ]
+            },
+            {
+                "key": "Colour",
+                "choices": [
+                    {
+                        "optionKey": "Colour",
+                        "key": "Black",
+                        "colour": "#2D2C2F",
+                        "title": "Black"
+                    },
+                    {
+                        "optionKey": "Colour",
+                        "key": "Navy",
+                        "colour": "#27293D",
+                        "title": "Navy"
+                    },
+                    {
+                        "optionKey": "Colour",
+                        "key": "Storm",
+                        "colour": "#8D8F8F",
+                        "title": "Storm"
+                    }
+                ]
+            }
+        ],
+        "variants": [
+            {
+                "sku": 14680561,
+                "inStock": false,
+                "title": "MP Men's Training Joggers - Black - XXS",
+                "images": [],
+                "price": {
+                    "price": {
+                        "displayValue": "£26.00"
+                    }
+                },
+                "choices": [
+                    {
+                        "optionKey": "Size",
+                        "key": "XXS",
+                        "colour": null,
+                        "title": "XXS"
+                    },
+                    {
+                        "optionKey": "Colour",
+                        "key": "Black",
+                        "colour": "#2D2C2F",
+                        "title": "Black"
+                    }
+                ]
+            },
+            {
+                "sku": 14680562,
+                "inStock": true,
+                "title": "MP Men's Training Joggers - Black - XS",
+                "images": [],
+                "price": {
+                    "price": {
+                        "displayValue": "£26.00"
+                    }
+                },
+                "choices": [
+                    {
+                        "optionKey": "Size",
+                        "key": "XS",
+                        "colour": null,
+                        "title": "XS"
+                    },
+                    {
+                        "optionKey": "Colour",
+                        "key": "Black",
+                        "colour": "#2D2C2F",
+                        "title": "Black"
+                    }
+                ]
+            },
+            {
+                "sku": 14680563,
+                "inStock": true,
+                "title": "MP Men's Training Joggers - Black - S",
+                "images": [],
+                "price": {
+                    "price": {
+                        "displayValue": "£26.00"
+                    }
+                },
+                "choices": [
+                    {
+                        "optionKey": "Size",
+                        "key": "S",
+                        "colour": null,
+                        "title": "S"
+                    },
+                    {
+                        "optionKey": "Colour",
+                        "key": "Black",
+                        "colour": "#2D2C2F",
+                        "title": "Black"
+                    }
+                ]
+            },
+            {
+                "sku": 14680564,
+                "inStock": true,
+                "title": "MP Men's Training Joggers - Black - M",
+                "images": [],
+                "price": {
+                    "price": {
+                        "displayValue": "£26.00"
+                    }
+                },
+                "choices": [
+                    {
+                        "optionKey": "Size",
+                        "key": "M",
+                        "colour": null,
+                        "title": "M"
+                    },
+                    {
+                        "optionKey": "Colour",
+                        "key": "Black",
+                        "colour": "#2D2C2F",
+                        "title": "Black"
+                    }
+                ]
+            },
+            {
+                "sku": 14680565,
+                "inStock": true,
+                "title": "MP Men's Training Joggers - Black - L",
+                "images": [],
+                "price": {
+                    "price": {
+                        "displayValue": "£26.00"
+                    }
+                },
+                "choices": [
+                    {
+                        "optionKey": "Size",
+                        "key": "L",
+                        "colour": null,
+                        "title": "L"
+                    },
+                    {
+                        "optionKey": "Colour",
+                        "key": "Black",
+                        "colour": "#2D2C2F",
+                        "title": "Black"
+                    }
+                ]
+            },
+            {
+                "sku": 14680566,
+                "inStock": true,
+                "title": "MP Men's Training Joggers - Black - XL",
+                "images": [],
+                "price": {
+                    "price": {
+                        "displayValue": "£26.00"
+                    }
+                },
+                "choices": [
+                    {
+                        "optionKey": "Size",
+                        "key": "XL",
+                        "colour": null,
+                        "title": "XL"
+                    },
+                    {
+                        "optionKey": "Colour",
+                        "key": "Black",
+                        "colour": "#2D2C2F",
+                        "title": "Black"
+                    }
+                ]
+            },
+            {
+                "sku": 14680567,
+                "inStock": true,
+                "title": "MP Men's Training Joggers - Black - XXL",
+                "images": [],
+                "price": {
+                    "price": {
+                        "displayValue": "£26.00"
+                    }
+                },
+                "choices": [
+                    {
+                        "optionKey": "Size",
+                        "key": "XXL",
+                        "colour": null,
+                        "title": "XXL"
+                    },
+                    {
+                        "optionKey": "Colour",
+                        "key": "Black",
+                        "colour": "#2D2C2F",
+                        "title": "Black"
+                    }
+                ]
+            },
+            {
+                "sku": 14680568,
+                "inStock": true,
+                "title": "MP Men's Training Joggers - Black - XXXL",
+                "images": [],
+                "price": {
+                    "price": {
+                        "displayValue": "£26.00"
+                    }
+                },
+                "choices": [
+                    {
+                        "optionKey": "Size",
+                        "key": "XXXL",
+                        "colour": null,
+                        "title": "XXXL"
+                    },
+                    {
+                        "optionKey": "Colour",
+                        "key": "Black",
+                        "colour": "#2D2C2F",
+                        "title": "Black"
+                    }
+                ]
+            },
+            {
+                "sku": 14680579,
+                "inStock": false,
+                "title": "MP Men's Training Joggers - Storm - XXS",
+                "images": [],
+                "price": {
+                    "price": {
+                        "displayValue": "£26.00"
+                    }
+                },
+                "choices": [
+                    {
+                        "optionKey": "Size",
+                        "key": "XXS",
+                        "colour": null,
+                        "title": "XXS"
+                    },
+                    {
+                        "optionKey": "Colour",
+                        "key": "Storm",
+                        "colour": "#8D8F8F",
+                        "title": "Storm"
+                    }
+                ]
+            },
+            {
+                "sku": 14680580,
+                "inStock": true,
+                "title": "MP Men's Training Joggers - Storm - XS",
+                "images": [],
+                "price": {
+                    "price": {
+                        "displayValue": "£26.00"
+                    }
+                },
+                "choices": [
+                    {
+                        "optionKey": "Size",
+                        "key": "XS",
+                        "colour": null,
+                        "title": "XS"
+                    },
+                    {
+                        "optionKey": "Colour",
+                        "key": "Storm",
+                        "colour": "#8D8F8F",
+                        "title": "Storm"
+                    }
+                ]
+            },
+            {
+                "sku": 14680581,
+                "inStock": true,
+                "title": "MP Men's Training Joggers - Storm - S",
+                "images": [],
+                "price": {
+                    "price": {
+                        "displayValue": "£26.00"
+                    }
+                },
+                "choices": [
+                    {
+                        "optionKey": "Size",
+                        "key": "S",
+                        "colour": null,
+                        "title": "S"
+                    },
+                    {
+                        "optionKey": "Colour",
+                        "key": "Storm",
+                        "colour": "#8D8F8F",
+                        "title": "Storm"
+                    }
+                ]
+            },
+            {
+                "sku": 14680582,
+                "inStock": true,
+                "title": "MP Men's Training Joggers - Storm - M",
+                "images": [],
+                "price": {
+                    "price": {
+                        "displayValue": "£26.00"
+                    }
+                },
+                "choices": [
+                    {
+                        "optionKey": "Size",
+                        "key": "M",
+                        "colour": null,
+                        "title": "M"
+                    },
+                    {
+                        "optionKey": "Colour",
+                        "key": "Storm",
+                        "colour": "#8D8F8F",
+                        "title": "Storm"
+                    }
+                ]
+            },
+            {
+                "sku": 14680583,
+                "inStock": true,
+                "title": "MP Men's Training Joggers - Storm - L",
+                "images": [],
+                "price": {
+                    "price": {
+                        "displayValue": "£26.00"
+                    }
+                },
+                "choices": [
+                    {
+                        "optionKey": "Size",
+                        "key": "L",
+                        "colour": null,
+                        "title": "L"
+                    },
+                    {
+                        "optionKey": "Colour",
+                        "key": "Storm",
+                        "colour": "#8D8F8F",
+                        "title": "Storm"
+                    }
+                ]
+            },
+            {
+                "sku": 14680584,
+                "inStock": true,
+                "title": "MP Men's Training Joggers - Storm - XL",
+                "images": [],
+                "price": {
+                    "price": {
+                        "displayValue": "£26.00"
+                    }
+                },
+                "choices": [
+                    {
+                        "optionKey": "Size",
+                        "key": "XL",
+                        "colour": null,
+                        "title": "XL"
+                    },
+                    {
+                        "optionKey": "Colour",
+                        "key": "Storm",
+                        "colour": "#8D8F8F",
+                        "title": "Storm"
+                    }
+                ]
+            },
+            {
+                "sku": 14680585,
+                "inStock": true,
+                "title": "MP Men's Training Joggers - Storm - XXL",
+                "images": [],
+                "price": {
+                    "price": {
+                        "displayValue": "£26.00"
+                    }
+                },
+                "choices": [
+                    {
+                        "optionKey": "Size",
+                        "key": "XXL",
+                        "colour": null,
+                        "title": "XXL"
+                    },
+                    {
+                        "optionKey": "Colour",
+                        "key": "Storm",
+                        "colour": "#8D8F8F",
+                        "title": "Storm"
+                    }
+                ]
+            },
+            {
+                "sku": 14680586,
+                "inStock": true,
+                "title": "MP Men's Training Joggers - Storm - XXXL",
+                "images": [],
+                "price": {
+                    "price": {
+                        "displayValue": "£26.00"
+                    }
+                },
+                "choices": [
+                    {
+                        "optionKey": "Size",
+                        "key": "XXXL",
+                        "colour": null,
+                        "title": "XXXL"
+                    },
+                    {
+                        "optionKey": "Colour",
+                        "key": "Storm",
+                        "colour": "#8D8F8F",
+                        "title": "Storm"
+                    }
+                ]
+            },
+            {
+                "sku": 14680570,
+                "inStock": true,
+                "title": "MP Men's Training Joggers - Navy - XXS",
+                "images": [],
+                "price": {
+                    "price": {
+                        "displayValue": "£26.00"
+                    }
+                },
+                "choices": [
+                    {
+                        "optionKey": "Size",
+                        "key": "XXS",
+                        "colour": null,
+                        "title": "XXS"
+                    },
+                    {
+                        "optionKey": "Colour",
+                        "key": "Navy",
+                        "colour": "#27293D",
+                        "title": "Navy"
+                    }
+                ]
+            },
+            {
+                "sku": 14680571,
+                "inStock": true,
+                "title": "MP Men's Training Joggers - Navy - XS",
+                "images": [],
+                "price": {
+                    "price": {
+                        "displayValue": "£26.00"
+                    }
+                },
+                "choices": [
+                    {
+                        "optionKey": "Size",
+                        "key": "XS",
+                        "colour": null,
+                        "title": "XS"
+                    },
+                    {
+                        "optionKey": "Colour",
+                        "key": "Navy",
+                        "colour": "#27293D",
+                        "title": "Navy"
+                    }
+                ]
+            },
+            {
+                "sku": 14680572,
+                "inStock": true,
+                "title": "MP Men's Training Joggers - Navy - S",
+                "images": [],
+                "price": {
+                    "price": {
+                        "displayValue": "£26.00"
+                    }
+                },
+                "choices": [
+                    {
+                        "optionKey": "Size",
+                        "key": "S",
+                        "colour": null,
+                        "title": "S"
+                    },
+                    {
+                        "optionKey": "Colour",
+                        "key": "Navy",
+                        "colour": "#27293D",
+                        "title": "Navy"
+                    }
+                ]
+            },
+            {
+                "sku": 14680573,
+                "inStock": true,
+                "title": "MP Men's Training Joggers - Navy - M",
+                "images": [],
+                "price": {
+                    "price": {
+                        "displayValue": "£26.00"
+                    }
+                },
+                "choices": [
+                    {
+                        "optionKey": "Size",
+                        "key": "M",
+                        "colour": null,
+                        "title": "M"
+                    },
+                    {
+                        "optionKey": "Colour",
+                        "key": "Navy",
+                        "colour": "#27293D",
+                        "title": "Navy"
+                    }
+                ]
+            },
+            {
+                "sku": 14680574,
+                "inStock": true,
+                "title": "MP Men's Training Joggers - Navy - L",
+                "images": [],
+                "price": {
+                    "price": {
+                        "displayValue": "£26.00"
+                    }
+                },
+                "choices": [
+                    {
+                        "optionKey": "Size",
+                        "key": "L",
+                        "colour": null,
+                        "title": "L"
+                    },
+                    {
+                        "optionKey": "Colour",
+                        "key": "Navy",
+                        "colour": "#27293D",
+                        "title": "Navy"
+                    }
+                ]
+            },
+            {
+                "sku": 14680575,
+                "inStock": true,
+                "title": "MP Men's Training Joggers - Navy - XL",
+                "images": [],
+                "price": {
+                    "price": {
+                        "displayValue": "£26.00"
+                    }
+                },
+                "choices": [
+                    {
+                        "optionKey": "Size",
+                        "key": "XL",
+                        "colour": null,
+                        "title": "XL"
+                    },
+                    {
+                        "optionKey": "Colour",
+                        "key": "Navy",
+                        "colour": "#27293D",
+                        "title": "Navy"
+                    }
+                ]
+            },
+            {
+                "sku": 14680576,
+                "inStock": true,
+                "title": "MP Men's Training Joggers - Navy - XXL",
+                "images": [],
+                "price": {
+                    "price": {
+                        "displayValue": "£26.00"
+                    }
+                },
+                "choices": [
+                    {
+                        "optionKey": "Size",
+                        "key": "XXL",
+                        "colour": null,
+                        "title": "XXL"
+                    },
+                    {
+                        "optionKey": "Colour",
+                        "key": "Navy",
+                        "colour": "#27293D",
+                        "title": "Navy"
+                    }
+                ]
+            },
+            {
+                "sku": 14680577,
+                "inStock": true,
+                "title": "MP Men's Training Joggers - Navy - XXXL",
+                "images": [],
+                "price": {
+                    "price": {
+                        "displayValue": "£26.00"
+                    }
+                },
+                "choices": [
+                    {
+                        "optionKey": "Size",
+                        "key": "XXXL",
+                        "colour": null,
+                        "title": "XXXL"
+                    },
+                    {
+                        "optionKey": "Colour",
+                        "key": "Navy",
+                        "colour": "#27293D",
+                        "title": "Navy"
+                    }
+                ]
+            }
+        ],
+        "defaultVariant": {
+            "sku": 14680562,
+            "title": "MP Men's Training Joggers - Black - XS",
+            "images": [],
+            "price": {
+                "price": {
+                    "displayValue": "£26.00"
+                }
+            },
+            "inStock": true,
+            "choices": [
+                {
+                    "optionKey": "Size",
+                    "key": "XS",
+                    "colour": null,
+                    "title": "XS"
+                },
+                {
+                    "optionKey": "Colour",
+                    "key": "Black",
+                    "colour": "#2D2C2F",
+                    "title": "Black"
+                }
+            ]
+        }
+    }
+}

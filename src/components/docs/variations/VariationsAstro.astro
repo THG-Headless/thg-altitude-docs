@@ -1,0 +1,36 @@
+---
+import { VariationAstro } from "@thg-altitude/elements/astro";
+const sku = Astro.props.sku
+---
+
+<VariationAstro id={sku} mode='async'><p slot="elements-variations-loading">Loading...</p></VariationAstro>
+
+
+<script>
+    import { Variation } from '@thg-altitude/elements/variations'
+    import productMock from "./product.json";
+    class ElementsVariations extends HTMLElement {
+      constructor() {
+        super()
+      }
+      async connectedCallback() {
+        const id = this.getAttribute('data-id')
+
+        let resp = productMock
+
+        const activeVariant = resp.product.defaultVariant.sku
+
+        const observer = new Variation(id, {
+          config: {
+            payload: resp.product,
+            layout: {
+              button: ['Colour', 'Size']
+            },
+            activeVariant
+          }
+        })
+      }
+    }
+    customElements.get('elements-variations') ||
+      customElements.define('elements-variations', ElementsVariations)
+</script>

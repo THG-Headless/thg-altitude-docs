@@ -1,0 +1,119 @@
+---
+import '@styles/elements/facets.css';
+import facetData from "@components/docs/facets/facetData.json";
+import { FacetWrapper, FacetResults } from "@thg-altitude/elements/astro";
+import { validateFacets } from "@thg-altitude/elements/facets/helper";
+
+const validFacets = validateFacets(facetData?.productList?.facets);
+---
+
+<div class="no-prose">
+<FacetWrapper
+  filterName={"facetFilters"}
+  options={{
+    endpoint: "/api/graphql",
+    pageType: "search",
+    query: "blue",
+    shippingDestination: "GB",
+    currency: "GBP",
+  }}
+  ariaLabels={{
+    facetsTitle: "Filters",
+    selectedOptions: "Selected options",
+    brandSearch: "brand search",
+    options: "options",
+    minPriceInput: "minimum price input",
+    maxPriceInput: "maximum price input",
+  }}
+>
+  <div slot="facets-1">
+    <h3 class="font-bold">Slot Sort Start Hydrated</h3>
+    <FacetResults id="desktop" facetPayload={validFacets}>
+      <span slot="elements-facets-filter-button" class="whitespace-nowrap">+ Filters</span>
+      <span slot="elements-facets-clear">Clear</span>
+      <span slot="elements-facets-clear-all">Clear All</span>
+      <span slot="elements-facets-selected">Selected</span>
+      <span slot="elements-facets-currency-symbol">£</span>
+      <span slot="elements-facets-show-more">Show More</span>
+      <span slot="elements-facets-show-less">Show Less</span>
+      <span slot="elements-facets-apply">Apply</span>
+      <select class="bg-white border w-full h-full border-black font-semibold rounded-md" slot="elements-facets-sort-start">
+        <option value="" class="px-2">Sort</option>
+        <option value="price-low-high">Popularity</option>
+        <option value="price-low-high">Price: Low to High</option>
+        <option value="price-high-low">Price: High to Low</option>
+        <option value="newest">A - Z</option>
+        <option value="bestselling">Newest Arrivals</option>
+        <option value="rating">Percentage Discount</option>
+      </select>
+    </FacetResults>
+  </div>
+
+  <div class="mt-4" slot="facets-2">
+    <h3 class="font-bold">Slot Sort End Hydrated</h3>
+    <FacetResults
+      id="mobile"
+      facetPayload={validFacets}
+    >
+      <span slot="elements-facets-filter-button">+ Filters</span>
+      <span slot="elements-facets-clear">Clear</span>
+      <span slot="elements-facets-clear-all">Clear All</span>
+      <span slot="elements-facets-selected">Selected</span>
+      <span slot="elements-facets-currency-symbol">£</span>
+      <span slot="elements-facets-show-more">Show More</span>
+      <span slot="elements-facets-show-less">Show Less</span>
+      <span slot="elements-facets-apply">Apply</span>
+      <select class="bg-white border w-full border-black font-semibold h-full rounded-md" slot="elements-facets-sort-end">
+        <option value="" class="px-2">Sort</option>
+        <option value="price-low-high">Popularity</option>
+        <option value="price-low-high">Price: Low to High</option>
+        <option value="price-high-low">Price: High to Low</option>
+        <option value="newest">A - Z</option>
+        <option value="bestselling">Newest Arrivals</option>
+        <option value="rating">Percentage Discount</option>
+      </select>
+    </FacetResults>
+  </div>
+</FacetWrapper>
+</div>
+
+<script>
+  import { formatQueryString } from "@thg-altitude/elements/facets/helper";
+  class ElementsFacetWrapper extends HTMLElement {
+    constructor() {
+      super();
+    }
+    async connectedCallback() {
+      window.addEventListener("elements-facet-wrapper", extractSSRContext);
+      const customElement = this;
+
+      async function extractSSRContext() {
+        const observer = window.elements.facets.observer;
+        observer.subscribe("refresh-product-list", async () => {
+          const params = new URLSearchParams(window.location.search);
+          const facetSelectionsArray =
+            params.get("facetFilters")?.split("|") ?? [];
+          const formattedFacetSelections =
+            formatQueryString(facetSelectionsArray);
+          const populatedFacetSelections = formattedFacetSelections.filter(
+            (facet) => facet.selections && facet.selections.length > 0
+          );
+
+          const url = new URL(window.location.href);
+          const searchQuery = url.searchParams.get("q") || "";
+
+          //fetch for product data
+        });
+        observer.subscribe("facet-toggle", (facetOpen) => {
+          const facetToggleSlot = customElement.querySelector(
+            "[data-slot='elements-facets-filter-button']"
+          );
+          facetToggleSlot.innerHTML = `<span class="whitespace-nowrap">${facetOpen ? "+ Filters" : "- Filters"}</span>`;
+        });
+      }
+    }
+  }
+
+  customElements.get("elements-facet-wrapper") ||
+    customElements.define("elements-facet-wrapper", ElementsFacetWrapper);
+</script>

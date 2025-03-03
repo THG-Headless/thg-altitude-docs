@@ -1,0 +1,105 @@
+---
+title: 'Configuration'
+---
+
+## FacetWrapper Props
+
+The `FacetWrapper` component requires one instance per page. Its props configure the API endpoint, URL parameters, and accessibility labels.
+
+#### filterName
+- • **Type:** `String`
+- • **Required:** Yes
+- The URL parameter name used for facets (e.g. `facetFilters`).
+
+### Options Object
+
+The `options` prop contains settings for API requests:
+
+#### endpoint
+- • **Type:** `String`
+- • **Required:** Yes
+- Path to your GraphQL endpoint (e.g. `/api/commerce`).
+
+#### pageType
+- • **Type:** `'search' | 'collection'`
+- • **Required:** Yes
+- Determines the fetch behavior based on page type.
+
+#### query
+- • **Type:** `String`
+- • **Required:** Yes
+- Search query or collection path handle.
+
+#### shippingDestination
+- • **Type:** `String`
+- • **Required:** Yes
+- Shipping destination code for Horizon requests.
+
+#### currency
+- • **Type:** `String`
+- • **Required:** Yes
+- Currency code for Horizon requests.
+
+### Accessibility Labels
+
+Since the package doesn't include built-in i18n, provide these labels for screen reader support:
+
+- • `facetsTitle` - Screen reader header for facets
+- • `selectedOptions` - Announces selected options in dropdowns
+- • `brandSearch` - Labels brand search inputs
+- • `options` - Announces number of product options
+- • `minPriceInput` - Labels minimum price input in slider
+- • `maxPriceInput` - Labels maximum price input in slider
+
+### Example Configuration
+
+```javascript
+<FacetWrapper
+  filterName="facetFilters"
+  options={{
+    endpoint: "/api/graphql",
+    pageType: "search",
+    query: searchTerm,
+    shippingDestination: "GB",
+    currency: "GBP"
+  }}
+  ariaLabels={{
+    facetsTitle: "Filter Products",
+    selectedOptions: "Selected Filters",
+    brandSearch: "Search Brands",
+    options: "Product Options",
+    minPriceInput: "Minimum Price",
+    maxPriceInput: "Maximum Price"
+  }}
+>
+  {/* Your FacetResults components */}
+</FacetWrapper>
+```
+
+## FacetResults Props
+
+Two `FacetResults` components can be used within one `FacetWrapper`:
+
+#### id
+- • **Type:** `String`
+- • **Required:** Yes
+- Unique identifier for hydration control when using the window.elements.facets.hydrate("id") function.
+
+#### deferHydration
+- • **Type:** `Boolean`
+- • **Required:** No
+- • **Default:** `false`
+- Controls when component hydration occurs. See [Hydration Guide](/facets/hydration).
+
+#### facetPayload
+- • **Type:** `Array`
+- • **Required:** Yes
+- Pre-hydration data for facet headers. Must be processed using `validateFacets` helper to minimize CLS.
+
+### Example Configuration
+
+```javascript
+<FacetResults id="desktop" facetPayload={validFacets}>
+  {/* Your slot content */}
+</FacetResults>
+```

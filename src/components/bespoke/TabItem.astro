@@ -1,0 +1,20 @@
+---
+// src/components/bespoke/TabItem.astro
+// A bespoke implementation of the TabItem component to replace Starlight's TabItem component
+
+interface Props {
+  label: string;
+}
+
+const { label } = Astro.props;
+---
+
+<div class="tab-item not-prose" role="tabpanel" data-label={label}>
+  <slot />
+</div>
+
+<style>
+  .tab-item {
+    margin: 0;
+  }
+</style>
