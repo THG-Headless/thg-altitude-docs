@@ -178,7 +178,7 @@ pnpm install
 pnpm run dev
 ```
 
-The site will be available at http://localhost:3000.
+The site will be available at http://localhost:8080.
 
 ## Deployment
 
