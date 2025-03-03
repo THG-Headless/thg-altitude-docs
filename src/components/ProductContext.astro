@@ -44,8 +44,8 @@ const hasVersions = versions.length > 0;
 <div class="sticky top-[70px] z-30" data-product-context>
   <div class="bg-stone-950/75 backdrop-blur supports-backdrop-blur:bg-stone-950/60">
     <!-- Product Navigation -->
-    <div class="max-w-[90rem] mx-auto">
-      <div class="flex items-center gap-2 px-4 sm:px-6 lg:px-8 py-4 border-b border-stone-800">
+    <div class="container px-4 lg:px-0 mx-auto">
+      <div class="flex items-center gap-2 px-4 lg:px-0 py-4 border-b border-stone-800">
         <a href="/products" class="text-stone-400 hover:text-stone-300">Products</a>
         <svg class="w-4 h-4 text-stone-600" viewBox="0 0 16 16" fill="none">
           <path d="M6 12l4-4-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -93,8 +93,8 @@ const hasVersions = versions.length > 0;
 
   <!-- Quick Links -->
   <div class="bg-stone-950/75 backdrop-blur supports-backdrop-blur:bg-stone-950/60 border-b border-stone-800 relative -z-10">
-    <div class="max-w-[90rem] mx-auto">
-      <nav class="flex items-center gap-4 px-4 sm:px-6 lg:px-8">
+    <div class="container px-4 lg:px-0 mx-auto">
+      <nav class="flex items-center gap-4 px-4 lg:px-0">
         {product.quickLinks.map(link => (
           <a
             href={link.href}
