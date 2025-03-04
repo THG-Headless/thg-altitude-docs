@@ -22,19 +22,19 @@ const {
 } = Astro.props;
 ---
 
-<div class="relative">
-  <div class="h-10 mb-1">
-    {
-      semanticLabel && (
-        <div class="text-xs leading-normal font-mono text-gray-600 px-1 text-center relative">
+<div class="relative flex flex-col justify-end h-32">
+  {
+    semanticLabel && (
+      <div class="mb-1">
+        <div class="text-xs leading-normal font-mono px-1 text-center relative">
           {semanticLabel}
         </div>
-      )
-    }
-  </div>
+      </div>
+    )
+  }
   <div class="w-full text-left px-1">
     <div
-      class="group relative w-full h-16 rounded-sm cursor-pointer overflow-visible"
+      class="group relative w-full aspect-square rounded-sm cursor-pointer overflow-visible"
       style={{ backgroundColor: getColorValue(color.value) }}
     >
       <button
@@ -45,7 +45,7 @@ const {
       <div
         class="opacity-0 group-hover:opacity-100 absolute bottom-[calc(100%+0.5rem)] left-1/2 -translate-x-1/2 bg-white p-2 rounded shadow-lg text-xs whitespace-nowrap transition-opacity z-[100]"
       >
-        <div class="font-mono">{color.name}</div>
+        <div class="font-mono text-black">{color.name}</div>
         <div class="text-gray-500 border-b border-gray-100 pb-1 mb-1">
           <div>{color.value}</div>
         </div>
@@ -84,20 +84,20 @@ const {
 
 <script>
   document.querySelectorAll('[aria-label^="Copy"]').forEach((button) => {
-    button.addEventListener('click', (e) => {
-      const group = (e.currentTarget as HTMLElement).closest('.group');
-      const copiedMessage = group?.querySelector('.copied-message');
-      const instruction = group?.querySelector('.copied-instruction');
+    button.addEventListener("click", (e) => {
+      const group = (e.currentTarget as HTMLElement).closest(".group");
+      const copiedMessage = group?.querySelector(".copied-message");
+      const instruction = group?.querySelector(".copied-instruction");
 
       if (copiedMessage && instruction) {
-        instruction.classList.add('hidden');
-        copiedMessage.classList.remove('hidden');
-        copiedMessage.classList.add('flex');
+        instruction.classList.add("hidden");
+        copiedMessage.classList.remove("hidden");
+        copiedMessage.classList.add("flex");
 
         setTimeout(() => {
-          copiedMessage.classList.remove('flex');
-          copiedMessage.classList.add('hidden');
-          instruction.classList.remove('hidden');
+          copiedMessage.classList.remove("flex");
+          copiedMessage.classList.add("hidden");
+          instruction.classList.remove("hidden");
         }, 2000);
       }
     });

@@ -3,11 +3,13 @@ title: Drawer
 description: A composable drawer built with HTML dialog element
 ---
 
-import { Aside } from '@components/docs';
-import ShowComponent from '@components/docs/browser-components/doc-helpers/ShowComponent.astro';
-import BackdropDrawer from '@components/docs/browser-components/drawer/BackdropDrawer.html';
+import { Aside } from "@components/docs";
+import ShowComponent from "@components/docs/browser-components/doc-helpers/ShowComponent.astro";
+import BackdropDrawer from "@components/docs/browser-components/drawer/BackdropDrawer.html";
 
-### Drawer
+# Drawer
+
+## Overview
 
 The drawer component is a modal sidebar built on top of the native `<dialog>` element. It provides a smooth sliding animation and a seamless user experience across both desktop and mobile devices.
 The default implementation slides in from the left when opened and snaps closed when dismissed. It includes a semi-transparent blurred background and can be closed using the ESC key or by clicking on the background.
@@ -16,19 +18,22 @@ The drawer is fully accessible with ARIA attributes and supports both mouse and 
 <Aside type="caution">
 When implementing drawers for mobile devices, you **MUST** include at least one of the following:
 
-> A close button
-
-> A clickable backdrop
+- A close button
+- A clickable backdrop
 
 Without one of these, mobile users will be unable to close the drawer as the ESC key isn't available on mobile keyboards.
 
 </Aside>
+
+## Example Usage
 
 ### Complete Drawer with Button Example
 
 <ShowComponent>
   <BackdropDrawer />
 </ShowComponent>
+
+## CSS Variables
 
 The styling of the base drawer is defined by the following variables. As with all components, they will use these default values, but can be redefined within your main css file.
 
@@ -60,45 +65,39 @@ The styling of the base drawer is defined by the following variables. As with al
 
 The drawer is built following the [WAI-ARIA Modal Dialog Pattern](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/), implementing key accessibility features through semantic HTML and ARIA attributes.
 
-### Current Implementation Features
-
-#### Closing animation
-
-The current snap-close implementation can only be further customised with the use of Javascript and the [HTMLDialogElement: showModal() method](https://developer.mozilla.org/en-US/docs/Web/API/HTMLDialogElement/showModal).
-
-#### Structure and Labeling
+### Structure and Labeling
 
 Each Drawer includes:
 
-- [x] The `role="dialog"` attribute to identify it as a modal dialog
-- [x] `aria-modal="true"` to indicate it's a modal context
-- [x] `aria-label` to provide an accessible name for the drawer
-- [x] `aria-controls` on trigger buttons to associate them with their respective drawers
+- The `role="dialog"` attribute to identify it as a modal dialog
+- `aria-modal="true"` to indicate it's a modal context
+- `aria-label` to provide an accessible name for the drawer
+- `aria-controls` on trigger buttons to associate them with their respective drawers
 
-#### Keyboard Support
+### Keyboard Support
 
 The native HTML `<dialog>` element provides:
 
-- [x] ESC key to close the drawer
-- [x] Tab key to navigate through focusable elements
-- [x] Automatic focus management within the drawer
+- ESC key to close the drawer
+- Tab key to navigate through focusable elements
+- Automatic focus management within the drawer
 
-#### Screen Reader Support
+### Screen Reader Support
 
 The drawer includes:
 
-- [x] Clear labeling of all interactive elements
-- [x] Proper content organization
-- [x] Hidden decorative elements using `aria-hidden="true"`
-- [x] Descriptive button labels for actions and close buttons
+- Clear labeling of all interactive elements
+- Proper content organization
+- Hidden decorative elements using `aria-hidden="true"`
+- Descriptive button labels for actions and close buttons
 
 ### Mobile Accessibility
 
 For mobile devices:
 
-- [x] Clear close mechanisms (either close button or backdrop)
-- [x] Touch-friendly target sizes
-- [x] Maintained content structure
+- Clear close mechanisms (either close button or backdrop)
+- Touch-friendly target sizes
+- Maintained content structure
 
 ### Required Implementation Steps
 
@@ -106,17 +105,17 @@ When implementing drawers in your project, ensure you:
 
 #### Content Structure
 
-- [ ] Use semantic HTML elements for content structure
-- [ ] Include descriptive text for all buttons and interactive elements
-- [ ] Maintain proper focus management
+- Use semantic HTML elements for content structure
+- Include descriptive text for all buttons and interactive elements
+- Maintain proper focus management
 
 #### Keyboard Navigation & focus
 
-- [ ] Javascript must be used to entirely trap the focus within the drawer. In some browsers such as Chrome, when the user has reached the end of the drawer, tabbing again will move focus to the browsers toolbar. In order to make the drawer as accessible as possible, it should ignore the tool bar and go back to the start of the drawer's index.
+- Javascript must be used to entirely trap the focus within the drawer. In some browsers such as Chrome, when the user has reached the end of the drawer, tabbing again will move focus to the browsers toolbar. In order to make the drawer as accessible as possible, it should ignore the tool bar and go back to the start of the drawer's index.
 
 #### ARIA Attributes
 
-- [ ] Add appropriate `aria-label` value to the dialog element
-- [ ] Include `aria-controls` on trigger buttons
-- [ ] Add descriptive `aria-label` values for action buttons
-- [ ] Use `aria-hidden="true"` for decorative elements
+- Add appropriate `aria-label` value to the dialog element
+- Include `aria-controls` on trigger buttons
+- Add descriptive `aria-label` values for action buttons
+- Use `aria-hidden="true"` for decorative elements
