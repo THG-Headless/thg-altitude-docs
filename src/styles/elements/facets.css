@@ -69,7 +69,7 @@
   .elements-facets-facets-tabs-container .elements-facets-dropdown-list,
   .elements-facets-facets-tabs-container .elements-facets-clear-facet-button,
   .elements-facets-facets-tabs-container .elements-facets-filter-tab-button {
-    background: hsl(var(--background)) !important;
+    background: #000 !important;
   }
   
   @media only screen and (width < 80rem) {

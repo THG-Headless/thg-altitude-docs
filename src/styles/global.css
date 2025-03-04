@@ -57,6 +57,10 @@
     }
 }
 
+h1, h2, h3, h4, h5, h6 {
+    @apply antialiased;
+}
+
 :root {
   --default-font-family: "Poppins", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", Segoe UI Symbol, "Noto Color Emoji";
 }
