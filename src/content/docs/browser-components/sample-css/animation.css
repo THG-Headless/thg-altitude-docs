@@ -1,0 +1,6 @@
+@theme {
+  --duration-speed-none: 0s;
+  --duration-speed-quick: 0.1s;
+  --duration-speed-default: 0.2s;
+  --duration-speed-slow: 0.3s;
+}

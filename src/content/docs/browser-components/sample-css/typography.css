@@ -1,0 +1,48 @@
+@theme {
+  /* Desktop Sizes */
+  --text-desktop-2xl: 45px;
+  --line-height-desktop-2xl: 56px;
+  --text-desktop-xl: 37px;
+  --line-height-desktop-xl: 48px;
+  --text-desktop-2lg: 30px;
+  --line-height-desktop-2lg: 40px;
+  --text-desktop-lg: 24px;
+  --line-height-desktop-lg: 32px;
+  --text-desktop-md: 20px;
+  --line-height-desktop-md: 28px;
+  --text-desktop-body: 16px;
+  --line-height-desktop-body: 24px;
+  --text-desktop-sm: 14px;
+  --line-height-desktop-sm: 20px;
+  --text-desktop-xs: 13px;
+  --line-height-desktop-xs: 20px;
+
+  /* Mobile Font Sizes */
+  --text-mobile-2xl: 32px;
+  --line-height-mobile-2xl: 40px;
+  --text-mobile-xl: 28px;
+  --line-height-mobile-xl: 36px;
+  --text-mobile-2lg: 24px;
+  --line-height-mobile-2lg: 32px;
+  --text-mobile-lg: 21px;
+  --line-height-mobile-lg: 28px;
+  --text-mobile-md: 18px;
+  --line-height-mobile-md: 24px;
+  --text-mobile-body: 16px;
+  --line-height-mobile-body: 24px;
+  --text-mobile-sm: 14px;
+  --line-height-mobile-sm: 20px;
+  --text-mobile-xs: 13px;
+  --line-height-mobile-xs: 20px;
+
+  /* Font Weights */
+  --font-thin: 100;
+  --font-extra-light: 200;
+  --font-light: 300;
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semi-bold: 600;
+  --font-bold: 700;
+  --font-extra-bold: 800;
+  --font-black: 900;
+}

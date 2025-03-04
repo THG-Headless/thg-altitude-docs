@@ -16,18 +16,3 @@ const { title, lang, code } = Astro.props;
   )}
   <pre class={`language-${lang} ${title ? 'pt-8' : ''}`}><code class={`language-${lang}`}>{code.trim()}</code></pre>
 </div>
-
-<style>
-  pre {
-    @apply rounded-lg overflow-hidden bg-stone-900;
-  }
-
-  code {
-    @apply font-mono text-sm block p-4;
-  }
-
-  /* Remove default padding when title is present */
-  pre[class*="language-"].pt-8 code {
-    @apply pt-0;
-  }
-</style>

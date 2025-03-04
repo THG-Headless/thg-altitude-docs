@@ -10,14 +10,13 @@ const resources = [
 const company = [
   { name: "About", href: "/about" },
   { name: "Blog", href: "/blog" },
-  { name: "Careers", href: "/careers" },
-  { name: "Contact", href: "/contact" }
+  { name: "Careers", href: "https://www.thg.com/talent/job-search?division=Ingenuity+Technology&page=1" },
 ];
 ---
 
-<footer class="bg-stone-950 border-t border-stone-800 relative z-100" aria-labelledby="footer-heading">
+<footer class="bg-stone-950 mt-26 border-t border-stone-800 relative z-100" aria-labelledby="footer-heading">
   <h2 id="footer-heading" class="sr-only">Footer</h2>
-  <div class="mx-auto container px-6 pb-8 pt-16 sm:pt-24 lg:px-8 lg:pt-32">
+  <div class="mx-auto container px-6 pb-8 pt-16 sm:pt-24 lg:px-8 lg:pt-26">
     <div class="xl:grid xl:grid-cols-3 xl:gap-8">
       <div class="space-y-8">
         <img class="h-7" src="/icons/altitude-alt.svg" alt="THG Commerce">
@@ -56,8 +55,17 @@ const company = [
         </div>
       </div>
     </div>
-    <div class="mt-16 border-t border-stone-900/10 pt-8 sm:mt-20 lg:mt-24">
-      <p class="text-xs leading-5 text-stone-400">&copy; {currentYear} THG Commerce. All rights reserved.</p>
+    <div class="border-t flex items-center justify-center border-stone-900/10 pt-8">
+      <p class="text-xs flew-grow w-full leading-5 text-stone-400">&copy; {currentYear} THG Commerce. All rights reserved.</p>
+      <iframe 
+        src="https://thg-altitude.instatus.com/embed-status/40fdbec4/dark-sm" 
+        width="230" 
+        height="61"
+
+        frameBorder="0" 
+        scrolling="no" 
+        style="border: none; flex: 0; align-items: center;"
+      ></iframe>
     </div>
   </div>
 </footer>

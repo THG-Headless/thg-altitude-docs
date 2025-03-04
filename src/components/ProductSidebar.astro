@@ -20,7 +20,7 @@ const { productGroups } = Astro.props;
         <li>
           <a
             href={`#product-group-${index}`}
-            class="block px-4 py-3 text-base font-medium rounded-lg border-l-4 border-transparent hover:bg-stone-800/50 text-stone-400 hover:text-stone-200 transition-all duration-200"
+            class="block px-4 py-3 text-base rounded-lg border-l-4 border-transparent hover:bg-stone-800/50 text-stone-400 hover:text-stone-200 transition-all duration-200"
             data-section={`product-group-${index}`}
           >
             {group.title}
@@ -88,7 +88,7 @@ const { productGroups } = Astro.props;
 <style>
   .overflow-y-auto {
     scrollbar-width: thin;
-    scrollbar-color: theme('colors.gray.700') transparent;
+    /* scrollbar-color: theme('colors.gray.700') transparent; */
   }
 
   .overflow-y-auto::-webkit-scrollbar {
@@ -100,7 +100,7 @@ const { productGroups } = Astro.props;
   }
 
   .overflow-y-auto::-webkit-scrollbar-thumb {
-    background-color: theme('colors.gray.700');
+    /* background-color: theme('colors.gray.700'); */
     border-radius: 3px;
   }
 </style>

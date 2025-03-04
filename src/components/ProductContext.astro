@@ -45,14 +45,14 @@ const hasVersions = versions.length > 0;
   <div class="bg-stone-950/75 backdrop-blur supports-backdrop-blur:bg-stone-950/60">
     <!-- Product Navigation -->
     <div class="container px-4 lg:px-0 mx-auto">
-      <div class="flex items-center gap-2 px-4 lg:px-0 py-4 border-b border-stone-800">
+      <div class="flex items-center text-sm gap-2 px-4 lg:px-1 py-4 border-b border-stone-800">
         <a href="/products" class="text-stone-400 hover:text-stone-300">Products</a>
         <svg class="w-4 h-4 text-stone-600" viewBox="0 0 16 16" fill="none">
           <path d="M6 12l4-4-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
         <div class="flex items-center gap-2">
           <img src={product.icon} alt="" class="w-5 h-5" />
-          <span class="font-medium text-stone-200">{product.name}</span>
+          <span class="text-stone-200">{product.name}</span>
         </div>
         
         {versionInfo && hasVersions && (

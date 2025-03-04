@@ -1,0 +1,150 @@
+---
+/**
+ * Bespoke implementation of Starlight's Aside component
+ * Based on https://starlight.astro.build/components/asides/
+ */
+
+interface Props {
+  /**
+   * The type of aside to display.
+   * @default 'note'
+   */
+  type?: 'note' | 'tip' | 'caution' | 'danger';
+
+  /**
+   * Optional custom title for the aside.
+   * If not provided, a default title based on the type will be used.
+   */
+  title?: string;
+}
+
+const { type = 'note', title } = Astro.props;
+
+// Default titles for each aside type
+const defaultTitles = {
+  note: 'Note',
+  tip: 'Tip',
+  caution: 'Caution',
+  danger: 'Danger',
+};
+
+// Icons for each aside type
+const icons = {
+  note: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="aside-icon"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>`,
+  tip: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="aside-icon"><path d="M12 2v8"/><path d="m4.93 10.93 1.41 1.41"/><path d="M2 18h2"/><path d="M20 18h2"/><path d="m19.07 10.93-1.41 1.41"/><path d="M22 22H2"/><path d="m8 22 4-10 4 10"/></svg>`,
+  caution: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="aside-icon"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>`,
+  danger: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="aside-icon"><rect width="16" height="16" x="4" y="4" rx="2"/><path d="m9 9 6 6"/><path d="m15 9-6 6"/></svg>`,
+};
+
+// Get the title to display
+const displayTitle = title || defaultTitles[type];
+
+// Get the icon for this aside type
+const icon = icons[type];
+---
+
+<aside class={`aside ${type}`} aria-label={displayTitle}>
+  <p class="aside-title" aria-hidden="true">
+    <span class="aside-icon-wrapper" set:html={icon} />
+    {displayTitle}
+  </p>
+  <section class="aside-content">
+    <slot />
+  </section>
+</aside>
+
+<style>
+  .aside {
+    --aside-color-base: var(--color-gray-100, #f3f4f6);
+    --aside-color-border: var(--color-gray-400, #9ca3af);
+    --aside-color-text: var(--color-gray-800, #1f2937);
+    --aside-color-title: var(--color-gray-900, #111827);
+    
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    border-inline-start: 0.25rem solid var(--aside-color-border);
+    background-color: var(--aside-color-base);
+    border-radius: 0.25rem;
+  }
+
+  .aside.note {
+    --aside-color-base: var(--color-blue-50, #eff6ff);
+    --aside-color-border: var(--color-blue-400, #60a5fa);
+    --aside-color-text: var(--color-blue-800, #1e40af);
+    --aside-color-title: var(--color-blue-900, #1e3a8a);
+  }
+
+  .aside.tip {
+    --aside-color-base: var(--color-green-50, #f0fdf4);
+    --aside-color-border: var(--color-green-400, #4ade80);
+    --aside-color-text: var(--color-green-800, #166534);
+    --aside-color-title: var(--color-green-900, #14532d);
+  }
+
+  .aside.caution {
+    --aside-color-base: var(--color-yellow-50, #fefce8);
+    --aside-color-border: var(--color-yellow-400, #facc15);
+    --aside-color-text: var(--color-yellow-800, #854d0e);
+    --aside-color-title: var(--color-yellow-900, #713f12);
+  }
+
+  .aside.danger {
+    --aside-color-base: var(--color-red-50, #fef2f2);
+    --aside-color-border: var(--color-red-400, #f87171);
+    --aside-color-text: var(--color-red-800, #991b1b);
+    --aside-color-title: var(--color-red-900, #7f1d1d);
+  }
+
+  .aside-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--aside-color-title);
+  }
+
+  .aside-icon-wrapper {
+    display: flex;
+    align-items: center;
+    color: var(--aside-color-border);
+  }
+
+  .aside-content {
+    color: var(--aside-color-text);
+  }
+
+  /* Dark mode adjustments */
+  :global(.dark) .aside {
+    --aside-color-base: rgba(255, 255, 255, 0.05);
+  }
+
+  :global(.dark) .aside.note {
+    --aside-color-base: rgba(59, 130, 246, 0.1);
+    --aside-color-border: rgba(59, 130, 246, 0.5);
+    --aside-color-text: rgba(219, 234, 254, 0.9);
+    --aside-color-title: rgba(219, 234, 254, 1);
+  }
+
+  :global(.dark) .aside.tip {
+    --aside-color-base: rgba(34, 197, 94, 0.1);
+    --aside-color-border: rgba(34, 197, 94, 0.5);
+    --aside-color-text: rgba(187, 247, 208, 0.9);
+    --aside-color-title: rgba(187, 247, 208, 1);
+  }
+
+  :global(.dark) .aside.caution {
+    --aside-color-base: rgba(234, 179, 8, 0.1);
+    --aside-color-border: rgba(234, 179, 8, 0.5);
+    --aside-color-text: rgba(254, 240, 138, 0.9);
+    --aside-color-title: rgba(254, 240, 138, 1);
+  }
+
+  :global(.dark) .aside.danger {
+    --aside-color-base: rgba(239, 68, 68, 0.1);
+    --aside-color-border: rgba(239, 68, 68, 0.5);
+    --aside-color-text: rgba(254, 202, 202, 0.9);
+    --aside-color-title: rgba(254, 202, 202, 1);
+  }
+</style>

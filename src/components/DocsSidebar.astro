@@ -264,7 +264,7 @@ function isSectionActive(items: NavItem[] | undefined): boolean {
   <div class="pb-10">
     {currentVersion && (
       <div class="mb-4">
-        <div class="text-sm font-medium text-stone-400">
+        <div class="text-xs text-stone-400">
           Version: <span class="text-stone-300">{currentVersion}</span>
         </div>
       </div>
@@ -277,7 +277,7 @@ function isSectionActive(items: NavItem[] | undefined): boolean {
             <div class="accordion-item">
               <button
                 type="button"
-                class={`accordion-button flex items-center justify-between w-full py-1.5 text-sm transition-colors ${
+                class={`accordion-button flex items-center justify-between w-full py-1.5 text-xs transition-colors ${
                   isSectionActive(item.items)
                     ? 'font-medium'
                     : 'text-stone-400 hover:text-stone-300'
@@ -303,7 +303,7 @@ function isSectionActive(items: NavItem[] | undefined): boolean {
                       <div class="accordion-item">
                         <button
                           type="button"
-                          class={`accordion-button flex items-center justify-between w-full py-1.5 text-sm transition-colors ${
+                          class={`accordion-button flex items-center justify-between w-full py-1.5 text-xs transition-colors ${
                             isSectionActive(subItem.items)
                               ? 'font-medium'
                               : 'text-stone-400 hover:text-stone-300'
@@ -328,7 +328,7 @@ function isSectionActive(items: NavItem[] | undefined): boolean {
                                 <div class="accordion-item">
                                   <button
                                     type="button"
-                                    class={`accordion-button flex items-center justify-between w-full py-1.5 text-sm transition-colors ${
+                                    class={`accordion-button flex items-center justify-between w-full py-1.5 text-xs transition-colors ${
                                       isSectionActive(subSubItem.items)
                                         ? 'font-medium'
                                         : 'text-stone-400 hover:text-stone-300'
@@ -353,7 +353,7 @@ function isSectionActive(items: NavItem[] | undefined): boolean {
                                           <div class="accordion-item">
                                             <button
                                               type="button"
-                                              class={`accordion-button flex items-center justify-between w-full py-1.5 text-sm transition-colors ${
+                                              class={`accordion-button flex items-center justify-between w-full py-1.5 text-xs transition-colors ${
                                                 isSectionActive(level4Item.items)
                                                   ? 'font-medium'
                                                   : 'text-stone-400 hover:text-stone-300'
@@ -376,7 +376,7 @@ function isSectionActive(items: NavItem[] | undefined): boolean {
                                                 <li>
                                                   <a
                                                     href={level5Item.href}
-                                                    class={`block py-1.5 text-sm transition-colors ${
+                                                    class={`block py-1.5 text-xs transition-colors ${
                                                       isActive(level5Item.href || '')
                                                         ? 'text-white font-medium'
                                                         : 'text-stone-400 hover:text-stone-300'
@@ -391,7 +391,7 @@ function isSectionActive(items: NavItem[] | undefined): boolean {
                                         ) : (
                                           <a
                                             href={level4Item.href}
-                                            class={`block py-1.5 text-sm transition-colors ${
+                                            class={`block py-1.5 text-xs transition-colors ${
                                               isActive(level4Item.href || '')
                                                 ? 'font-medium'
                                                 : 'text-stone-400 hover:text-stone-300'
@@ -407,7 +407,7 @@ function isSectionActive(items: NavItem[] | undefined): boolean {
                               ) : (
                                 <a
                                   href={subSubItem.href}
-                                  class={`block py-1.5 text-sm transition-colors ${
+                                  class={`block py-1.5 text-xs transition-colors ${
                                     isActive(subSubItem.href || '')
                                       ? 'font-medium'
                                       : 'text-stone-400 hover:text-stone-300'
@@ -423,7 +423,7 @@ function isSectionActive(items: NavItem[] | undefined): boolean {
                     ) : (
                       <a
                         href={subItem.href}
-                        class={`block py-1.5 text-sm transition-colors ${
+                        class={`block py-1.5 text-xs transition-colors ${
                           isActive(subItem.href || '')
                             ? 'font-medium'
                             : 'text-stone-400 hover:text-stone-300'
@@ -439,7 +439,7 @@ function isSectionActive(items: NavItem[] | undefined): boolean {
           ) : (
             <a
               href={item.href}
-              class={`block py-1.5 text-sm transition-colors ${
+              class={`block py-1.5 text-xs transition-colors ${
                 isActive(item.href || '')
                   ? 'font-medium'
                   : 'text-stone-400 hover:text-stone-300'

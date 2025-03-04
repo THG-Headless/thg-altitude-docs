@@ -20,7 +20,7 @@ const toc = headings.filter(heading => heading.depth > 1 && heading.depth < 4);
     <h5 class="mb-3 text-sm font-semibold text-stone-400 uppercase tracking-wide">
       On this page
     </h5>
-    <ul class="space-y-1 text-sm" id="table-of-contents">
+    <ul class="space-y-1 text-xs" id="table-of-contents">
       {toc.map(heading => (
         <li>
           <a
@@ -101,7 +101,7 @@ const toc = headings.filter(heading => heading.depth > 1 && heading.depth < 4);
 <style>
   .overflow-y-auto {
     scrollbar-width: thin;
-    scrollbar-color: theme('colors.gray.700') transparent;
+    /* scrollbar-color: theme('colors.gray.700') transparent; */
   }
 
   .overflow-y-auto::-webkit-scrollbar {
@@ -113,7 +113,7 @@ const toc = headings.filter(heading => heading.depth > 1 && heading.depth < 4);
   }
 
   .overflow-y-auto::-webkit-scrollbar-thumb {
-    background-color: theme('colors.gray.700');
+    /* background-color: theme('colors.gray.700'); */
     border-radius: 3px;
   }
 </style>

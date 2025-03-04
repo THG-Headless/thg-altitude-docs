@@ -7,3 +7,4 @@ export { default as Table } from './Table.astro';
 export { default as BulletList } from './BulletList.astro';
 export { default as Tabs } from './Tabs.astro';
 export { default as TabItem } from './TabItem.astro';
+export { default as Aside } from './Aside.astro';

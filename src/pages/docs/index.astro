@@ -26,8 +26,8 @@ const availableProducts = Object.keys(products)
 <BaseLayout title="Documentation">
   <div class="container px-4 lg:px-0 mx-auto px-4 sm:px-6 lg:px-8">
     <header class="py-16 sm:text-center">
-      <h1 class="mb-4 text-3xl sm:text-4xl tracking-tight text-stone-100 font-extrabold">THG Altitude Documentation</h1>
-      <p class="text-lg text-stone-400 font-medium">
+      <h1 class="mb-4 text-3xl sm:text-4xl tracking-tight text-stone-100">THG Altitude Documentation</h1>
+      <p class="text-lg text-stone-400 font-light">
         Comprehensive guides and references for all THG Altitude products
       </p>
     </header>
@@ -44,11 +44,11 @@ const availableProducts = Object.keys(products)
                 <img src={product.icon} alt="" class="w-6 h-6" />
               </div>
               <div class="flex items-center gap-3">
-                <h3 class="text-xl font-semibold text-stone-100">
+                <h3 class="text-[1.2rem] text-stone-100">
                   {product.name}
                 </h3>
                 {product.status && (
-                  <span class={`px-2 py-1 rounded text-xs font-medium ${
+                  <span class={`px-2 py-1 rounded text-xs ${
                     product.status === 'live' ? 'bg-green-500/10 text-green-500' :
                     product.status === 'beta' ? 'bg-blue-500/10 text-blue-500' :
                     product.status === 'alpha' ? 'bg-yellow-500/10 text-yellow-500' :
