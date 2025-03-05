@@ -56,7 +56,7 @@ const toc = headings.filter(heading => heading.depth > 1 && heading.depth < 4);
         if (entry.isIntersecting) {
           // Remove active class from all links
           tocLinks.forEach(link => {
-            link.classList.remove('text-primary-400', 'font-medium');
+            link.classList.remove('font-medium');
             if (link.classList.contains('pl-3')) {
               link.classList.add('text-stone-500');
             } else {
@@ -67,7 +67,7 @@ const toc = headings.filter(heading => heading.depth > 1 && heading.depth < 4);
           // Add active class to the current link
           if (link) {
             link.classList.remove(link.classList.contains('pl-3') ? 'text-stone-500' : 'text-stone-400');
-            link.classList.add('text-primary-400', 'font-medium');
+            link.classList.add('font-medium');
           }
         }
       });

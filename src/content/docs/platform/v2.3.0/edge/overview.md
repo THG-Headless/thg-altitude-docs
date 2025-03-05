@@ -92,6 +92,6 @@ export default {
 
 To get started with edge functions, check out:
 
-- [Writing Edge Functions](/docs/cloud/edge/functions)
-- [Edge Function Examples](/docs/cloud/edge/examples)
-- [Deployment Guide](/docs/cloud/guides/create-a-site)
+- [Writing Edge Functions](/docs/platform/edge/functions)
+- [Edge Function Examples](/docs/platform/edge/examples)
+- [Deployment Guide](/docs/platform/guides/create-a-site)

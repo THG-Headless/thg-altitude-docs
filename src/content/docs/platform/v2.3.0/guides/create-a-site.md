@@ -72,8 +72,8 @@ If you encounter issues during deployment:
 
 Now that you've created your site, you can:
 
-- [Set up environment variables](/docs/cloud/v2.3.0/guides/environment-variables)
-- [Configure the KV store](/docs/cloud/v2.3.0/guides/kv-store)
-- [Set up team permissions](/docs/cloud/v2.3.0/guides/team-permissions)
-- [Configure CI/CD integration](/docs/cloud/v2.3.0/guides/ci-cd-integration)
-- [Set up real-time monitoring](/docs/cloud/v2.3.0/guides/monitoring)
+- [Set up environment variables](/docs/platform/v2.3.0/guides/environment-variables)
+- [Configure the KV store](/docs/platform/v2.3.0/guides/kv-store)
+- [Set up team permissions](/docs/platform/v2.3.0/guides/team-permissions)
+- [Configure CI/CD integration](/docs/platform/v2.3.0/guides/ci-cd-integration)
+- [Set up real-time monitoring](/docs/platform/v2.3.0/guides/monitoring)

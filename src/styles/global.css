@@ -63,6 +63,7 @@ h1, h2, h3, h4, h5, h6 {
 
 :root {
   --default-font-family: "Poppins", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", Segoe UI Symbol, "Noto Color Emoji";
+  --color-primary: #43177b;
 }
 
 /* Custom link underline animation */
@@ -171,7 +172,7 @@ h4:hover .heading-anchor {
 }
 
 .details-custom summary {
-  @apply cursor-pointer dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300;
+  @apply cursor-pointer hover:text-primary-700 dark:hover:text-primary-300;
 }
 
 .details-custom[open] summary {
@@ -202,4 +203,89 @@ pre[class*="language-"].pt-8 code {
 
 .expressive-code .frame pre {
   background: #0e0e0e !important;
+}
+
+.prose {
+  :where(h2):not(:where([class~="not-prose"],[class~="not-prose"] *)),
+  :where(h1):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+    @apply font-semibold;
+  }
+
+  :where(img):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+    @apply rounded-lg my-6 mx-auto;
+  }
+
+  :where(ul):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+    list-style-type: disc;
+    @apply mb-12;
+  }
+
+  :where(table):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+    @apply text-sm;
+  }
+
+  :where(code):not(:where([class~="not-prose"],[class~="not-prose"] *))::before,
+  :where(code):not(:where([class~="not-prose"],[class~="not-prose"] *))::after {
+    content: "";
+  }
+}
+
+pre {
+  @apply rounded-lg overflow-hidden bg-stone-900;
+  padding: 1.5rem;
+}
+
+code:not(pre *) {
+  @apply font-mono font-medium text-sm bg-white/5 inline p-1 px-1 border border-white/20 rounded-sm;
+}
+
+/* Remove default padding when title is present */
+pre[class*="language-"].pt-8 code {
+  @apply pt-0;
+}
+
+/* Blog Styles */
+
+.blog-content h2 {
+  @apply text-3xl font-semibold text-stone-900 dark:text-white mb-6 mt-12 border-b border-stone-200 dark:border-stone-800 pb-2;
+}
+
+.blog-content h3 {
+  @apply text-lg text-stone-900 dark:text-white mb-4 mt-8;
+}
+
+.blog-content p {
+  @apply mb-6 leading-7 text-stone-700 dark:text-stone-300;
+}
+
+.blog-content a {
+  @apply hover:underline;
+}
+
+.blog-content ul {
+  @apply my-6 ml-6 list-disc;
+}
+
+.blog-content ol {
+  @apply my-6 ml-6 list-decimal;
+}
+
+.blog-content li {
+  @apply mb-2 text-stone-700 dark:text-stone-300;
+}
+
+.blog-content blockquote {
+  @apply border-l-4 border-stone-200 dark:border-stone-700 pl-4 italic my-6 text-stone-600 dark:text-stone-400;
+}
+
+.blog-content code:not(pre code) {
+  @apply bg-stone-100 dark:bg-stone-800 rounded px-1.5 py-0.5 text-stone-900 dark:text-stone-100 font-mono text-sm;
+}
+
+.blog-content pre {
+  @apply bg-stone-900 rounded-lg overflow-hidden my-6 text-sm p-4;
+}
+
+.blog-content img {
+  @apply rounded-lg my-6 mx-auto;
 }

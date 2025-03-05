@@ -23,7 +23,7 @@ Documentation site covering the following:
 - **Astro Integration** - i18N, Commerce API, Blog API abstractions
 - **Astro Adapter** - Astro to Altitude worker adapter
 - **Altitude CLI** - Environment management
-- **Altitude v0** - Prompt to UI to deployment interface/LLM
+- **Altitude Spark** - Prompt to UI to deployment interface/LLM
 
 The documentation site is built with [Astro](https://astro.build/).
 
@@ -103,7 +103,7 @@ This route automatically redirects to the corresponding path in the latest versi
 
 #### Automatic Redirection
 
-When accessing a product's documentation without specifying a version (e.g., `/docs/cloud`), the system automatically redirects to the latest version of that product's documentation.
+When accessing a product's documentation without specifying a version (e.g., `/docs/platform`), the system automatically redirects to the latest version of that product's documentation.
 
 ### Navigation Structure
 
@@ -120,8 +120,8 @@ The sidebar navigation is automatically generated from the content files, with t
 
 #### Special Case Handling
 
-- **Single Item Pages**: If a page is the only item in its section (e.g., a standalone page like `/docs/cloud/changelog`), the sidebar is hidden to provide a cleaner layout
-- **Non-versioned Content**: Non-versioned content (e.g., `/docs/cloud/changelog`) is accessible without redirection
+- **Single Item Pages**: If a page is the only item in its section (e.g., a standalone page like `/docs/platform/changelog`), the sidebar is hidden to provide a cleaner layout
+- **Non-versioned Content**: Non-versioned content (e.g., `/docs/platform/changelog`) is accessible without redirection
 
 ### Content Sorting
 

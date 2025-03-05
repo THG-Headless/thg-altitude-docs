@@ -7,7 +7,7 @@ interface Props {
     text: string;
     href: string;
   };
-  secondaryAction: {
+  secondaryAction?: {
     text: string;
     href: string;
   };
@@ -26,78 +26,525 @@ const {
   highlights = []
 } = Astro.props;
 ---
-
-<div class="w-full rounded-2xl container mx-auto overflow-hidden outline outline-white/10 bg-gradient-to-b from-stone-900/30 via-transparent to-transparent">
-  <div class="relative">
-    <!-- Background Pattern -->
-    <div class="absolute inset-0 opacity-10">
-      <div class="absolute inset-0" style="background-image: url('data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
-    </div>
-
-    <!-- Radial Gradient Overlay -->
-    <div class="absolute inset-0 bg-gradient-radial from-transparent via-stone-900/50 to-stone-900"></div>
-
-    <!-- Content -->
-    <div class="relative container px-4 lg:px-0 mx-auto py-20 pb-10">
-      <div class="max-w-3xl mx-auto text-center px-4 sm:px-6 lg:px-8">
-        <!-- Icon -->
-        <div class="flex justify-center mb-8">
-          <div class="relative">
-            <div class="absolute inset-0 bg-primary-500/20 blur-xl rounded-full"></div>
-            <div class="relative w-20 h-20 bg-primary-500/10 rounded-2xl p-3 border border-primary-500/20">
-              <img src={icon} alt="" class="w-full h-full" />
+<div id="hero" class="overflow-hidden relative -mt-[74px] py-[74px] pb-[120px]">
+  <div class="absolute bottom-0 left-0 w-full h-62 bg-gradient-to-t from-black to-transparent z-10 pointer-events-none"></div>
+  <div class="backdrop-blur-2xl w-full h-full -z-0 absolute top-0 left-0"></div>
+  <div class="w-full rounded-1xl container mx-auto overflow-hidden outline outline-white/10 bg-gradient-to-b from-stone-900/30 via-transparent to-transparent">
+    <div class="relative">
+      <!-- Content -->
+      <div class="relative container px-4 lg:px-0 mx-auto py-20 pb-10">
+        <div class="max-w-3xl mx-auto text-center px-4 sm:px-6 lg:px-8">
+          <!-- Icon -->
+          <div class="flex justify-center mb-8">
+            <div class="relative">
+              <div class="absolute inset-0 blur-xl rounded-full"></div>
+              <div class="relative w-20 h-20  rounded-2xl p-3 border border-stone-500/20 shadow-[0px_0px_76px_0px_rgba(87,87,87,0.3)]">
+                <img src={icon} alt="" class="w-full h-full" />
+              </div>
             </div>
+          </div>
+
+          <!-- Title -->
+          <h1 class="block font-sans text-4xl md:text-5xl lg:text-6xl">
+            {title}
+          </h1>
+
+          <!-- Description -->
+          <p class="mt-6 text-stone-400">
+            {description}
+          </p>
+
+          <!-- Actions -->
+          <div class="mt-10 gap-4 flex justify-center flex-wrap">
+            <a 
+              href={primaryAction.href}
+              class="inline-flex justify-center items-center gap-x-2 text-center bg-white text-black border border-transparent text-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2 focus:ring-offset-stone-800 transition py-3 px-6"
+            >
+              {primaryAction.text}
+              <svg class="w-3 h-3" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M5.27921 2L10.9257 7.64645C11.1209 7.84171 11.1209 8.15829 10.9257 8.35355L5.27921 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </a>
+            {secondaryAction && 
+            <a 
+              href={secondaryAction.href}
+              class="inline-flex justify-center items-center gap-x-2 text-center text-sm text-white hover:text-stone-200 focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2 focus:ring-offset-stone-800 transition py-3 px-4"
+            >
+              {secondaryAction.text}
+              <svg class="w-2.5 h-2.5" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M5.27921 2L10.9257 7.64645C11.1209 7.84171 11.1209 8.15829 10.9257 8.35355L5.27921 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </a>
+            }
           </div>
         </div>
 
-        <!-- Title -->
-        <h1 class="block font-sans text-4xl md:text-5xl lg:text-6xl">
-          {title}
-        </h1>
-
-        <!-- Description -->
-        <p class="mt-6 text-stone-400">
-          {description}
-        </p>
-
-        <!-- Actions -->
-        <div class="mt-10 gap-4 flex justify-center flex-wrap">
-          <a 
-            href={primaryAction.href}
-            class="inline-flex justify-center items-center gap-x-2 text-center bg-white text-black border border-transparent text-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2 focus:ring-offset-stone-800 transition py-3 px-6"
-          >
-            {primaryAction.text}
-            <svg class="w-3 h-3" width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M5.27921 2L10.9257 7.64645C11.1209 7.84171 11.1209 8.15829 10.9257 8.35355L5.27921 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-          </a>
-          <a 
-            href={secondaryAction.href}
-            class="inline-flex justify-center items-center gap-x-2 text-center text-sm text-white hover:text-stone-200 focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2 focus:ring-offset-stone-800 transition py-3 px-4"
-          >
-            {secondaryAction.text}
-            <svg class="w-2.5 h-2.5" width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M5.27921 2L10.9257 7.64645C11.1209 7.84171 11.1209 8.15829 10.9257 8.35355L5.27921 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-          </a>
-        </div>
+        <!-- Highlights -->
+        {highlights.length > 0 && (
+          <div class="mt-20 grid sm:grid-cols-2 lg:grid-cols-4 gap-8 px-4 sm:px-6 lg:px-8">
+            {highlights.map(highlight => (
+              <div class="bg-black/20 backdrop-blur-sm rounded-lg p-6 border border-stone-700/50 transition-colors">
+                <h3 class="text-base font-semibold text-stone-200 mb-2">
+                  {highlight.title}
+                </h3>
+                <p class="text-sm text-stone-400">
+                  {highlight.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
-
-      <!-- Highlights -->
-      {highlights.length > 0 && (
-        <div class="mt-20 grid sm:grid-cols-2 lg:grid-cols-4 gap-8 px-4 sm:px-6 lg:px-8">
-          {highlights.map(highlight => (
-            <div class="bg-black/20 backdrop-blur-sm rounded-lg p-6 border border-stone-700/50 hover:border-primary-500/50 transition-colors">
-              <h3 class="text-base font-semibold text-stone-200 mb-2">
-                {highlight.title}
-              </h3>
-              <p class="text-sm text-stone-400">
-                {highlight.description}
-              </p>
-            </div>
-          ))}
-        </div>
-      )}
     </div>
   </div>
 </div>
+<script>
+  "use strict";
+
+let canv, ctx; // canvas and context
+let maxx, maxy; // canvas dimensions
+
+// for animation
+let messages;
+let dist, radius;
+let nbx, nby;
+let grid;
+let sn;
+let mousePos, currentPos;
+
+// shortcuts for Math.
+const mrandom = Math.random;
+const mfloor = Math.floor;
+const mround = Math.round;
+const mceil = Math.ceil;
+const mabs = Math.abs;
+const mmin = Math.min;
+const mmax = Math.max;
+
+const mPI = Math.PI;
+const mPIS2 = Math.PI / 2;
+const mPIS3 = Math.PI / 3;
+const m2PI = Math.PI * 2;
+const m2PIS3 = (Math.PI * 2) / 3;
+const msin = Math.sin;
+const mcos = Math.cos;
+const matan2 = Math.atan2;
+
+const mhypot = Math.hypot;
+const msqrt = Math.sqrt;
+
+const rac3 = msqrt(3);
+const rac3s2 = rac3 / 2;
+
+//------------------------------------------------------------------------
+
+function alea(mini, maxi) {
+  // random number in given range
+
+  if (typeof maxi == "undefined") return mini * mrandom(); // range 0..mini
+
+  return mini + mrandom() * (maxi - mini); // range mini..maxi
+}
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+function intAlea(mini, maxi) {
+  // random integer in given range (mini..maxi - 1 or 0..mini - 1)
+  //
+  if (typeof maxi == "undefined") return mfloor(mini * mrandom()); // range 0..mini - 1
+  return mini + mfloor(mrandom() * (maxi - mini)); // range mini .. maxi - 1
+}
+//------------------------------------------------------------------------
+function lerp(p0, p1, alpha) {
+  return {
+    x: p1.x * alpha + p0.x * (1 - alpha),
+    y: p1.y * alpha + p0.y * (1 - alpha)
+  };
+}
+//------------------------------------------------------------------------
+// S I M P L E X   N O I S E
+//------------------------------------------------------------------------
+/* simplified by Dillon https://codepen.io/Dillo
+        The original file contains noise2D, noise3D and noise4D
+        */
+/*
+ * A fast javascript implementation of simplex noise by Jonas Wagner
+ *
+ * Based on a speed-improved simplex noise algorithm for 2D, 3D and 4D in Java.
+ * Which is based on example code by Stefan Gustavson (stegu@itn.liu.se).
+ * With Optimisations by Peter Eastman (peastman@drizzle.stanford.edu).
+ * Better rank ordering method by Stefan Gustavson in 2012.
+ *
+ *
+ * Copyright (C) 2012 Jonas Wagner
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ */
+(function () {
+  "use strict";
+
+  var F2 = 0.5 * (Math.sqrt(3.0) - 1.0),
+    G2 = (3.0 - Math.sqrt(3.0)) / 6.0,
+    F3 = 1.0 / 3.0,
+    G3 = 1.0 / 6.0,
+    F4 = (Math.sqrt(5.0) - 1.0) / 4.0,
+    G4 = (5.0 - Math.sqrt(5.0)) / 20.0;
+
+  function SimplexNoise(random) {
+    if (!random) random = Math.random;
+    this.p = new Uint8Array(256);
+    this.perm = new Uint8Array(512);
+    this.permMod12 = new Uint8Array(512);
+    for (var i = 0; i < 256; i++) {
+      this.p[i] = random() * 256;
+    }
+    for (i = 0; i < 512; i++) {
+      this.perm[i] = this.p[i & 255];
+      this.permMod12[i] = this.perm[i] % 12;
+    }
+  }
+  SimplexNoise.prototype = {
+    grad3: new Float32Array([
+      1,
+      1,
+      0,
+      -1,
+      1,
+      0,
+      1,
+      -1,
+      0,
+
+      -1,
+      -1,
+      0,
+      1,
+      0,
+      1,
+      -1,
+      0,
+      1,
+
+      1,
+      0,
+      -1,
+      -1,
+      0,
+      -1,
+      0,
+      1,
+      1,
+
+      0,
+      -1,
+      1,
+      0,
+      1,
+      -1,
+      0,
+      -1,
+      -1
+    ]),
+    // 3D simplex noise
+    noise3D: function (xin, yin, zin) {
+      var permMod12 = this.permMod12,
+        perm = this.perm,
+        grad3 = this.grad3;
+      var n0, n1, n2, n3; // Noise contributions from the four corners
+      // Skew the input space to determine which simplex cell we're in
+      var s = (xin + yin + zin) * F3; // Very nice and simple skew factor for 3D
+      var i = Math.floor(xin + s);
+      var j = Math.floor(yin + s);
+      var k = Math.floor(zin + s);
+      var t = (i + j + k) * G3;
+      var X0 = i - t; // Unskew the cell origin back to (x,y,z) space
+      var Y0 = j - t;
+      var Z0 = k - t;
+      var x0 = xin - X0; // The x,y,z distances from the cell origin
+      var y0 = yin - Y0;
+      var z0 = zin - Z0;
+      // For the 3D case, the simplex shape is a slightly irregular tetrahedron.
+      // Determine which simplex we are in.
+      var i1, j1, k1; // Offsets for second corner of simplex in (i,j,k) coords
+      var i2, j2, k2; // Offsets for third corner of simplex in (i,j,k) coords
+      if (x0 >= y0) {
+        if (y0 >= z0) {
+          i1 = 1;
+          j1 = 0;
+          k1 = 0;
+          i2 = 1;
+          j2 = 1;
+          k2 = 0;
+        } // X Y Z order
+        else if (x0 >= z0) {
+          i1 = 1;
+          j1 = 0;
+          k1 = 0;
+          i2 = 1;
+          j2 = 0;
+          k2 = 1;
+        } // X Z Y order
+        else {
+          i1 = 0;
+          j1 = 0;
+          k1 = 1;
+          i2 = 1;
+          j2 = 0;
+          k2 = 1;
+        } // Z X Y order
+      } else {
+        // x0<y0
+        if (y0 < z0) {
+          i1 = 0;
+          j1 = 0;
+          k1 = 1;
+          i2 = 0;
+          j2 = 1;
+          k2 = 1;
+        } // Z Y X order
+        else if (x0 < z0) {
+          i1 = 0;
+          j1 = 1;
+          k1 = 0;
+          i2 = 0;
+          j2 = 1;
+          k2 = 1;
+        } // Y Z X order
+        else {
+          i1 = 0;
+          j1 = 1;
+          k1 = 0;
+          i2 = 1;
+          j2 = 1;
+          k2 = 0;
+        } // Y X Z order
+      }
+      // A step of (1,0,0) in (i,j,k) means a step of (1-c,-c,-c) in (x,y,z),
+      // a step of (0,1,0) in (i,j,k) means a step of (-c,1-c,-c) in (x,y,z), and
+      // a step of (0,0,1) in (i,j,k) means a step of (-c,-c,1-c) in (x,y,z), where
+      // c = 1/6.
+      var x1 = x0 - i1 + G3; // Offsets for second corner in (x,y,z) coords
+      var y1 = y0 - j1 + G3;
+      var z1 = z0 - k1 + G3;
+      var x2 = x0 - i2 + 2.0 * G3; // Offsets for third corner in (x,y,z) coords
+      var y2 = y0 - j2 + 2.0 * G3;
+      var z2 = z0 - k2 + 2.0 * G3;
+      var x3 = x0 - 1.0 + 3.0 * G3; // Offsets for last corner in (x,y,z) coords
+      var y3 = y0 - 1.0 + 3.0 * G3;
+      var z3 = z0 - 1.0 + 3.0 * G3;
+      // Work out the hashed gradient indices of the four simplex corners
+      var ii = i & 255;
+      var jj = j & 255;
+      var kk = k & 255;
+      // Calculate the contribution from the four corners
+      var t0 = 0.6 - x0 * x0 - y0 * y0 - z0 * z0;
+      if (t0 < 0) n0 = 0.0;
+      else {
+        var gi0 = permMod12[ii + perm[jj + perm[kk]]] * 3;
+        t0 *= t0;
+        n0 =
+          t0 *
+          t0 *
+          (grad3[gi0] * x0 + grad3[gi0 + 1] * y0 + grad3[gi0 + 2] * z0);
+      }
+      var t1 = 0.6 - x1 * x1 - y1 * y1 - z1 * z1;
+      if (t1 < 0) n1 = 0.0;
+      else {
+        var gi1 = permMod12[ii + i1 + perm[jj + j1 + perm[kk + k1]]] * 3;
+        t1 *= t1;
+        n1 =
+          t1 *
+          t1 *
+          (grad3[gi1] * x1 + grad3[gi1 + 1] * y1 + grad3[gi1 + 2] * z1);
+      }
+      var t2 = 0.6 - x2 * x2 - y2 * y2 - z2 * z2;
+      if (t2 < 0) n2 = 0.0;
+      else {
+        var gi2 = permMod12[ii + i2 + perm[jj + j2 + perm[kk + k2]]] * 3;
+        t2 *= t2;
+        n2 =
+          t2 *
+          t2 *
+          (grad3[gi2] * x2 + grad3[gi2 + 1] * y2 + grad3[gi2 + 2] * z2);
+      }
+      var t3 = 0.6 - x3 * x3 - y3 * y3 - z3 * z3;
+      if (t3 < 0) n3 = 0.0;
+      else {
+        var gi3 = permMod12[ii + 1 + perm[jj + 1 + perm[kk + 1]]] * 3;
+        t3 *= t3;
+        n3 =
+          t3 *
+          t3 *
+          (grad3[gi3] * x3 + grad3[gi3 + 1] * y3 + grad3[gi3 + 2] * z3);
+      }
+      // Add contributions from each corner to get the final noise value.
+      // The result is scaled to stay just inside [-1,1]
+      return 32.0 * (n0 + n1 + n2 + n3);
+    }
+  };
+
+  window.SimplexNoise = SimplexNoise;
+})();
+//------------------------------------------------------------------------
+
+class Line {
+  constructor(kx, ky) {
+    this.kx = kx;
+    this.ky = ky;
+    this.c = { x: kx * dist, y: ky * dist };
+  } // constructor
+
+  draw(t, lum) {
+    ctx.beginPath();
+    ctx.moveTo(this.c.x, this.c.y);
+    let ang = t * 0.0025 + 2 * sn.noise3D(this.kx / 40, this.ky / 40, t / 2000);
+    ctx.lineTo(this.c.x + radius * mcos(ang), this.c.y + radius * msin(ang));
+    ctx.strokeStyle = `hsl(${(ang / m2PI) * 360} 100% ${lum}%)`;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  } // draw
+} // class Line
+//------------------------------------------------------------------------
+
+let animate;
+
+{
+  // scope for animate
+
+  let animState = 0;
+  let tPre;
+  let currT;
+  animate = function (tStamp) {
+    let message, dt;
+
+    message = messages.shift();
+    if (message && message.message == "reset") animState = 0;
+    if (message && message.message == "click") animState = 0;
+    window.requestAnimationFrame(animate);
+
+    switch (animState) {
+      case 0:
+        if (startOver()) {
+          ++animState;
+          tPre = tStamp;
+          currT = 0;
+        }
+        break;
+
+      case 1:
+        currentPos = lerp(currentPos, mousePos, 0.05);
+        let lum = 100 - (50 * currentPos.x) / maxx;
+        dt = tStamp - tPre;
+        tPre = tStamp;
+
+        currT += 0.15 * dt; // time running at speed(!) altered by mouse position
+
+        ctx.fillStyle = "#000";
+        ctx.fillRect(0, 0, maxx, maxy);
+        grid.forEach((row) => row.forEach((ln) => ln.draw(currT, lum)));
+        break;
+
+      case 2:
+        break;
+    } // switch
+  }; // animate
+} // scope for animate
+
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
+
+function startOver() {
+  // canvas dimensions
+  const hero = document.getElementById("hero");
+  maxx = hero?.offsetWidth;
+  maxy = hero?.offsetHeight;
+
+  mousePos = mousePos || { x: maxx / 2, y: maxy / 2 };
+  currentPos = currentPos || { x: maxx / 2, y: maxy / 2 };
+
+  canv.width = maxx;
+  canv.height = maxy;
+  ctx.lineJoin = "round";
+  ctx.lineCap = "round";
+
+  ctx.fillStyle = "#000";
+  ctx.fillRect(0, 0, maxx, maxy);
+
+  dist = alea(12, 20);
+  radius = (5 / 3) * dist;
+  nbx = mceil(maxx / dist) + 1;
+  nby = mceil(maxy / dist) + 1;
+  sn = new SimplexNoise();
+
+  grid = new Array(nby)
+    .fill(0)
+    .map((v, ky) => new Array(nbx).fill(0).map((v, kx) => new Line(kx, ky)));
+
+  return true;
+} // startOver
+
+//------------------------------------------------------------------------
+
+function mouseClick(event) {
+  messages.push({ message: "click" });
+} // mouseClick
+//------------------------------------------------------------------------
+function mouseMove(event) {
+  mousePos = mousePos || { x: 0, y: 0 };
+  mousePos.x = event.clientX;
+  mousePos.y = event.clientY;
+} // mousePos
+//------------------------------------------------------------------------
+class Touch {
+  constructor(target) {
+    target.addEventListener("touchstart", (event) => this.touchStart(event));
+    target.addEventListener("touchmove", (event) => this.touchStart(event));
+  }
+  touchStart(event) {
+    if (event.touches.length != 1) return;
+    mousePos = mousePos || { x: 0, y: 0 };
+    mousePos.x = event.touches[0].clientX;
+    mousePos.y = event.touches[0].clientY;
+  }
+}
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
+// beginning of execution
+
+{
+  canv = document.createElement("canvas");
+  canv.style.position = "absolute";
+  canv.style.left = "0";
+  canv.style.top = "0";
+  canv.style.zIndex = "-1";
+  canv.style.pointerEvents = "none";
+  canv.style.opacity = "0.75";
+  // document.body.appendChild(canv);
+  document.getElementById("hero")?.appendChild(canv);
+  ctx = canv.getContext("2d");
+  /*    canv.setAttribute ('title','click me'); */
+} // CANVAS creation
+canv.addEventListener("click", mouseClick);
+window.addEventListener("resize", mouseClick);
+// canv.addEventListener("mousemove", mouseMove);
+new Touch(canv);
+messages = [{ message: "reset" }];
+requestAnimationFrame(animate);
+
+</script>

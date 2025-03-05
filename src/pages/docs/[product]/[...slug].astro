@@ -61,7 +61,7 @@ export async function getStaticPaths() {
 const { product: productId, slug } = Astro.params;
 const { doc } = Astro.props;
 
-// We should NOT redirect non-root pages like /docs/cloud/changelog/
+// We should NOT redirect non-root pages like /docs/platform/changelog/
 // Only redirect if this is a direct access to a product root page
 
 // Get product info from config

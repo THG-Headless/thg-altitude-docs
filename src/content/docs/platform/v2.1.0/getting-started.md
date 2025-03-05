@@ -43,8 +43,8 @@ Before you begin, make sure you have:
 
 Now that you've deployed your first site, you can:
 
-- [Explore Edge Functions](/docs/cloud/edge/functions)
-- [Learn about Environment Management](/docs/cloud/walkthrough/sites)
-- [Discover Starter Kits](/docs/cloud/kits/introduction)
+- [Explore Edge Functions](/docs/platform/edge/functions)
+- [Learn about Environment Management](/docs/platform/walkthrough/sites)
+- [Discover Starter Kits](/docs/platform/kits/introduction)
 
-For more detailed information, check out our [documentation](/docs/cloud).
+For more detailed information, check out our [documentation](/docs/platform).

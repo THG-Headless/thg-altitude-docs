@@ -1,0 +1,444 @@
+---
+import PageLayout from '../../../layouts/PageLayout.astro';
+import ProductHero from '../../../components/ProductHero.astro';
+
+const features = [
+  {
+    title: "Blazing Fast Performance",
+    description: "V8 Isolate Edge SSR for lightning-fast performance regardless of traffic volume",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>`
+  },
+  {
+    title: "Global Edge Network",
+    description: "Sub-100ms Time to First Byte (TTFB) from anywhere in the world",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`
+  },
+  {
+    title: "Seamless Deployment",
+    description: "Deploy your front-end globally in just 3 minutes with GitHub integration",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"/></svg>`
+  },
+  {
+    title: "Customizable & Flexible",
+    description: "Build the perfect commerce website for your business with extensive customization",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"/></svg>`
+  }
+];
+
+const resources = [
+  {
+    title: "Documentation",
+    description: "Learn how to deploy with Cloud",
+    href: "/docs/platform",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>`
+  },
+  {
+    title: "Quick Start",
+    description: "Deploy your first site in minutes",
+    href: "/docs/platform/quickstart",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>`
+  },
+  {
+    title: "API Reference",
+    description: "Explore the Cloud API documentation",
+    href: "/docs/platform/api",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>`
+  }
+];
+
+const highlights = [
+  {
+    title: "Lightning Fast",
+    description: "Sub-100ms TTFB from anywhere in the world"
+  },
+  {
+    title: "Global Scale",
+    description: "200+ edge locations worldwide"
+  },
+  {
+    title: "Enterprise Ready",
+    description: "99.99% uptime with robust security"
+  },
+  {
+    title: "Developer First",
+    description: "Deploy in minutes with GitHub integration"
+  }
+];
+---
+
+<PageLayout
+  title="Cloud"
+  description="Edge-first delivery of headless front-ends"
+>
+  <ProductHero
+    title="Altitude Platform"
+    description="Deploy your headless front-end to the edge in minutes. Our global edge network delivers lightning-fast performance, seamless deployments, and enterprise-grade reliability."
+    icon="/icons/altitude-alt.svg"
+    primaryAction={{
+      text: "Go to Platform",
+      href: "https://www.platform.thgaltitude.com/"
+    }}
+    secondaryAction={{
+      text: "View Documentation",
+      href: "/docs/platform"
+    }}
+    highlights={highlights}
+  />
+
+  <section>
+    <div class="container px-4 py-10 sm:px-6 lg:px-12 lg:py-24 mx-auto">
+      <div class="mx-auto flex max-w-screen-md flex-col items-center gap-6">
+        <div
+          class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 text-foreground">
+          Overview
+        </div>
+        <h2 class="mb-2 text-center text-3xl font-semibold lg:text-4xl">
+          The building blocks of the web
+        </h2>
+        <p class="text-center text-stone-200 lg:text-lg">
+          Everything you need develop, deploy, scale and monitor.
+        </p>
+      </div>
+      <div class="flex flex-col items-center justify-center">
+        <div class="w-full max-w-96 lg:max-w-none">
+          <div data-orientation="horizontal" role="none" class="shrink-0 bg-border h-[1px] my-16 w-full"></div>
+          <div class="mx-auto inline-block w-full gap-x-10 lg:grid lg:grid-cols-4">
+            <h3 class="mb-4 text-2xl font-semibold lg:text-3xl">Develop</h3>
+            <ul class="col-span-3 grid gap-x-10 gap-y-4 lg:grid-cols-3">
+              <li class="flex gap-1 text-stone-200">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="lucide lucide-check mr-2 inline-block w-4">
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>JavaScript and TypeScript edge functions
+              </li>
+              <li class="flex gap-1 text-stone-200">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="lucide lucide-check mr-2 inline-block w-4">
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>NPM dependency management
+              </li>
+              <li class="flex gap-1 text-stone-200">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="lucide lucide-check mr-2 inline-block w-4">
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>Server-side rendering at the edge
+              </li>
+              <li class="flex gap-1 text-stone-200">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="lucide lucide-check mr-2 inline-block w-4">
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>Extensible starter kits
+              </li>
+              <li class="flex gap-1 text-stone-200">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="lucide lucide-check mr-2 inline-block w-4">
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>API endpoint creation
+              </li>
+              <li class="flex gap-1 text-stone-200">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="lucide lucide-check mr-2 inline-block w-4">
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>Request handling and manipulation
+              </li>
+              <li class="flex gap-1 text-stone-200">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="lucide lucide-check mr-2 inline-block w-4">
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>Edge KV store integration
+              </li>
+              <li class="flex gap-1 text-stone-200">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="lucide lucide-check mr-2 inline-block w-4">
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>Developer-friendly CLI tools
+              </li>
+              <li class="flex gap-1 text-stone-200">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="lucide lucide-check mr-2 inline-block w-4">
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>Custom environment variables
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="w-full max-w-96 lg:max-w-none">
+          <div data-orientation="horizontal" role="none" class="shrink-0 bg-border h-[1px] my-16 w-full"></div>
+          <div class="mx-auto inline-block w-full gap-x-10 lg:grid lg:grid-cols-4">
+            <h3 class="mb-4 text-2xl font-semibold lg:text-3xl">Deploy</h3>
+            <ul class="col-span-3 grid gap-x-10 gap-y-4 lg:grid-cols-3">
+              <li class="flex gap-1 text-stone-200">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="lucide lucide-check mr-2 inline-block w-4">
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>One-click GitHub deployments
+              </li>
+              <li class="flex gap-1 text-stone-200">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="lucide lucide-check mr-2 inline-block w-4">
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>Automatic preview environments
+              </li>
+              <li class="flex gap-1 text-stone-200">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="lucide lucide-check mr-2 inline-block w-4">
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>Branch-based deployments
+              </li>
+              <li class="flex gap-1 text-stone-200">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="lucide lucide-check mr-2 inline-block w-4">
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>Rollback capabilities
+              </li>
+              <li class="flex gap-1 text-stone-200">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="lucide lucide-check mr-2 inline-block w-4">
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>Environment variables management
+              </li>
+              <li class="flex gap-1 text-stone-200">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="lucide lucide-check mr-2 inline-block w-4">
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>Custom domain support
+              </li>
+              <li class="flex gap-1 text-stone-200">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="lucide lucide-check mr-2 inline-block w-4">
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>SSL/TLS certificate management
+              </li>
+              <li class="flex gap-1 text-stone-200">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="lucide lucide-check mr-2 inline-block w-4">
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>CI/CD pipeline integration
+              </li>
+              <li class="flex gap-1 text-stone-200">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="lucide lucide-check mr-2 inline-block w-4">
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>Multi-team collaboration
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="w-full max-w-96 lg:max-w-none">
+          <div data-orientation="horizontal" role="none" class="shrink-0 bg-border h-[1px] my-16 w-full"></div>
+          <div class="mx-auto inline-block w-full gap-x-10 lg:grid lg:grid-cols-4">
+            <h3 class="mb-4 text-2xl font-semibold lg:text-3xl">Scale</h3>
+            <ul class="col-span-3 grid gap-x-10 gap-y-4 lg:grid-cols-3">
+              <li class="flex gap-1 text-stone-200">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="lucide lucide-check mr-2 inline-block w-4">
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>Global edge network distribution
+              </li>
+              <li class="flex gap-1 text-stone-200">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="lucide lucide-check mr-2 inline-block w-4">
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>Edge caching with custom TTL
+              </li>
+              <li class="flex gap-1 text-stone-200">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="lucide lucide-check mr-2 inline-block w-4">
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>Request collapsing for performance
+              </li>
+              <li class="flex gap-1 text-stone-200">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="lucide lucide-check mr-2 inline-block w-4">
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>Key-Value store at the edge
+              </li>
+              <li class="flex gap-1 text-stone-200">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="lucide lucide-check mr-2 inline-block w-4">
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>Automatic scaling for traffic spikes
+              </li>
+              <li class="flex gap-1 text-stone-200">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="lucide lucide-check mr-2 inline-block w-4">
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>Cache purging capabilities
+              </li>
+              <li class="flex gap-1 text-stone-200">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="lucide lucide-check mr-2 inline-block w-4">
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>Customizable cache configuration
+              </li>
+              <li class="flex gap-1 text-stone-200">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="lucide lucide-check mr-2 inline-block w-4">
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>Reduced latency with edge processing
+              </li>
+              <li class="flex gap-1 text-stone-200">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="lucide lucide-check mr-2 inline-block w-4">
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>Cost-efficient resource utilization
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="w-full max-w-96 lg:max-w-none">
+          <div data-orientation="horizontal" role="none" class="shrink-0 bg-border h-[1px] my-16 w-full"></div>
+          <div class="mx-auto inline-block w-full gap-x-10 lg:grid lg:grid-cols-4">
+            <h3 class="mb-4 text-2xl font-semibold lg:text-3xl">Monitor</h3>
+            <ul class="col-span-3 grid gap-x-10 gap-y-4 lg:grid-cols-3">
+              <li class="flex gap-1 text-stone-200">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="lucide lucide-check mr-2 inline-block w-4">
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>Real-time performance analytics
+              </li>
+              <li class="flex gap-1 text-stone-200">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="lucide lucide-check mr-2 inline-block w-4">
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>BigQuery logging integration
+              </li>
+              <li class="flex gap-1 text-stone-200">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="lucide lucide-check mr-2 inline-block w-4">
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>Function logs and debugging
+              </li>
+              <li class="flex gap-1 text-stone-200">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="lucide lucide-check mr-2 inline-block w-4">
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>Traffic and usage metrics
+              </li>
+              <li class="flex gap-1 text-stone-200">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="lucide lucide-check mr-2 inline-block w-4">
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>Custom logging solutions
+              </li>
+              <li class="flex gap-1 text-stone-200">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="lucide lucide-check mr-2 inline-block w-4">
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>Detailed request tracking
+              </li>
+              <li class="flex gap-1 text-stone-200">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="lucide lucide-check mr-2 inline-block w-4">
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>Geographic and IP analytics
+              </li>
+              <li class="flex gap-1 text-stone-200">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="lucide lucide-check mr-2 inline-block w-4">
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>Response time monitoring
+              </li>
+              <li class="flex gap-1 text-stone-200">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="lucide lucide-check mr-2 inline-block w-4">
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>Custom header and cookie tracking
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <div class="container px-4 py-10 sm:px-6 lg:px-12 lg:py-24 mx-auto">
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 items-start gap-12">
+      {features.map(feature => (
+        <div class="text-center">
+          <div class="flex justify-center items-center w-12 h-12 rounded-xl mx-auto">
+            <Fragment set:html={feature.icon} />
+          </div>
+          <div class="mt-3">
+            <h3 class="text-base font-semibold text-stone-800 dark:text-stone-200">
+              {feature.title}
+            </h3>
+            <p class="mt-1 text-stone-600 dark:text-stone-400">
+              {feature.description}
+            </p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <!-- Resources -->
+  <div class="container px-4 py-10 sm:px-6 lg:px-12 lg:py-24 mx-auto">
+    <div class="max-w-2xl mx-auto text-center mb-10">
+      <h2 class="text-xl font-bold md:text-3xl dark:text-white">Resources</h2>
+      <p class="mt-3 text-stone-600 dark:text-stone-400">Everything you need to deploy with THG Commerce Cloud.</p>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 items-center">
+      {resources.map(resource => (
+        <a class="group flex flex-col h-full border shadow-sm rounded-xl hover:shadow-md transition bg-black/50 border-stone-800 justify-center" href={resource.href}>
+          <div class="p-4 md:p-5">
+            <div class="flex items-center gap-4">
+              <div class="flex justify-center items-center w-8 h-8 rounded-lg">
+                <Fragment set:html={resource.icon} />
+              </div>
+              <div class="grow">
+                <h3>
+                  {resource.title}
+                </h3>
+                <p class="text-sm text-stone-600 dark:text-stone-400">
+                  {resource.description}
+                </p>
+              </div>
+              <div class="flex-shrink-0 text-stone-400">
+                <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+              </div>
+            </div>
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+</PageLayout>

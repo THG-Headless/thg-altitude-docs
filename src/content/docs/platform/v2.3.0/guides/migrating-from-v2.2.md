@@ -182,6 +182,6 @@ Configure fine-grained permissions for team members:
 
 If you encounter any issues during migration:
 
-- Check the [troubleshooting guide](/docs/cloud/v2.3.0/guides/troubleshooting)
+- Check the [troubleshooting guide](/docs/platform/v2.3.0/guides/troubleshooting)
 - Contact support through the new in-app chat feature
 - Join our [community forum](https://community.thgaltitude.com)
