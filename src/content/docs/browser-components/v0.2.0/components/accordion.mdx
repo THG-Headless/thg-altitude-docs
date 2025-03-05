@@ -1,0 +1,136 @@
+---
+title: Accordion
+description: A primitive accordion
+---
+
+import { Aside } from "@components/docs";
+import ShowComponent from "@components/docs/browser-components/v0.2.0/doc-helpers/ShowComponent.astro";
+import SummaryAccordion from "@components/docs/browser-components/v0.2.0/accordion/SummaryAccordion.html";
+import NamedSummaryAccordion from "@components/docs/browser-components/v0.2.0/accordion/NamedSummaryAccordion.html";
+
+# Accordion
+
+## Overview
+
+Accordions provide a way to provide users with a large quantity of information, without visually overwhelming them.
+
+<Aside type="caution">
+
+There are two HTML templates laid out for the accordion, (Named) Summary Accordion and WCAG Accordion.
+
+The summary accordions using the details and summary tags have some CSS powered functionality, but we cannot guarantee that this pattern matches WCAG2.1 criteria.
+
+If using the Altitude Commerce starter kits, there is a Javascript based solution for the Accordion also provided, that confirms to WCAG best practices.
+
+</Aside>
+
+## Example Usage
+
+### Summary Accordion
+
+This accordion has a basic open close mechanic from the details/summary tag used.
+
+<ShowComponent>
+  <SummaryAccordion />
+</ShowComponent>
+
+### Named Summary Accordion
+
+Building on the initial Summary accordion, the use of the name attribute on the details tag allows only one section to be open at a time.
+
+<ShowComponent >
+  <NamedSummaryAccordion />
+</ShowComponent>
+{/* 
+### Style Override Example
+
+This is identical in functionality to the previous accordion, but demonstrates the styling flexibility of the accordion css variables
+
+<ShowComponent>
+  <div
+    style={{
+      "--accordion-gap": "0.5em",
+      "--accordion-divider-width": "none",
+      "--accordion-radius": "var(--radius-sm)",
+      "--accordion-section-radius": "var(--radius-sm)",
+      "--accordion-box-shadow": "var(--shadow-md)",
+    }}
+  >
+    <NamedSummaryAccordion />
+  </div>
+</ShowComponent> */}
+
+## CSS Variables
+
+The accordion system can be customized using CSS variables:
+
+### Layout and Sizing
+
+| Variable                      | Default Value | Description                                                            |
+| ----------------------------- | ------------- | ---------------------------------------------------------------------- |
+| `--accordion-gap`             | `0em`         | Horizontal space between sections                                      |
+| `--accordion-wrapper-padding` | `0px`         | Horizontal padding between the border of the accordion and its content |
+
+### Trigger Configuration
+
+| Variable                    | Default Value | Description                                            |
+| --------------------------- | ------------- | ------------------------------------------------------ |
+| `--accordion-inner-margin`  | `0px`         | Shared value between trigger and content to align text |
+| `--accordion-inner-padding` | `1em 1.5em`   | Shared value between trigger and content to align text |
+
+### Icon Configuration
+
+| Variable                               | Default Value                             | Description                                     |
+| -------------------------------------- | ----------------------------------------- | ----------------------------------------------- |
+| `--accordion-icon-expanded-transform`  | `rotate(180deg)`                          | Transformation to apply when panel is expanded  |
+| `--accordion-icon-transition`          | `all var(--duration-speed-quick) ease-in` | Transition to apply for icon animations         |
+| `--accordion-icon-collapsed-transform` | `rotate(0deg)`                            | Transformation to apply when panel is collapsed |
+
+### Borders and Styling
+
+| Variable                               | Default Value | Description                                                                                                                            |
+| -------------------------------------- | ------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `--accordion-radius`                   | `none`        | Rounding on outer borders                                                                                                              |
+| `--accordion-section-radius`           | `none`        | Rounding on section borders                                                                                                            |
+| `--accordion-border`                   | `none`        | Border thickness around the accordion                                                                                                  |
+| `--accordion-divider-width`            | `2px`         | Width of divider lines between accordion sections                                                                                      |
+| `--accordion-closed-divider-lightness` | `20%`         | Lightness of dividers between closed accordion sections, as a percentage of the skins border colour blended with its background colour |
+
+## Accessibility
+
+Using the pattern of the html details and summary tags allows the open/close interactivity of the accordion. To make it WCAG compliant and to activate some css based on aria changes, some Javascript will need to be implemented in the final version.
+
+### Current Implementation Features
+
+#### Structure and Labeling
+
+> Each trigger has a role of button to indicate it's interactivity to screen readers.
+> Every accordion section has aria to link the trigger / heading of the section to its content
+
+#### Keyboard Support
+
+The current implementation provides:
+
+> Tab navigation between focusable elements
+> Focus indicators on interactive elements
+> Space/Enter keys to open/close the dropdown
+
+#### Screen Reader Support
+
+#### ARIA State Management
+
+Update the following ARIA states dynamically:
+
+- `aria-expanded` This should be toggled with javascript
+- `aria-controls=ID` link the top level element around the trigger for an accordion panel
+- Use role=region / `aria-labelledby` on the accordion content panel div, to demonstrate the link to the button controlling visibility
+
+This is not a typical implementation of aria and accessibility. It is known to work against Android talkback and Apple VoiceOver screen-readers. If a fully WCAG compliant version is needed, please refer to the WCAGAccordion example. This will need Javascript implementation to make it interactive.
+
+#### Keyboard Navigation
+
+These are met by default, but after any Javascript additions to the accordion, it should be confirmed that they are still met:
+
+- Tab moves focus to the next focusable element
+- Shift / Tab moves focus to the previous focusable element
+- Enter / Space expands a collapsed tab

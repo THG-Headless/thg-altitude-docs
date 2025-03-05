@@ -1,0 +1,224 @@
+---
+import fs from "node:fs";
+import path from "node:path";
+import { parseColourScheme } from "@utils/browser-components/v0.2.0/colourParser";
+import ColorSwatch from "./ColorSwatch.astro";
+
+const cssFilePath = path.resolve(
+  "./src/content/docs/browser-components/v0.2.0/sample-css/colour.css"
+);
+const cssContent = fs.readFileSync(cssFilePath, "utf-8");
+const colours = parseColourScheme(cssContent);
+
+// Helper function to determine if value is a CSS variable
+const isVarReference = (value: string) => value.startsWith("var(");
+
+// Helper function to resolve nested variables
+const resolveNestedVar = (value: string, cssContent: string) => {
+  if (!isVarReference(value)) return value;
+
+  const varName = value.slice(4, -1);
+  const varRegex = new RegExp(`${varName}:\\s*([^;]+)`);
+  const match = cssContent.match(varRegex);
+  return match ? match[1].trim() : value;
+};
+
+// Updated helper function to get color display value
+const getColorValue = (value: string) => {
+  const resolvedValue = resolveNestedVar(value, cssContent);
+  if (isVarReference(resolvedValue)) {
+    return resolveNestedVar(resolvedValue, cssContent);
+  }
+  return resolvedValue;
+};
+
+const semanticLabels: Record<
+  "" | "light" | "dark" | "hover" | "hover-light",
+  string
+> = {
+  "": "default",
+  light: "light",
+  dark: "dark",
+  hover: "hover",
+  "hover-light": "hover-light",
+};
+
+const copyToClipboard = (text: string) => {
+  navigator.clipboard.writeText(text);
+};
+
+const colorFamilies = [
+  "primary",
+  "secondary",
+  "tertiary",
+  "neutral",
+  "attention",
+  "success",
+  "error",
+  "promotion",
+] as const;
+
+type ColorFamily = (typeof colorFamilies)[number];
+
+const semanticMap: Record<ColorFamily, Record<string, string>> = {
+  primary: {
+    "": "--color-primary-500",
+    light: "--color-primary-50",
+    dark: "--color-primary-950",
+    hover: "--color-primary-600",
+    "hover-light": "--color-primary-400",
+  },
+  secondary: {
+    "": "--color-secondary-500",
+    light: "--color-secondary-50",
+    dark: "--color-secondary-950",
+    hover: "--color-secondary-600",
+    "hover-light": "--color-secondary-400",
+  },
+  tertiary: {
+    "": "--color-tertiary-500",
+    light: "--color-tertiary-50",
+    dark: "--color-tertiary-950",
+    hover: "--color-tertiary-600",
+    "hover-light": "--color-tertiary-400",
+  },
+  neutral: {
+    "": "--color-neutral-500",
+    light: "--color-neutral-50",
+    dark: "--color-neutral-950",
+    hover: "--color-neutral-600",
+    "hover-light": "--color-neutral-400",
+  },
+  attention: {
+    "": "--color-attention-500",
+    light: "--color-attention-50",
+    dark: "--color-attention-950",
+    hover: "--color-attention-600",
+    "hover-light": "--color-attention-400",
+  },
+  success: {
+    "": "--color-success-500",
+    light: "--color-success-50",
+    dark: "--color-success-950",
+    hover: "--color-success-600",
+    "hover-light": "--color-success-400",
+  },
+  error: {
+    "": "--color-error-500",
+    light: "--color-error-50",
+    dark: "--color-error-950",
+    hover: "--color-error-600",
+    "hover-light": "--color-error-400",
+  },
+  promotion: {
+    "": "--color-promotion-500",
+    light: "--color-promotion-50",
+    dark: "--color-promotion-950",
+    hover: "--color-promotion-600",
+    "hover-light": "--color-promotion-400",
+  },
+};
+---
+
+<div class="max-w-7xl mx-auto pt-8">
+  <div class="">
+    {
+      colorFamilies.map((family) => (
+        <section class="pb-6">
+          <h3 class=" font-semibold capitalize mb-0">{family}</h3>
+
+          {/* Color Scale */}
+          {colours[family].colours
+            .filter((group) => group.prefix === "scale")
+            .map((scale) => (
+              <div class="">
+                <div class="grid grid-cols-11 gap-2 items-end">
+                  {scale.shades.map((shade) => {
+                    // Find semantic usage by exact variable name match
+                    const semanticUsage = Object.entries(
+                      semanticMap[family] || {}
+                    ).find(([_, value]) => value === shade.name);
+
+                    const semanticLabel = semanticUsage
+                      ? semanticLabels[
+                          semanticUsage[0] as keyof typeof semanticLabels
+                        ]
+                      : undefined;
+
+                    return (
+                      <div class="swatch-container">
+                        <ColorSwatch
+                          color={shade}
+                          semantic={!!semanticLabel}
+                          semanticLabel={
+                            semanticLabel ? `${semanticLabel}` : undefined
+                          }
+                          getColorValue={getColorValue}
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+        </section>
+      ))
+    }
+  </div>
+</div>
+
+<style>
+  .copied-message {
+    opacity: 0;
+    transition: opacity 200ms ease-in-out;
+  }
+
+  .copied-message.flex {
+    display: flex;
+    opacity: 1;
+  }
+
+  .copied-instruction.hidden {
+    display: none;
+  }
+
+  .swatch-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    height: 100%;
+  }
+
+  /* Ensure grid items are aligned at the bottom */
+  .grid.items-end > * {
+    align-self: end;
+  }
+</style>
+
+<script>
+  document.querySelectorAll("button").forEach((button) => {
+    button.addEventListener("click", (e) => {
+      const group = (e.currentTarget as HTMLElement).closest(".group");
+      const copiedMessage = group?.querySelector(".copied-message");
+      const instruction = group?.querySelector(".copied-instruction");
+
+      if (copiedMessage && instruction) {
+        // Hide instruction first
+        instruction.classList.add("hidden");
+
+        // Show copied message
+        copiedMessage.classList.remove("hidden");
+        copiedMessage.classList.add("flex");
+
+        setTimeout(() => {
+          // Hide copied message
+          copiedMessage.classList.remove("flex");
+          copiedMessage.classList.add("hidden");
+
+          // Show instruction again
+          instruction.classList.remove("hidden");
+        }, 2000);
+      }
+    });
+  });
+</script>

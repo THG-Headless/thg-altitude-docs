@@ -1,0 +1,74 @@
+---
+// Define the colors with their properties and explicit values
+const colors = [
+  {
+    name: "Primary",
+    variable: "--color-primary",
+    value: "oklch(0.43 0.0147 248.17)",
+    color: "oklch(0.43 0.0147 248.17)",
+  },
+  {
+    name: "Secondary",
+    variable: "--color-secondary",
+    value: "oklch(0.67 0.15 250)",
+    color: "oklch(0.67 0.15 250)",
+  },
+  {
+    name: "Tertiary",
+    variable: "--color-tertiary",
+    value: "oklch(0.65 0.2 300)",
+    color: "oklch(0.65 0.2 300)",
+  },
+  {
+    name: "Neutral",
+    variable: "--color-neutral",
+    value: "oklch(0.64 0 0)",
+    color: "oklch(0.64 0 0)",
+  },
+  {
+    name: "Success",
+    variable: "--color-success",
+    value: "oklch(0.5 0.15 150)",
+    color: "oklch(0.5 0.15 150)",
+  },
+  {
+    name: "Attention",
+    variable: "--color-attention",
+    value: "oklch(0.55 0.12 250)",
+    color: "oklch(0.55 0.12 250)",
+  },
+  {
+    name: "Error",
+    variable: "--color-error",
+    value: "oklch(0.55 0.2 30)",
+    color: "oklch(0.55 0.2 30)",
+  },
+  {
+    name: "Promotion",
+    variable: "--color-promotion",
+    value: "oklch(0.6 0.25 30)",
+    color: "oklch(0.6 0.25 30)",
+  },
+];
+---
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 py-6">
+  {
+    colors.map((color) => (
+      <div class="flex mt-0">
+        <div
+          class="h-full aspect-square flex-shrink-0 rounded-lg mr-2.5"
+          style={`background-color: ${color.color};`}
+          aria-label={`${color.name} color`}
+        />
+        <div class="mt-0">
+          <strong>{color.name}</strong>
+          <div>
+            <p class="mt-1.5 mb-1.5">{color.value}</p>
+            <code>{color.variable}</code>
+          </div>
+        </div>
+      </div>
+    ))
+  }
+</div>

@@ -1,0 +1,52 @@
+<button
+  class="skin-primary-emphasised interactive btn"
+  onclick="complexModal.showModal()"
+  aria-haspopup="dialog"
+  aria-controls="complexModal"
+>
+  Open Complex Modal
+</button>
+
+<dialog
+  id="complexModal"
+  class="modal-dialog"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="complex-modal-title"
+  aria-describedby="complex-modal-body"
+>
+  <form method="dialog" class="modal-backdrop" aria-hidden="true">
+    <button aria-hidden="true" aria-label="Close Modal" tabindex="-1"></button>
+  </form>
+
+  <div class="skin-modal modal-container modal-container--with-hero">
+    <form method="dialog" class="modal-header">
+      <button class="modal-close">
+        <span>Close</span>
+        <span aria-hidden="true">✕</span>
+      </button>
+    </form>
+    <div class="modal-hero">
+      <img
+        class="modal-hero-image"
+        src="https://picsum.photos/id/558/1920/1080"
+        alt="Hero image"
+      />
+    </div>
+    <div>
+      <h3 id="complex-modal-title" class="text-lg">Modal with Hero Image</h3>
+      <div id="complex-modal-body" class="text-body py-4">
+        <p>
+          This modal features a hero image on the left side, content, and a
+          backdrop click away
+        </p>
+      </div>
+      <button
+        type="button"
+        class="skin-primary-emphasised interactive btn full-width"
+      >
+        Primary CTA
+      </button>
+    </div>
+  </div>
+</dialog>
