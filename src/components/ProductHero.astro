@@ -45,12 +45,12 @@ const {
           </div>
 
           <!-- Title -->
-          <h1 class="block font-sans text-4xl md:text-5xl lg:text-6xl">
+          <h1 class="block font-sans text-4xl md:text-5xl lg:text-6xl" transition:name="hero-title">
             {title}
           </h1>
 
           <!-- Description -->
-          <p class="mt-6 text-stone-400">
+          <p class="mt-6 text-stone-400" transition:name="hero-description">
             {description}
           </p>
 
@@ -423,6 +423,7 @@ class Line {
 //------------------------------------------------------------------------
 
 let animate;
+let animationFrameId;
 
 {
   // scope for animate
@@ -436,7 +437,7 @@ let animate;
     message = messages.shift();
     if (message && message.message == "reset") animState = 0;
     if (message && message.message == "click") animState = 0;
-    window.requestAnimationFrame(animate);
+    animationFrameId = window.requestAnimationFrame(animate);
 
     switch (animState) {
       case 0:
@@ -527,7 +528,7 @@ class Touch {
 //------------------------------------------------------------------------
 // beginning of execution
 
-{
+function initializeAnimation() {
   canv = document.createElement("canvas");
   canv.style.position = "absolute";
   canv.style.left = "0";
@@ -536,15 +537,54 @@ class Touch {
   canv.style.pointerEvents = "none";
   canv.style.opacity = "0.75";
   // document.body.appendChild(canv);
-  document.getElementById("hero")?.appendChild(canv);
-  ctx = canv.getContext("2d");
-  /*    canv.setAttribute ('title','click me'); */
+  const heroElement = document.getElementById("hero");
+  if (heroElement) {
+    // Remove any existing canvas to avoid duplicates
+    const existingCanvas = heroElement.querySelector("canvas");
+    if (existingCanvas) {
+      existingCanvas.remove();
+    }
+    
+    heroElement.appendChild(canv);
+    ctx = canv.getContext("2d");
+    /*    canv.setAttribute ('title','click me'); */
+    
+    canv.addEventListener("click", mouseClick);
+    // canv.addEventListener("mousemove", mouseMove);
+    new Touch(canv);
+    messages = [{ message: "reset" }];
+    requestAnimationFrame(animate);
+  }
 } // CANVAS creation
-canv.addEventListener("click", mouseClick);
+
+// Function to clean up animation resources
+function cleanupAnimation() {
+  // Remove the canvas if it exists
+  const heroElement = document.getElementById("hero");
+  if (heroElement) {
+    const existingCanvas = heroElement.querySelector("canvas");
+    if (existingCanvas) {
+      existingCanvas.remove();
+    }
+  }
+  
+  // Cancel any pending animation frames
+  if (typeof window !== 'undefined' && window.cancelAnimationFrame && animationFrameId) {
+    window.cancelAnimationFrame(animationFrameId);
+    animationFrameId = undefined;
+  }
+}
+
+// Initialize on first load
+initializeAnimation();
+
+// Initialize on page transitions
+document.addEventListener('astro:page-load', initializeAnimation);
+
+// Clean up before page transitions
+document.addEventListener('astro:before-preparation', cleanupAnimation);
+
+// Handle resize events
 window.addEventListener("resize", mouseClick);
-// canv.addEventListener("mousemove", mouseMove);
-new Touch(canv);
-messages = [{ message: "reset" }];
-requestAnimationFrame(animate);
 
 </script>
