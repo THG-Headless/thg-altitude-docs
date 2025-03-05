@@ -1,0 +1,37 @@
+---
+import "@content/docs/browser-components/v0.2.0/sample-css/corners.css";
+import fs from "node:fs";
+import path from "node:path";
+import { parseRadiusScheme } from "@utils/browser-components/v0.2.0/radiusParser";
+
+const cssFilePath = path.resolve(
+  "./src/content/docs/browser-components/v0.2.0/sample-css/corners.css"
+);
+const cssContent = fs.readFileSync(cssFilePath, "utf-8");
+const radius = parseRadiusScheme(cssContent);
+---
+
+<div class="pt-6 flex justify-center w-full">
+  <div class="flex gap-4 items-center">
+    <div
+      class="aspect-square w-[120px] bg-zinc-400 mb-3"
+      style={{
+        borderRadius: radius?.value,
+        display: "block",
+      }}
+    >
+    </div>
+    <div>
+      <div>
+        <strong>
+          {radius?.name}
+        </strong>
+      </div>
+      <div>
+        <p>
+          {radius?.value}
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

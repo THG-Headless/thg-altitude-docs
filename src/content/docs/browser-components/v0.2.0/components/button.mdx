@@ -1,0 +1,114 @@
+---
+title: Button
+description: A versatile button component with multiple styles and emphasis levels
+---
+
+import ShowComponent from "@components/docs/browser-components/v0.2.0/doc-helpers/ShowComponent.astro";
+import Buttons from "@components/docs/browser-components/v0.2.0/buttons/Buttons.html";
+import ControlButton from "@components/docs/browser-components/v0.2.0/buttons/ControlButton.html";
+import ControlBar from "@components/docs/browser-components/v0.2.0/buttons/ControlBar.html";
+import ControlBarVertical from "@components/docs/browser-components/v0.2.0/buttons/ControlBarVertical.html";
+
+# Button
+
+## Overview
+
+A fundamental part of any UI, the Browser Components provide a button style that provides consistent styles across all your buttons.
+
+## Example Usage
+
+Buttons use the `btn` class, along with your chosen skin, e.g. `skin-primary-emphasised`
+
+Don't forget to also include the `interactive` class so that the button receives the skins hover, active, focus and disabled
+
+<ShowComponent>
+  <Buttons />
+</ShowComponent>
+
+### Icon Support
+
+Buttons can include icons on the left or right side of the text, or as standalone icon buttons. Use the `icon-container` class to wrap your SVG icons.
+
+### Disabled State
+
+Add the `disabled` attribute to a button to indicate that it's not interactive.
+
+### Bordered Buttons
+
+We may want to have our borders have a low, or no border by default, but also have consistent widths on our buttons with emphasised borders. For this reason, the `bordered` class can be used to specify the button should have an emphasised border. The height is adjusted, ensuring that both bordered and non bordered buttons are a consistent width.
+
+<ShowComponent>
+  <ControlButton />
+</ShowComponent>
+
+### Button Bars
+
+Placing buttons together as a bar can be made easy using the `btn-bar` class applied to a parent div. Vertical button bars can also be created, using the `btn-bar-vertical` class.
+
+<ShowComponent>
+  <ControlBar />
+</ShowComponent>
+
+<ShowComponent>
+  <ControlBarVertical />
+</ShowComponent>
+
+## CSS Variables
+
+### General Button Variables
+
+| Variable                      | Default Value                                          | Description                       |
+| ----------------------------- | ------------------------------------------------------ | --------------------------------- |
+| `--btn-radius`                | `var(--radius-site)`                                   | Border radius of the button       |
+| `--btn-animation-speed`       | `var(--animation-speed-quick)`                         | Speed of button animations        |
+| `--btn-hover-scale`           | `1.005`                                                | Scale factor on hover             |
+| `--btn-active-scale`          | `0.995`                                                | Scale factor when active          |
+| `--btn-gap`                   | `0.5rem`                                               | Gap between button elements       |
+| `--btn-icon-scale-hover`      | `1.15`                                                 | Icon scale factor on hover        |
+| `--btn-icon-scale-active`     | `1.3`                                                  | Icon scale factor when active     |
+| `--btn-icon-stroke-width`     | `3`                                                    | Stroke width of icon SVGs         |
+| `--btn-padding-x`             | `1rem`                                                 | Horizontal padding                |
+| `--btn-padding-y`             | `0.5rem`                                               | Vertical padding                  |
+| `--btn-border-width`          | `0px`                                                  | Default border width              |
+| `--btn-bordered-border-width` | `3px`                                                  | Border width for bordered buttons |
+| `--btn-line-height`           | `var(--line-height-body)`                              | Line height of button text        |
+| `--btn-height`                | `calc(var(--line-height) + 2 * var(--btn-padding-y))`  | Total button height               |
+| `--btn-text-size`             | `var(--text-body)`                                     | Font size of button text          |
+| `--btn-icon-size`             | `calc(var(--btn-height) - (2 * var(--btn-padding-y)))` | Size of button icons              |
+
+## Accessibility
+
+The button system is designed with accessibility in mind:
+
+- Use of semantic `<button>` elements for all buttons.
+- Provides descriptive text for screen readers.
+- Supports keyboard navigation and focus states.
+
+For further guidance on documentation, refer to the **[WAI-ARIA Button Pattern](https://www.w3.org/WAI/ARIA/apg/patterns/button/examples/button/)**.
+
+### Keyboard Interaction
+
+- Buttons are focusable and can be activated using the Space or Enter keys.
+- Tab key navigates between buttons.
+- Disabled buttons do not receive focus or be clickable.
+
+## Best Practices
+
+- Use button types consistently across your application.
+- Choose the appropriate emphasis level based on the action's importance.
+- Use clear, action-oriented text for button labels.
+- Avoid using too many high emphasis buttons on a single page.
+- Consider the visual hierarchy when placing buttons near each other.
+
+## Implementation Notes
+
+When implementing buttons in your project:
+
+- Ensure that button text is clear and descriptive.
+- Use icons judiciously to enhance understanding, not replace text.
+- Make sure that aria labels on icon only buttons clearly explain the function of the button, and don't just state what the icon is.
+- Test buttons across different screen sizes to ensure proper scaling and touch targets.
+- Implement proper focus management, especially when buttons trigger modals or other interactive elements.
+- Ensure that aria labels for icon only buttons are correct
+
+{/*  */}
