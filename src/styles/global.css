@@ -201,6 +201,10 @@ pre[class*="language-"].pt-8 code {
   @apply pt-0;
 }
 
+.expressive-code {
+  @apply mb-12;
+}
+
 .expressive-code .frame pre {
   background: #0e0e0e !important;
 }
