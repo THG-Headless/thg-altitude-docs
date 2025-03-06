@@ -1,11 +1,8 @@
 ---
 export const prerender = true;
-import fs from 'node:fs';
-import path from 'node:path';
+import cssContent from '../../../../../content/docs/browser-components/v0.2.0/sample-css/semanticColours.css?raw';
 import { parseSemanticColors } from '@utils/browser-components/v0.2.0/SemanticColorParser';
 
-const cssFilePath = path.resolve('./src/content/docs/browser-components/sample-css/semanticColours.css');
-const cssContent = fs.readFileSync(cssFilePath, 'utf-8');
 const semanticGroups = parseSemanticColors(cssContent);
 
 const getCssVar = (name: string) => `var(${name})`;

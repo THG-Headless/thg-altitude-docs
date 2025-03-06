@@ -1,14 +1,9 @@
 ---
 export const prerender = true;
-import fs from "node:fs";
-import path from "node:path";
+import cssContent from "../../../../../content/docs/browser-components/v0.2.0/sample-css/animation.css?raw";
 import { parseAnimationScheme } from "@utils/browser-components/v0.2.0/animationParser";
 import type { AnimationVariable } from "@utils/browser-components/v0.2.0/animationParser";
 
-const cssFilePath = path.resolve(
-  "./src/content/docs/browser-components/v0.2.0/sample-css/animation.css"
-);
-const cssContent = fs.readFileSync(cssFilePath, "utf-8");
 const animationVariables = parseAnimationScheme(cssContent);
 ---
 

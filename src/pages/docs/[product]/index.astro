@@ -14,7 +14,7 @@ export async function getStaticPaths() {
   
   // Define the type for paths
   type PathItem = {
-    params: { product: string };
+    params: { product: string }; // Make product required, not optional
     props: { doc: CollectionEntry<'docs'> };
   };
   
@@ -52,30 +52,47 @@ export async function getStaticPaths() {
         // For example, for "elements/variations/index.mdx", we want "elements/variations"
         const nestedPath = pathParts.slice(0, -1).join('/');
         
-        paths.push({
-          params: { product: nestedPath },
-          props: { doc }
-        });
+        // Only create paths for top-level product pages, not for nested pages
+        // This prevents the "Missing parameter: product" error
+        if (nestedPath.split('/').length === 1) {
+          paths.push({
+            params: { product: nestedPath },
+            props: { doc }
+          });
+        }
       }
     }
   });
   
+  // Debug output
+  console.log(paths.map(p => p.params.product));
+  
   return paths;
 }
 
-const { product: productParam } = Astro.params;
+const { product: productParam = "" } = Astro.params;
 const { doc } = Astro.props;
 
-// Split the product parameter to handle versioned paths
+// Split the product parameter to handle different path types
 const productParts = productParam.split('/');
-const productId = productParts[0];
-const version = productParts.length > 1 ? productParts[1] : null;
+let productId = productParts[0];
+let version = null;
 
-// Check if this is a direct access to a product index (not a versioned page)
+// Check if this is a versioned path (e.g., "platform/v2.3.0")
+if (productParts.length > 1 && isVersionFolder(productParts[1])) {
+  version = productParts[1];
+} else {
+  // This is a nested path (e.g., "elements/facets")
+  // For nested paths, we keep the full path as the productId
+  // but we don't set a version
+  productId = productParam;
+}
+
+// Check if this is a direct access to a product index (not a versioned or nested page)
 const currentPath = Astro.url.pathname;
 const isDirectProductAccess = currentPath === `/docs/${productId}` || currentPath === `/docs/${productId}/`;
 
-if (isDirectProductAccess) {
+if (isDirectProductAccess && !version) {
   // Get all versions for this product
   const versions = await getProductVersions(productId);
   
@@ -98,6 +115,7 @@ const product = products[productId] || {
   quickLinks: []
 };
 
+// @ts-ignore - Astro content collections typing issue
 const { Content, headings } = await doc.render();
 ---
 

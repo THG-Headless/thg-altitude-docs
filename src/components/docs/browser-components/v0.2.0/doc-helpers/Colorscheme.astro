@@ -1,14 +1,9 @@
 ---
 export const prerender = true;
-import fs from "node:fs";
-import path from "node:path";
+import cssContent from "../../../../../content/docs/browser-components/v0.2.0/sample-css/colour.css?raw";
 import { parseColourScheme } from "@utils/browser-components/v0.2.0/colourParser";
 import ColorSwatch from "./ColorSwatch.astro";
 
-const cssFilePath = path.resolve(
-  "./src/content/docs/browser-components/v0.2.0/sample-css/colour.css"
-);
-const cssContent = fs.readFileSync(cssFilePath, "utf-8");
 const colours = parseColourScheme(cssContent);
 
 // Helper function to determine if value is a CSS variable
