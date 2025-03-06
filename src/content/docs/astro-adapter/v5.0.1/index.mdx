@@ -1,0 +1,68 @@
+---
+title: "Astro Adapter v5.0.1"
+description: "Deploy your Astro site to Altitude with the official adapter"
+---
+
+# Astro Adapter
+
+The Altitude Astro Adapter allows you to deploy your Astro site to Altitude's edge network with minimal configuration.
+
+## Installation
+
+```bash
+npm install @altitude/astro-adapter
+```
+
+> **Note:** Only npm is officially supported in Altitude.
+
+## Usage
+
+Add the adapter to your `astro.config.mjs` file:
+
+```js
+import { defineConfig } from 'astro/config';
+import altitude from '@altitude/astro-adapter';
+
+export default defineConfig({
+  output: 'server',
+  adapter: altitude(),
+});
+```
+
+## Configuration Options
+
+The adapter accepts the following options:
+
+```js
+altitude({
+  // Your Altitude project name (optional)
+  // Default: inferred from package.json
+  projectName: 'my-astro-site',
+  
+  // Additional build options (optional)
+  buildOptions: {
+    // Any additional build configuration
+    // specific to your project needs
+  }
+})
+```
+
+## Deployment
+
+After building your site with the adapter, you can deploy it to Altitude using the Altitude CLI:
+
+```bash
+# Install the Altitude CLI if you haven't already
+npm install -g @altitude/cli
+
+# Deploy your site
+altitude deploy
+```
+
+## Compatibility
+
+This version of the adapter is compatible with Astro 3.x and 4.x.
+
+## Need Help?
+
+If you encounter any issues or have questions, please [open an issue](https://github.com/altitude/astro-adapter/issues) on our GitHub repository.

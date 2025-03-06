@@ -18,19 +18,19 @@ const { product } = Astro.props;
 const currentPath = Astro.url.pathname;
 
 // Check if the current path contains a version
-const versionInfo = extractVersionFromPath(currentPath, product.id);
+const versionInfo = extractVersionFromPath(currentPath, product?.id);
 let versions: string[] = [];
 let versionLinks: { version: string; url: string; isLatest: boolean; isCurrent: boolean }[] = [];
 
 if (versionInfo) {
   // Get all versions for this product
-  versions = await getProductVersions(product.id);
+  versions = await getProductVersions(product?.id);
   
   if (versions.length > 0) {
     // Generate version links
     versionLinks = generateVersionLinks(
       currentPath,
-      product.id,
+      product?.id,
       versionInfo.version,
       versions,
       versionInfo.basePath
@@ -51,8 +51,8 @@ const hasVersions = versions.length > 0;
           <path d="M6 12l4-4-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
         <div class="flex items-center gap-2">
-          <img src={product.icon} alt="" class="w-5 h-5" />
-          <span class="text-stone-200">{product.name}</span>
+          <img src={product?.icon} alt="" class="w-5 h-5" />
+          <span class="text-stone-200">{product?.name}</span>
         </div>
         
         {versionInfo && hasVersions && (
@@ -80,7 +80,7 @@ const hasVersions = versions.length > 0;
                   </a>
                 ))}
                 <div class="version-dropdown-divider"></div>
-                <a href={`/docs/${product.id}/latest${currentPath.substring((versionInfo.basePath + '/' + versionInfo.version).length)}`} class="version-dropdown-item">
+                <a href={`/docs/${product?.id}/latest${currentPath.substring((versionInfo.basePath + '/' + versionInfo.version).length)}`} class="version-dropdown-item">
                   Always use latest
                 </a>
               </div>
@@ -95,7 +95,7 @@ const hasVersions = versions.length > 0;
   <div class="backdrop-blur supports-backdrop-blur:bg-stone-950/60 border-b border-stone-800 relative -z-10">
     <div class="container px-4 lg:px-0 mx-auto">
       <nav class="flex items-center gap-4 px-4 lg:px-0">
-        {product.quickLinks.map(link => (
+        {product?.quickLinks.map(link => (
           <a
             href={link.href}
             class:list={[

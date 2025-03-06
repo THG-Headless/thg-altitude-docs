@@ -98,11 +98,11 @@ export const products: Record<string, Product> = {
     quickLinks: [
       {
         title: "Overview",
-        href: "/products/starter-kits"
+        href: "/products/kits"
       },
       {
         title: "Documentation",
-        href: "/docs/starter-kits"
+        href: "/docs/kits"
       }
     ]
   },

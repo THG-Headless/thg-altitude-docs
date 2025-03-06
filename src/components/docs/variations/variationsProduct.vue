@@ -4,14 +4,14 @@ import { VariationVue } from "@thg-altitude/elements/vue";
 import productMock from "./product.json";
 
 const activeVariant = ref(
-  productMock.product.defaultVariant.sku
-    ? productMock.product.defaultVariant
-    : productMock.product.variants.find((variant) => variant.inStock) ||
-        productMock.product.variants?.[0]
+  productMock.product?.defaultVariant.sku
+    ? productMock.product?.defaultVariant
+    : productMock.product?.variants.find((variant) => variant.inStock) ||
+        productMock.product?.variants?.[0]
 );
 
 function handleVariationUpdate(data) {
-  activeVariant.value = productMock.product.variants.find(
+  activeVariant.value = productMock.product?.variants?.find(
     (variant) => variant.sku == data.sku
   );
 }

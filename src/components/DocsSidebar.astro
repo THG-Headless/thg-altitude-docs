@@ -26,7 +26,7 @@ const currentPath = Astro.url.pathname;
 const allDocs = await getCollection('docs');
 
 // Check if the current path contains a version
-const versionInfo = extractVersionFromPath(currentPath, product.id);
+const versionInfo = extractVersionFromPath(currentPath, product?.id);
 const currentVersion = versionInfo?.version;
 
 // Function to generate navigation structure from content collection
@@ -239,7 +239,7 @@ async function generateNavFromContent(productId: string) {
 }
 
 // Generate navigation for the current product
-const nav = await generateNavFromContent(product.id);
+const nav = await generateNavFromContent(product?.id);
 
 // Check if there's content for the sidebar
 // If there's only one item and it's the current page, consider it as having no content

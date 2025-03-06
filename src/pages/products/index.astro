@@ -75,26 +75,26 @@ const productGroups = [
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {group.products.map(product => (
+              {group.products?.map(product => (
                 <a
-                  href={product.quickLinks[0].href}
+                  href={product?.quickLinks[0].href}
                   class="group relative border border-white/10 hover:bg-white/5 rounded-lg p-8 transition-all duration-200"
                 >
                   <div class="flex items-center gap-4 mb-6">
                     <div class="flex-shrink-0 flex items-center justify-center w-12 h-12 rounded-lg bg-stone-800 group-hover:bg-stone-700 transition-colors">
-                      <img src={product.icon} alt="" class="w-6 h-6" />
+                      <img src={product?.icon} alt="" class="w-6 h-6" />
                     </div>
                     <div class="flex items-center gap-3">
                       <h3 class="text-[1.2rem] font-semibold text-stone-100">
-                        {product.name}
+                        {product?.name}
                       </h3>
-                      <span class={`px-2 py-1 rounded text-xs ${statusColors[product.status]}`}>
-                        {statusLabels[product.status]}
+                      <span class={`px-2 py-1 rounded text-xs ${statusColors[product?.status]}`}>
+                        {statusLabels[product?.status]}
                       </span>
                     </div>
                   </div>
                   <p class="text-stone-400 group-hover:text-stone-300 transition-colors">
-                    {product.description}
+                    {product?.description}
                   </p>
                   <div class="absolute top-8 right-8 text-stone-500 group-hover:text-stone-400 transition-colors">
                     <svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">

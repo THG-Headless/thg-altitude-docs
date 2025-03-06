@@ -1,0 +1,14 @@
+version: v2.3
+provider: cloudflare
+routes:
+  - pathPrefix: /
+    name: ssr
+    type: function
+    directory: .
+    build:
+      command: build
+      output:
+        directory: dist
+        filename: _bundled_worker.js
+      nodeSettings:
+       version: 22.13.1

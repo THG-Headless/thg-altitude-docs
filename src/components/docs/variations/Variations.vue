@@ -14,8 +14,8 @@ productData.value = productMock;
   <VariationVue
     id="demo-vue"
     :options="{
-      product: productData.product,
-      activeVariant: productData.product.defaultVariant.sku,
+      product: productData?.product,
+      activeVariant: productData?.product?.defaultVariant?.sku,
       layout: {
         button: ['Size', 'Colour'],
       },

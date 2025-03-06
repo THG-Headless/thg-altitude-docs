@@ -76,7 +76,7 @@ For applications using the Vue variations component, a `ref` containing the valu
       const props = defineProps({
         product: Object
       })
-      const productData = ref(props.product)
+      const productData = ref(props?.product)
     </script>
 
     <template>
@@ -135,11 +135,11 @@ For non-async modes, the custom element must still be defined, but the Astro var
 
         const resp = await fetch(...)
 
-        const activeVariant = resp.data.product.defaultVariant.sku
+        const activeVariant = resp.data?.product?.defaultVariant?.sku
 
         const observer = new Variation(id, {
           config: {
-            payload: resp.data.product,
+            payload: resp?.data?.product,
             layout: {
               button: ['Size', 'Colour']
             },

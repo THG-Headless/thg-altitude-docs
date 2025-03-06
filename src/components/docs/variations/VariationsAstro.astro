@@ -18,11 +18,11 @@ const sku = Astro.props.sku
 
         let resp = productMock
 
-        const activeVariant = resp.product.defaultVariant.sku
+        const activeVariant = resp?.product?.defaultVariant?.sku
 
         const observer = new Variation(id, {
           config: {
-            payload: resp.product,
+            payload: resp?.product,
             layout: {
               button: ['Colour', 'Size']
             },
