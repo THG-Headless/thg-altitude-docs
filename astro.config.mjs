@@ -7,6 +7,8 @@ import altitude from '@thg-altitude/astro-adapter';
 
 import tailwindcss from "@tailwindcss/vite";
 import expressiveCode from 'astro-expressive-code';
+import fs from 'fs';
+import path from 'path';
 
 export default defineConfig({
   site: 'https://docs.thgaltitude.com',
