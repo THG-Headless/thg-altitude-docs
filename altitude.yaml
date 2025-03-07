@@ -10,6 +10,6 @@ routes:
       output:
         directory: dist
         filename: _bundled_worker.js
-        staticDirectory: ssr-assets
+        staticDirectory: statics
       nodeSettings:
        version: 22.13.1
