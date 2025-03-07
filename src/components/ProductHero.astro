@@ -184,7 +184,7 @@ class Line {
     
     // Create varied purple colors with different brightness levels
     const purpleHue = 270 + (random() * 40 - 20); // Range from 250-290
-    const saturation = 70 + random() * 30; // Range from 70-100%
+    const saturation = 70 + random() * 70; // Range from 70-100%
     const brightness = 30 + random() * 60; // Range from 30-90% (both dark and light variants)
     
     this.color = `hsl(${purpleHue} ${saturation}% ${brightness}%)`;
@@ -398,7 +398,7 @@ function initializeAnimation(): void {
   canv.style.top = "0";
   canv.style.zIndex = "-1";
   canv.style.pointerEvents = "none";
-  canv.style.opacity = "0.08";
+  canv.style.opacity = "0.1";
   
   const heroElement = document.getElementById("hero");
   if (!heroElement) return;
