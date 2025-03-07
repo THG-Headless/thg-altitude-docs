@@ -197,11 +197,11 @@ const formattedHTML = formatHTML(htmlContent);
     const switchTab = (activeTab, inactiveTab, activePanel, inactivePanel) => {
       // Update tab states
       activeTab.setAttribute("aria-selected", "true");
-      activeTab.classList.add("text-white", "border-b-2", "border-primary-500", "bg-opacity-10");
+      activeTab.classList.add("text-white", "border-b-2", "border-primary-400", "bg-opacity-10");
       activeTab.classList.remove("text-stone-400");
 
       inactiveTab.setAttribute("aria-selected", "false");
-      inactiveTab.classList.remove("text-white", "border-b-2", "border-primary-500", "bg-opacity-10");
+      inactiveTab.classList.remove("text-white", "border-b-2", "border-primary-400", "bg-opacity-10");
       inactiveTab.classList.add("text-stone-400");
 
       // Show/hide panels
@@ -210,7 +210,7 @@ const formattedHTML = formatHTML(htmlContent);
     };
 
     // Set initial state
-    previewTab.classList.add("text-white", "border-b-2", "border-primary-500", "bg-opacity-10");
+    previewTab.classList.add("text-white", "border-b-2", "border-primary-400", "bg-opacity-10");
     codeTab.classList.add("text-stone-400");
 
     // Clone elements to remove existing event listeners
