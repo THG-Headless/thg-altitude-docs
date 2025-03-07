@@ -4,7 +4,7 @@ title: Create an SPA Website
 
 ## 1. Setup Edge Configuration
 
-First set up your Altitude.yaml file to use `static` as a rendering type. This will let us know that you're project has pre-built the HTML required to serve a page.
+First set up your Altitude.yaml file to use `static` as a rendering type. This will let us know that your project has pre-built the HTML required to serve a page.
 
 **`altitude.yaml`**
 

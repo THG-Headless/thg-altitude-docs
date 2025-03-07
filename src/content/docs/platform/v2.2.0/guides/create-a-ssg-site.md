@@ -13,7 +13,7 @@ An SSG (Static Site Generator) site is a type of website that is generated from 
 
 ## 1. Edge Configuration
 
-First set up your Altitude.yaml file to use `static` as a rendering type. This will let us know that you're project has pre-built the HTML required to serve a page. An example config file is shown below:
+First set up your Altitude.yaml file to use `static` as a rendering type. This will let us know that your project has pre-built the HTML required to serve a page. An example config file is shown below:
 
 **`altitude.yaml`**
 

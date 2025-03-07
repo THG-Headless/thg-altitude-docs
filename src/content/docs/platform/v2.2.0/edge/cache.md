@@ -40,11 +40,11 @@ stale data whilst in the background we will refresh the cache.
 
 ### Cache Configuration
 
-Within Altitude, we give you the ability to fully customise you're caching experience. You can specify custom caching length and cache keys on specific paths on your site.
+Within Altitude, we give you the ability to fully customise your caching experience. You can specify custom caching length and cache keys on specific paths on your site.
 
 A cache key serves as a unique identifier for each requested resource, and can contain information such as HTTP headers and cookies. It enables efficient storage and retrieval of cached content, optimizing delivery speed. By default the cache key only contains the host, path, query strings and the `Accept-Encoding` header however, on Altitude we maintain the ability to add additional information to it.
 
-For example, if you're site contains localised content based upon a locale cookie, we can pass this cookie into the cache key so that each locale maintains different cached responses and there can be no bleed.
+For example, if your site contains localised content based upon a locale cookie, we can pass this cookie into the cache key so that each locale maintains different cached responses and there can be no bleed.
 
 An example of an `Altitude.yaml` file with caching enabled is below. For more information on the configuration, see [the edge configuration](/reference/file-based-configuration/v2-1/).
 
