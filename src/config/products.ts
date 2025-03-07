@@ -16,7 +16,7 @@ export const products: Record<string, Product> = {
     id: "platform",
     name: "Altitude Platform",
     description: "Deploy to a V8 edge environment in minutes",
-    icon: "/icons/altitude-alt.svg",
+    icon: "/statics/icons/altitude-alt.svg",
     href: "/products/platform",
     status: "live",
     quickLinks: [
@@ -38,7 +38,7 @@ export const products: Record<string, Product> = {
     id: "browser-components",
     name: "Browser Components",
     description: "Browser native UI components that are accessible and highly performant",
-    icon: "/icons/altitude.svg",
+    icon: "/statics/icons/altitude.svg",
     href: "/products/browser-components",
     status: "beta",
     quickLinks: [
@@ -56,7 +56,7 @@ export const products: Record<string, Product> = {
     id: "custom-components",
     name: "Custom Components",
     description: "Directory of opinionated web components for building modern interfaces",
-    icon: "/icons/altitude.svg",
+    icon: "/statics/icons/altitude.svg",
     href: "/products/custom-components",
     status: "q2",
     quickLinks: [
@@ -74,7 +74,7 @@ export const products: Record<string, Product> = {
     id: "elements",
     name: "Elements",
     description: "Installable commerce features to enhance your online store",
-    icon: "/icons/altitude.svg",
+    icon: "/statics/icons/altitude.svg",
     href: "/products/elements",
     status: "beta",
     quickLinks: [
@@ -92,7 +92,7 @@ export const products: Record<string, Product> = {
     id: "starter-kits",
     name: "Starter Kits",
     description: "Commerce accelerants to jumpstart your development",
-    icon: "/icons/altitude.svg",
+    icon: "/statics/icons/altitude.svg",
     href: "/products/kits",
     status: "alpha",
     quickLinks: [
@@ -110,7 +110,7 @@ export const products: Record<string, Product> = {
     id: "astro-integration",
     name: "Astro Integration",
     description: "i18N, Commerce API, and Blog API abstractions for Astro projects",
-    icon: "/icons/altitude.svg",
+    icon: "/statics/icons/altitude.svg",
     href: "/products/astro-integration",
     status: "live",
     quickLinks: [
@@ -128,7 +128,7 @@ export const products: Record<string, Product> = {
     id: "astro-adapter",
     name: "Astro Adapter",
     description: "Astro to Altitude worker adapter for seamless deployment",
-    icon: "/icons/altitude.svg",
+    icon: "/statics/icons/altitude.svg",
     href: "/products/astro-adapter",
     status: "beta",
     quickLinks: [
@@ -146,7 +146,7 @@ export const products: Record<string, Product> = {
     id: "cli",
     name: "Altitude CLI",
     description: "Environment management tools with component commands",
-    icon: "/icons/altitude.svg",
+    icon: "/statics/icons/altitude.svg",
     href: "/products/cli",
     status: "live",
     quickLinks: [
@@ -164,7 +164,7 @@ export const products: Record<string, Product> = {
     id: "altitude-spark",
     name: "Altitude Spark",
     description: "Prompt to UI to deployment interface with LLM capabilities",
-    icon: "/icons/altitude.svg",
+    icon: "/statics/icons/altitude.svg",
     href: "/products/spark",
     status: "q2",
     quickLinks: [
