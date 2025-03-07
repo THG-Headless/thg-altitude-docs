@@ -1,21 +1,28 @@
 ---
+/**
+ * Preview component for displaying content in a styled container
+ *
+ * This component is used in the elements package with the Tabs component
+ * to show a preview of the component separate from its code.
+ * Styled to match the ComponentPreview component.
+ */
+
 const { height = 400 } = Astro.props;
 ---
  
-<div class="preview polka" style={`height: ${height}px`}>
-    <slot />
+<div class="component-preview not-prose mb-8 rounded-lg overflow-hidden shadow-lg">
+  <!-- Preview Panel - Styled to match ComponentPreview -->
+
+    <div class="flex justify-center items-center" style={height ? `min-height: ${height}px` : ""}>
+      <slot />
+    </div>
 </div>
- 
-<style>
-.preview {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    border: 1px solid rgba(255,255,255,0.1);
-    padding: 1rem;
-    text-decoration: none;
-    color: var(--sl-color-gray-2);
-    height: auto;
-}
+
+<style is:global>
+  /* Dark mode adjustments */
+  @media (prefers-color-scheme: dark) {
+    .component-preview {
+      border-color: rgba(75, 85, 99, 0.5);
+    }
+  }
 </style>

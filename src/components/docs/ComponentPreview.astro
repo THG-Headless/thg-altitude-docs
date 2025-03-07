@@ -1,0 +1,316 @@
+---
+/**
+ * ComponentPreview - A professional tabbed component previewer
+ * 
+ * This component provides a tabbed interface with:
+ * - A "Preview" tab showing the interactive component
+ * - A "Code" tab showing the code with syntax highlighting
+ * 
+ * Usage:
+ * 
+ * ```astro
+ * import ComponentPreview from '@components/docs/ComponentPreview.astro';
+ * 
+ * <ComponentPreview>
+ *   <button class="skin-primary-emphasised interactive btn">Click me</button>
+ * </ComponentPreview>
+ * ```
+ */
+
+// Generate a unique ID for this component instance
+const componentId = Math.random().toString(36).substring(2, 12);
+
+// Get the HTML content from the slot
+const slotContent = await Astro.slots.render("default");
+
+// The preview content is the raw HTML
+const previewContent = slotContent;
+
+// Clean up the HTML content for code display (remove scripts and styles)
+const htmlContent = slotContent
+  .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
+  .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, "")
+  .trim();
+
+// Format the HTML with proper indentation
+function formatHTML(html: string): string {
+  let formatted = '';
+  let indent = 0;
+  
+  // Helper function to get indentation string
+  const getIndent = (level: number): string => '  '.repeat(level);
+  
+  // Split by < to get tags and content
+  const parts = html.split('<');
+  
+  for (let i = 0; i < parts.length; i++) {
+    if (!parts[i]) continue;
+    
+    const isSelfClosing = parts[i].includes('/>');
+    const isClosingTag = parts[i].startsWith('/');
+    const hasClosingBracket = parts[i].includes('>');
+    
+    // Handle closing tags
+    if (isClosingTag && !isSelfClosing) {
+      indent--;
+    }
+    
+    // Add the current part with proper indentation
+    if (hasClosingBracket) {
+      const [tagPart, contentPart] = parts[i].split('>');
+      formatted += getIndent(indent) + '<' + tagPart + '>';
+      
+      // Add content if it exists and is not just whitespace
+      if (contentPart && contentPart.trim()) {
+        formatted += contentPart;
+      } else if (contentPart) {
+        formatted += '\n';
+      }
+    } else {
+      formatted += getIndent(indent) + '<' + parts[i];
+    }
+    
+    // Add newline if not a self-closing tag and has a closing bracket
+    if (hasClosingBracket && !isSelfClosing) {
+      formatted += '\n';
+    }
+    
+    // Increase indent for opening tags that are not self-closing
+    if (!isClosingTag && !isSelfClosing && hasClosingBracket) {
+      indent++;
+    }
+  }
+  
+  return formatted;
+}
+
+// Format the HTML content
+const formattedHTML = formatHTML(htmlContent);
+---
+
+<div class="component-preview not-prose mb-8 rounded-lg overflow-hidden border border-stone-800 shadow-lg">
+  <!-- Tab Navigation -->
+  <div class="bg-stone-950 border-b border-stone-900">
+    <div class="flex">
+      <button
+        id={`preview-tab-${componentId}`}
+        class="tab-button px-4 py-3 text-sm font-medium transition-colors duration-200 focus:outline-none"
+        aria-selected="true"
+        role="tab"
+        aria-controls={`preview-panel-${componentId}`}
+      >
+        Preview
+      </button>
+      <button
+        id={`code-tab-${componentId}`}
+        class="tab-button px-4 py-3 text-sm font-medium transition-colors duration-200 focus:outline-none"
+        aria-selected="false"
+        role="tab"
+        aria-controls={`code-panel-${componentId}`}
+      >
+        Code
+      </button>
+    </div>
+  </div>
+
+  <!-- Preview Panel -->
+  <div
+    id={`preview-panel-${componentId}`}
+    class="bg-stone-50 dark:bg-stone-950 p-6 not-prose"
+    role="tabpanel"
+    aria-labelledby={`preview-tab-${componentId}`}
+  >
+    <div class="flex justify-center items-center">
+      <Fragment set:html={previewContent} />
+    </div>
+  </div>
+
+  <!-- Code Panel -->
+  <div
+    id={`code-panel-${componentId}`}
+    class="hidden bg-stone-950 overflow-hidden"
+    role="tabpanel"
+    aria-labelledby={`code-tab-${componentId}`}
+  >
+    <div class="flex justify-between items-center px-4 py-2 bg-stone-950 border-b border-stone-900">
+      <span class="text-xs font-mono text-stone-400">HTML</span>
+      <button
+        id={`copy-button-${componentId}`}
+        class="text-stone-400 hover:text-white text-sm flex items-center gap-1.5 transition-colors duration-200"
+        aria-label="Copy code to clipboard"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="copy-icon">
+          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span>Copy</span>
+      </button>
+    </div>
+    <div class="code-container max-h-[500px] overflow-auto p-4">
+      <pre class="language-html"><code class="language-html">{formattedHTML}</code></pre>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  // Load Prism.js for syntax highlighting if it's not already loaded
+  if (typeof Prism === 'undefined') {
+    // Create link for Prism CSS
+    const prismCSS = document.createElement('link');
+    prismCSS.rel = 'stylesheet';
+    prismCSS.href = 'https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css';
+    document.head.appendChild(prismCSS);
+    
+    // Create script for Prism JS
+    const prismScript = document.createElement('script');
+    prismScript.src = 'https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js';
+    document.head.appendChild(prismScript);
+    
+    // Add HTML language support
+    const htmlScript = document.createElement('script');
+    htmlScript.src = 'https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-markup.min.js';
+    document.head.appendChild(htmlScript);
+  }
+</script>
+
+<script define:vars={{ componentId }}>
+  // Initialize syntax highlighting
+  function highlightCode() {
+    if (typeof Prism !== 'undefined') {
+      Prism.highlightAll();
+    } else {
+      // If Prism isn't loaded yet, wait and try again
+      setTimeout(highlightCode, 100);
+    }
+  }
+
+  // Initialize tabs functionality
+  function setupTabs() {
+    const previewTab = document.getElementById(`preview-tab-${componentId}`);
+    const codeTab = document.getElementById(`code-tab-${componentId}`);
+    const previewPanel = document.getElementById(`preview-panel-${componentId}`);
+    const codePanel = document.getElementById(`code-panel-${componentId}`);
+
+    if (!previewTab || !codeTab || !previewPanel || !codePanel) return;
+
+    // Function to switch tabs
+    const switchTab = (activeTab, inactiveTab, activePanel, inactivePanel) => {
+      // Update tab states
+      activeTab.setAttribute("aria-selected", "true");
+      activeTab.classList.add("text-primary-500", "border-b-2", "border-primary-500", "bg-opacity-10", "bg-primary-500");
+      activeTab.classList.remove("text-stone-400");
+
+      inactiveTab.setAttribute("aria-selected", "false");
+      inactiveTab.classList.remove("text-primary-500", "border-b-2", "border-primary-500", "bg-opacity-10", "bg-primary-500");
+      inactiveTab.classList.add("text-stone-400");
+
+      // Show/hide panels
+      activePanel.classList.remove("hidden");
+      inactivePanel.classList.add("hidden");
+    };
+
+    // Set initial state
+    previewTab.classList.add("text-primary-500", "border-b-2", "border-primary-500", "bg-opacity-10", "bg-primary-500");
+    codeTab.classList.add("text-stone-400");
+
+    // Clone elements to remove existing event listeners
+    const newPreviewTab = previewTab.cloneNode(true);
+    const newCodeTab = codeTab.cloneNode(true);
+    
+    previewTab.parentNode.replaceChild(newPreviewTab, previewTab);
+    codeTab.parentNode.replaceChild(newCodeTab, codeTab);
+
+    // Add click event listeners
+    newPreviewTab.addEventListener("click", () => {
+      switchTab(newPreviewTab, newCodeTab, previewPanel, codePanel);
+    });
+
+    newCodeTab.addEventListener("click", () => {
+      switchTab(newCodeTab, newPreviewTab, codePanel, previewPanel);
+      // Highlight code when the code tab is clicked
+      highlightCode();
+    });
+  }
+
+  // Initialize copy button functionality
+  function setupCopyButton() {
+    const copyButton = document.getElementById(`copy-button-${componentId}`);
+    const codePanel = document.getElementById(`code-panel-${componentId}`);
+    
+    if (!copyButton || !codePanel) return;
+
+    // Clone to remove existing event listeners
+    const newCopyButton = copyButton.cloneNode(true);
+    copyButton.parentNode.replaceChild(newCopyButton, copyButton);
+
+    newCopyButton.addEventListener("click", async () => {
+      try {
+        const codeElement = codePanel.querySelector("code");
+        const codeText = codeElement ? codeElement.textContent : "";
+
+        await navigator.clipboard.writeText(codeText);
+
+        // Show success state
+        const originalContent = newCopyButton.innerHTML;
+        newCopyButton.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="check-icon">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          <span>Copied!</span>
+        `;
+        newCopyButton.classList.add("text-green-500");
+
+        // Reset after 2 seconds
+        setTimeout(() => {
+          newCopyButton.innerHTML = originalContent;
+          newCopyButton.classList.remove("text-green-500");
+        }, 2000);
+      } catch (err) {
+        console.error("Failed to copy text: ", err);
+      }
+    });
+  }
+
+  // Initialize component
+  function initializeComponent() {
+    setupTabs();
+    setupCopyButton();
+    highlightCode();
+  }
+
+  // Initialize on page load and view transitions
+  document.addEventListener("DOMContentLoaded", initializeComponent);
+  document.addEventListener("astro:page-load", initializeComponent);
+  
+  // Also initialize immediately for the current render
+  initializeComponent();
+</script>
+
+<style is:global>
+  /* Tab styling */
+  .component-preview .tab-button:focus-visible {
+    outline: 2px solid var(--primary, #3b82f6);
+    outline-offset: -2px;
+  }
+
+  /* Code container styling */
+  .component-preview .code-container pre {
+    margin: 0 !important;
+    padding: 0 !important;
+    background-color: transparent !important;
+  }
+
+  .component-preview .code-container code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 0.9em !important;
+    line-height: 1.5 !important;
+    tab-size: 2;
+  }
+
+  /* Dark mode adjustments */
+  @media (prefers-color-scheme: dark) {
+    .component-preview {
+      border-color: rgba(75, 85, 99, 0.5);
+    }
+  }
+</style>

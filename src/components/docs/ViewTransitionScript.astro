@@ -1,0 +1,55 @@
+---
+/**
+ * ViewTransitionScript - A Higher-Order Component for JavaScript in Markdown
+ * 
+ * This component wraps JavaScript code to ensure it runs:
+ * 1. On initial page load (DOMContentLoaded)
+ * 2. After view transitions (astro:page-load)
+ * 3. Immediately when the script is executed
+ * 
+ * Usage in MDX:
+ * 
+ * ```mdx
+ * import ViewTransitionScript from '@components/docs/ViewTransitionScript.astro';
+ * 
+ * <ViewTransitionScript>
+ * {`
+ *   // Your JavaScript code here
+ *   const button = document.getElementById('my-button');
+ *   if (button) {
+ *     button.addEventListener('click', () => {
+ *       console.log('Button clicked!');
+ *     });
+ *   }
+ * `}
+ * </ViewTransitionScript>
+ * ```
+ */
+
+// Get the JavaScript code from the slot
+const jsCode = await Astro.slots.render('default');
+
+// Generate a unique ID for this script instance
+const scriptId = `vts-${Math.random().toString(36).substring(2, 9)}`;
+---
+
+<script define:vars={{ jsCode, scriptId }}>
+// Wrap the code in a function so it can be called multiple times
+window[scriptId] = function() {
+  try {
+    // Execute the code
+    new Function(jsCode)();
+  } catch (error) {
+    console.error(`Error in ViewTransitionScript (${scriptId}):`, error);
+  }
+};
+
+// Initialize on DOMContentLoaded (for initial page load)
+document.addEventListener('DOMContentLoaded', window[scriptId]);
+
+// Initialize on astro:page-load (for view transitions)
+document.addEventListener('astro:page-load', window[scriptId]);
+
+// Also execute immediately
+window[scriptId]();
+</script>

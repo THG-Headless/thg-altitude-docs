@@ -16,9 +16,8 @@ export default defineConfig({
   build: {
     assets: 'statics'
   },
-  integrations: [expressiveCode({
-    themes: ['github-dark-default'],
-  }), mdx({
+  integrations: [
+  mdx({
     syntaxHighlight: 'shiki',
     shikiConfig: {
       theme: 'houston'
@@ -33,7 +32,10 @@ export default defineConfig({
     },
     gfm: true
   }), react(), vue()],
-  server: { port: 8080 },
+  server: {
+    port: 8080,
+    host: 'localhost'
+  },
   image: {
     service: passthroughImageService(),
   },
@@ -54,7 +56,9 @@ export default defineConfig({
       external: ['node:buffer', 'node:fs', 'node:path'],
     },
     optimizeDeps: {
-      include: ['react', 'react-dom', 'class-variance-authority', 'clsx', 'tailwind-merge']
+      include: ['react', 'react-dom', 'class-variance-authority', 'clsx', 'tailwind-merge'],
+      // Force dependency pre-bundling
+      force: true
     }
   }
 });

@@ -3,7 +3,7 @@ title: Dropdown
 description: A drop down selector
 ---
 
-import ShowComponent from "@components/docs/browser-components/v0.2.0/doc-helpers/ShowComponent.astro";
+import ComponentPreview from "@components/docs/ComponentPreview.astro";
 import BasicDropdown from "@components/docs/browser-components/v0.2.0/dropdown/BasicDropdown.html";
 import BasicDropdownOpen from "@components/docs/browser-components/v0.2.0/dropdown/BasicDropdownOpen.html";
 import ErrorDropdown from "@components/docs/browser-components/v0.2.0/dropdown/ErrorDropdown.html";
@@ -23,32 +23,32 @@ The dropdown component provides a flexible and accessible way to present a list 
 
 To use the basic dropdown, simply include the following HTML structure:
 
-<ShowComponent>
+<ComponentPreview>
   <BasicDropdown />
-</ShowComponent>
+</ComponentPreview>
 
 The open state of the search dropdown can be triggered by adding the `dropdown-open` to the main wrapper.
 
 <div className="mb-48!">
-  <ShowComponent>
+  <ComponentPreview>
     <BasicDropdownOpen />
-  </ShowComponent>
+  </ComponentPreview>
 </div>
 
 ### Adding Search Functionality
 
 To add search functionality to your dropdown, use the search dropdown variant:
 
-<ShowComponent>
+<ComponentPreview>
   <SearchDropdown />
-</ShowComponent>
+</ComponentPreview>
 
 The open variant is applied in the same way as before, by adding the `dropdown-open` class to the main wrapper.
 
 <div className="mb-58!">
-  <ShowComponent>
+  <ComponentPreview>
     <SearchDropdownOpen />
-  </ShowComponent>
+  </ComponentPreview>
 </div>
 
 ### States
@@ -57,17 +57,17 @@ The open variant is applied in the same way as before, by adding the `dropdown-o
 
 To indicate an error state, add the `dropdown-error` class to the main wrapper:
 
-<ShowComponent>
+<ComponentPreview>
   <ErrorDropdown />
-</ShowComponent>
+</ComponentPreview>
 
 #### Inactive State
 
 For an inactive dropdown, add the `disabled` property to the `dropdown-wrapper` div. Ensure that the aria labels are also changed to reflect this.
 
-<ShowComponent>
+<ComponentPreview>
   <InactiveDropdown />
-</ShowComponent>
+</ComponentPreview>
 
 ## CSS Variables
 

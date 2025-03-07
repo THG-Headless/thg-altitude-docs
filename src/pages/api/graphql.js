@@ -1,5 +1,3 @@
-export const prerender = false;
-
 import axios from 'axios'
 
 // GraphQL endpoint configuration

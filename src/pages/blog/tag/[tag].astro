@@ -1,35 +1,22 @@
 ---
-export const prerender = true;
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 
-export async function getStaticPaths() {
-  const allPosts = await getCollection('blog');
-  
-  // Get all unique tags
-  const uniqueTags = [...new Set(allPosts.flatMap(post => post.data.tags || []))];
-  
-  // Create a path for each tag
-  return uniqueTags.map((tag: string) => {
-    // Filter posts that have this tag
-    const filteredPosts = allPosts.filter(post => 
-      post.data.tags?.includes(tag) && 
-      (!import.meta.env.PROD || !post.data.draft)
-    );
-    
-    return {
-      params: { tag },
-      props: { 
-        posts: filteredPosts.sort((a, b) => 
-          b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-        ),
-        tag 
-      },
-    };
-  });
-}
+// Get the tag from the URL
+const tag = Astro.params.tag || '';
 
-const { posts, tag } = Astro.props;
+// Get all blog posts
+const allPosts = await getCollection('blog');
+
+// Filter posts that have this tag
+const posts = allPosts
+  .filter(post =>
+    post.data.tags?.includes(tag) &&
+    (!import.meta.env.PROD || !post.data.draft)
+  )
+  .sort((a, b) =>
+    b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+  );
 
 // Format date
 function formatDate(date: Date) {

@@ -1,32 +1,34 @@
 ---
-export const prerender = true;
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Pagination from '../../components/Pagination.astro';
 import { getCollection } from 'astro:content';
-import type { GetStaticPathsOptions, Page } from 'astro';
 
-export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
-  // Get all blog posts
-  const allPosts = await getCollection('blog');
+// Get the current page from the URL
+const currentPage = parseInt(Astro.params.page || '1');
+const pageSize = 10;
 
-  // Filter out draft posts in production
-  const posts = import.meta.env.PROD 
-    ? allPosts.filter(post => !post.data.draft)
-    : allPosts;
+// Get all blog posts
+const allPosts = await getCollection('blog');
 
-  // Sort posts by date
-  const sortedPosts = posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
-  
-  // Generate pages with 10 posts per page
-  return paginate(sortedPosts, { pageSize: 10 });
+// Filter out draft posts in production
+const filteredPosts = import.meta.env.PROD
+  ? allPosts.filter(post => !post.data.draft)
+  : allPosts;
+
+// Sort posts by date
+const sortedPosts = filteredPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+// Calculate pagination
+const totalPosts = sortedPosts.length;
+const lastPage = Math.ceil(totalPosts / pageSize);
+const startIndex = (currentPage - 1) * pageSize;
+const endIndex = startIndex + pageSize;
+const posts = sortedPosts.slice(startIndex, endIndex);
+
+// Redirect to first page if the requested page doesn't exist
+if (currentPage > lastPage && lastPage > 0) {
+  return Astro.redirect('/blog');
 }
-
-interface Props {
-  page: Page<any>;
-}
-
-const { page } = Astro.props;
-const { data: posts, currentPage, lastPage } = page;
 
 // Format date
 function formatDate(date: Date) {

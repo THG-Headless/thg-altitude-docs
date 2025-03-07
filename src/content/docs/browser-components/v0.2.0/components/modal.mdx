@@ -4,14 +4,8 @@ description: A composable modal system built with HTML dialog element
 ---
 
 import { Aside } from "@components/docs";
-import ShowComponent from "@components/docs/browser-components/v0.2.0/doc-helpers/ShowComponent.astro";
-import BasicModal from "@components/docs/browser-components/v0.2.0/modals/BasicModal.html";
-import NoBackdropModal from "@components/docs/browser-components/v0.2.0/modals/NoBackdropModal.html";
-import HeroModal from "@components/docs/browser-components/v0.2.0/modals/HeroModal.html";
-import ComplexModal from "@components/docs/browser-components/v0.2.0/modals/ComplexModal.html";
-import BackdropCloseModal from "@components/docs/browser-components/v0.2.0/modals/BackdropCloseModal.html";
-import FullScreenModal from "@components/docs/browser-components/v0.2.0/modals/FullScreenModal.html";
-import NoEntranceModal from "@components/docs/browser-components/v0.2.0/modals/NoEntrance.html";
+import PageScript from "@components/docs/PageScript.astro";
+import ComponentPreview from "@components/docs/ComponentPreview.astro";
 
 # Modal
 
@@ -27,33 +21,172 @@ The default modal implementation centers in the viewport on desktop and slides u
 
 Here's an example that combines multiple features into a complete modal. This demonstrates how the modal system's composable nature allows you to build complex interfaces by combining simple components. This example includes a hero image with responsive layout, a close button in the control bar, structured content with title and body, primary and secondary actions, and supports backdrop click-to-close.
 
-<ShowComponent>
-  <ComplexModal />
-</ShowComponent>
+<ComponentPreview>
+<button
+  class="skin-primary-emphasised interactive btn"
+  onclick="complexModal.showModal()"
+  aria-haspopup="dialog"
+  aria-controls="complexModal"
+>
+  Open Complex Modal
+</button>
+
+<dialog
+  id="complexModal"
+  class="modal-dialog"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="complex-modal-title"
+  aria-describedby="complex-modal-body"
+>
+  <form method="dialog" class="modal-backdrop" aria-hidden="true">
+    <button aria-hidden="true" aria-label="Close Modal" tabindex="-1"></button>
+  </form>
+
+  <div class="skin-modal modal-container modal-container--with-hero">
+    <form method="dialog" class="modal-header">
+      <button class="modal-close">
+        <span>Close</span>
+        <span aria-hidden="true">✕</span>
+      </button>
+    </form>
+    <div class="modal-hero">
+      <img
+        class="modal-hero-image"
+        src="https://picsum.photos/id/558/1920/1080"
+        alt="Hero image"
+      />
+    </div>
+    <div>
+      <h3 id="complex-modal-title" class="text-lg">Modal with Hero Image</h3>
+      <div id="complex-modal-body" class="text-body py-4">
+        <p>
+          This modal features a hero image on the left side, content, and a
+          backdrop click away
+        </p>
+      </div>
+      <button
+        type="button"
+        class="skin-primary-emphasised interactive btn full-width"
+      >
+        Primary CTA
+      </button>
+    </div>
+  </div>
+</dialog>
+</ComponentPreview>
 
 ### Basic Modal
 
 The simplest implementation of a modal includes basic container styling, a backdrop with blur effect, ESC key to close, and default padding and margins.
 
-<ShowComponent>
-  <BasicModal />
-</ShowComponent>
+<ComponentPreview>
+<button
+  class="skin-primary-emphasised interactive btn"
+  onclick="basicModal.showModal()"
+  aria-haspopup="dialog"
+  aria-controls="basicModal"
+>
+  Open Basic Modal
+</button>
+
+<dialog
+  id="basicModal"
+  class="modal-dialog"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Basic Modal"
+>
+  <div class="skin-modal modal-container">
+    <form method="dialog" class="modal-header">
+      <button class="modal-close interactive-foreground">
+        <span>Close</span>
+        <span aria-hidden="true">✕</span>
+      </button>
+    </form>
+    <div class="modal-content">
+      <div id="basic-modal-content" class="text-body">
+        Click the close button or press ESC to close
+      </div>
+    </div>
+  </div>
+</dialog>
+</ComponentPreview>
 
 ### Disable Backdrop
 
 To remove the backdrop blur and dimming effects, add the `modal-disable-backdrop` class to the dialog element alongside the `modal` class.
 
-<ShowComponent>
-  <NoBackdropModal />
-</ShowComponent>
+<ComponentPreview>
+<button
+  class="skin-primary-emphasised interactive btn"
+  onclick="noBackdropModal.showModal()"
+  aria-haspopup="dialog"
+  aria-controls="noBackdropModal"
+>
+  Open Modal with no Backdrop
+</button>
+
+<dialog
+  id="noBackdropModal"
+  class="modal-dialog modal-disable-backdrop"
+  role="dialog"
+  aria-modal="true"
+  aria-label="No Backdrop Modal"
+>
+  <div class="skin-modal modal-container">
+    <form method="dialog" class="modal-header">
+      <button class="modal-close">
+        <span>Close</span>
+        <span aria-hidden="true">✕</span>
+      </button>
+    </form>
+    <div>
+      <div class="text-body">This modal can be closed with ESC key</div>
+    </div>
+  </div>
+</dialog>
+</ComponentPreview>
 
 ### Backdrop Click Away
 
 To enable closing the modal by clicking the backdrop, add a `form` element with `method="dialog"` and the `modal-clickaway` class after the modal content.
 
-<ShowComponent>
-  <BackdropCloseModal />
-</ShowComponent>
+<ComponentPreview>
+<button
+  class="skin-primary-emphasised interactive btn"
+  onclick="backdropModal.showModal()"
+  aria-haspopup="dialog"
+  aria-controls="backdropModal"
+>
+  Open Modal with Backdrop Click Away
+</button>
+
+<dialog
+  id="backdropModal"
+  class="modal-dialog"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="backdrop-modal-content"
+>
+  <form method="dialog" class="modal-backdrop" aria-hidden="true">
+    <button aria-hidden="true" tabindex="-1" aria-label="Close Modal"></button>
+  </form>
+  <div class="skin-modal modal-container">
+    <form method="dialog" class="modal-header">
+      <button class="modal-close">
+        <span>Close</span>
+        <span aria-hidden="true">✕</span>
+      </button>
+    </form>
+    <div class="">
+      <div id="backdrop-modal-content" class="text-body">
+        This modal can be closed with ESC key or by clicking the background
+      </div>
+    </div>
+  </div>
+</dialog>
+</ComponentPreview>
 
 ---
 
@@ -74,9 +207,43 @@ Always prefer explicit dismissal method of the close button for important modal 
 
 To create a modal with a hero image, add the `modal-container--with-hero` class to your modal container. Place your image with the `modal-hero-image` class in a separate `div` before your content. The layout will automatically adjust between desktop (left-aligned) and mobile (top-aligned).
 
-<ShowComponent>
-  <HeroModal />
-</ShowComponent>
+<ComponentPreview>
+<button
+  class="skin-primary-emphasised interactive btn"
+  onclick="heroModal.showModal()"
+  aria-haspopup="dialog"
+  aria-controls="heroModal"
+>
+  Open Modal with Hero Image
+</button>
+
+<dialog
+  id="heroModal"
+  class="modal-dialog"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Hero Modal"
+>
+  <div class="skin-modal modal-container modal-container--with-hero modal">
+    <form method="dialog" class="modal-header">
+      <button class="modal-close">
+        <span>Close</span>
+        <span aria-hidden="true">✕</span>
+      </button>
+    </form>
+    <div class="modal-hero">
+      <img
+        class="modal-hero-image"
+        src="https://picsum.photos/id/558/1920/1080"
+        alt="Hero image"
+      />
+    </div>
+    <div>
+      <div class="text-body">This modal can be closed with ESC key</div>
+    </div>
+  </div>
+</dialog>
+</ComponentPreview>
 
 ### Fullscreen Modals
 
@@ -87,17 +254,75 @@ The modal system supports fullscreen layouts for both desktop and mobile views. 
 
 These classes can be used independently or together for different responsive behaviors.
 
-<ShowComponent>
-  <FullScreenModal />
-</ShowComponent>
+<ComponentPreview>
+<button
+  class="skin-primary-emphasised interactive btn"
+  onclick="fullscreenModal.showModal()"
+  aria-haspopup="dialog"
+  aria-controls="fullscreenModal"
+>
+  Open Fullscreen Modal
+</button>
+
+<dialog
+  id="fullscreenModal"
+  class="modal-dialog modal-fullscreen modal-fullscreen-mobile"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Fullscreen Modal"
+>
+  <div class="skin-modal modal-container">
+    <form method="dialog" class="modal-header">
+      <button class="modal-close">
+        <span>Close</span>
+        <span aria-hidden="true">✕</span>
+      </button>
+    </form>
+    <div>
+      <div class="text-body">
+        <h1>This modal is fullscreen on both desktop and mobile</h1>
+      </div>
+    </div>
+  </div>
+</dialog>
+</ComponentPreview>
 
 ### Disable Entrance animation
 
 By applying the `modal-disable-entrance` class, the pop up / slide in animations are disabled for desktop and mobile respectively.
+<ComponentPreview>
+<button
+  class="skin-primary-emphasised interactive btn"
+  onclick="noEntranceModal.showModal()"
+  aria-haspopup="dialog"
+  aria-controls="noEntranceModal"
+>
+  Open Modal Without Entrance Animation
+</button>
 
-<ShowComponent>
-  <NoEntranceModal />
-</ShowComponent>
+<dialog
+  id="noEntranceModal"
+  class="modal-dialog modal-disable-entrance"
+  role="dialog"
+  aria-modal="true"
+  aria-label="No Entrance Animation Modal"
+>
+  <div class="skin-modal modal-container modal">
+    <form method="dialog" class="modal-header">
+      <button class="modal-close">
+        <span>Close</span>
+        <span aria-hidden="true">✕</span>
+      </button>
+    </form>
+    <div>
+      <div class="text-body">
+        This modal simply fades in and out, with no pop-up or slide-in
+        animations.
+      </div>
+    </div>
+  </div>
+</dialog>
+</ComponentPreview>
 
 ## Mobile Implementation
 
@@ -206,5 +431,3 @@ When implementing modals in your project, several JavaScript features are necess
 - Include `aria-controls` on trigger buttons
 - Add descriptive `aria-label` values for action buttons
 - Use `aria-hidden="true"` for decorative elements
-
-{/*  */}

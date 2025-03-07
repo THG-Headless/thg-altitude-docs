@@ -1,49 +1,13 @@
 ---
-export const prerender = true;
 import DocsLayout from '../../../../layouts/DocsLayout.astro';
 import DocsSidebar from '../../../../components/DocsSidebar.astro';
-import { getCollection, type CollectionEntry } from 'astro:content';
+import { getCollection } from 'astro:content';
 import { products } from '../../../../config/products';
-import { isVersionFolder } from '../../../../utils/versions';
+import { isVersionFolder, getProductVersions, getLatestVersion } from '../../../../utils/versions';
 
-export async function getStaticPaths() {
-  const docs = await getCollection('docs');
-  
-  // Filter only index files
-  const indexDocs = docs.filter(doc => doc.id.endsWith('/index.mdx') || doc.id.endsWith('/index.md'));
-  
-  // Define the type for paths
-  type PathItem = {
-    params: { product: string; version: string };
-    props: { doc: CollectionEntry<'docs'> };
-  };
-  
-  const paths: PathItem[] = [];
-  
-  indexDocs.forEach(doc => {
-    // Get the path parts
-    const pathParts = doc.id.split('/');
-    
-    // We need at least product/version/index
-    if (pathParts.length >= 3) {
-      const product = pathParts[0];
-      const version = pathParts[1];
-      
-      // Only process if the second part is a version folder and the last part is index
-      if (isVersionFolder(version) && (pathParts[pathParts.length - 1] === 'index.mdx' || pathParts[pathParts.length - 1] === 'index.md')) {
-        paths.push({
-          params: { product, version },
-          props: { doc }
-        });
-      }
-    }
-  });
-  
-  return paths;
-}
-
-const { product: productId, version } = Astro.params;
-const { doc } = Astro.props;
+// Ensure parameters are defined
+const productId = Astro.params.product || '';
+const versionId = Astro.params.version || '';
 
 // Get product info from config
 const product = products[productId] || {
@@ -55,15 +19,108 @@ const product = products[productId] || {
   quickLinks: []
 };
 
-const { Content, headings } = await doc.render();
+// Debug logging
+console.log('Version params:', { productId, versionId });
+
+// Get the entry from the collection
+let Content;
+let headings = [];
+let docData: { title?: string; description?: string } = {};
+
+// Check if this is actually a version folder
+if (!isVersionFolder(versionId)) {
+  // This is not a version folder, so it's likely a direct file like "changelog"
+  console.log(`Non-version path detected: /docs/${productId}/${versionId}`);
+  
+  // Try to find the file directly in the content collection
+  try {
+    const docs = await getCollection('docs');
+    
+    // Look for the file with the exact path
+    const directPaths = [
+      `${productId}/${versionId}.md`,
+      `${productId}/${versionId}.mdx`
+    ];
+    
+    console.log('Looking for direct file paths:', directPaths);
+    
+    // Try to find the file
+    const directFile = docs.find(doc => directPaths.includes(doc.id));
+    
+    if (directFile) {
+      // File exists, render it directly
+      console.log('Found direct file:', directFile.id);
+      docData = directFile.data;
+      
+      // Render the content
+      const result = await (directFile as any).render();
+      Content = result.Content;
+      headings = result.headings;
+      console.log('Content available (direct file):', !!Content);
+      
+      // Continue with the template rendering (don't return here)
+    } else {
+      // File doesn't exist, redirect to the latest version
+      console.log('Direct file not found, redirecting to latest version');
+      
+      // Get all versions for this product
+      const versions = await getProductVersions(productId);
+      
+      // If versions exist, redirect to the latest version
+      if (versions.length > 0) {
+        const latestVersion = getLatestVersion(versions);
+        if (latestVersion) {
+          console.log(`Redirecting to latest version: ${latestVersion}`);
+          return Astro.redirect(`/docs/${productId}/${latestVersion}`);
+        }
+      }
+      
+      // If no versions found, show a not found message
+      console.error('No versions found for product:', productId);
+    }
+  } catch (error) {
+    console.error(`Error checking for direct file: ${error}`);
+  }
+}
+
+try {
+  // This is a version folder, look for the index file
+  const indexPath = `${productId}/${versionId}/index`;
+  const possiblePaths = [
+    `${indexPath}.md`,
+    `${indexPath}.mdx`
+  ];
+  
+  console.log('Checking these paths:', possiblePaths);
+  
+  // Find the document
+  const docs = await getCollection('docs');
+  const doc = docs.find(doc => possiblePaths.includes(doc.id));
+  
+  if (doc) {
+    console.log('Found doc:', doc.id);
+    docData = doc.data;
+    
+    // Render the content
+    const result = await (doc as any).render();
+    Content = result.Content;
+    headings = result.headings;
+    console.log('Content available:', !!Content);
+  } else {
+    console.error('Doc not found for:', `${productId}/${versionId}`);
+    console.log('Available docs:', docs.map(d => d.id));
+  }
+} catch (error) {
+  console.error(`Error rendering content: ${error}`);
+}
 ---
 
 <DocsLayout
-  title={doc.data.title}
-  description={doc.data.description}
+  title={docData.title || `${product.name} Documentation`}
+  description={docData.description || `Documentation for ${product.name}`}
   product={product}
   headings={headings}
 >
   <DocsSidebar slot="sidebar" product={product} />
-  <Content />
+  {Content ? <Content /> : <p>Documentation content not available.</p>}
 </DocsLayout>

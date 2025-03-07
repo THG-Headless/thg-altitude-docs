@@ -37,6 +37,7 @@ const { title, description, product } = Astro.props;
     <title>{title} - THG Altitude</title>
     {description && <meta name="description" content={description} />}
     <ViewTransitions />
+    <script is:inline src="/components/docs/browser-components/v0.2.0/modals/modal-init.js"></script>
   </head>
   <body class="min-h-screen bg-[#010101] text-stone-100">
     <HeaderNav />

@@ -1,5 +1,4 @@
 ---
-export const prerender = true;
 import { parseAnimationScheme } from "@utils/browser-components/v0.2.0/animationParser";
 import type { AnimationVariable } from "@utils/browser-components/v0.2.0/animationParser";
 
@@ -40,12 +39,22 @@ const animationVariables = parseAnimationScheme(cssContent);
     );
   }
 
-  document.addEventListener("DOMContentLoaded", () => {
+  // Function to initialize the animation button
+  function initAnimationButton() {
     const animateButton = document.getElementById("animate-button");
     if (animateButton) {
+      // Remove any existing event listeners to prevent duplicates
+      animateButton.removeEventListener("click", startAnimations);
+      // Add the event listener
       animateButton.addEventListener("click", startAnimations);
     }
-  });
+  }
+
+  // Initialize on DOMContentLoaded (for initial page load)
+  document.addEventListener("DOMContentLoaded", initAnimationButton);
+  
+  // Initialize on astro:page-load (for view transitions)
+  document.addEventListener("astro:page-load", initAnimationButton);
 </script>
 
 <div class="max-w-7xl mx-auto p-6">

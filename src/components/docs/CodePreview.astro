@@ -1,83 +1,42 @@
 ---
+/**
+ * CodePreview - A component that shows both a preview and code view of HTML content
+ *
+ * This component provides a tabbed interface with:
+ * - A "Preview" tab that shows the rendered HTML
+ * - A "Code" tab that shows the HTML code with syntax highlighting
+ *
+ * It's designed to work with view transitions and includes proper tab switching.
+ *
+ * Usage:
+ *
+ * ```astro
+ * import CodePreview from '@components/docs/CodePreview.astro';
+ *
+ * <CodePreview>
+ *   <button class="skin-primary-emphasised interactive btn">Click me</button>
+ * </CodePreview>
+ * ```
+ */
+import CodeBlock from './CodeBlock.astro';
 
-interface Props {
-  filePath?: string;
-}
+// Generate a unique ID for this component instance
+const componentId = Math.random().toString(36).substring(2, 9);
 
-const { filePath } = Astro.props;
-
-function getFileExtension(filepath: string): string {
-  return filepath.split(".").pop()?.toLowerCase() || "";
-}
-
-async function getCodeContent(content: string, language: string = "html"): Promise<string> {
-  // Use Astro's built-in code block with syntax highlighting
-  return `
-    <div class="dark-theme dark:block hidden">
-      <pre><code class="language-${language}">${content}</code></pre>
-    </div>
-    <div class="light-theme dark:hidden block">
-      <pre><code class="language-${language}">${content}</code></pre>
-    </div>
-  `;
-}
-
-async function getFileContent(filepath: string): Promise<string> {
-  try {
-    // Use fetch to get the file content at runtime
-    const response = await fetch(filepath);
-    if (!response.ok) {
-      throw new Error(`Failed to fetch file: ${response.statusText}`);
-    }
-    
-    const content = await response.text();
-    const processedContent = content.replace(/---[\s\S]*?---/, "").trim();
-
-    const fileExt = getFileExtension(filepath);
-    const languageMap: { [key: string]: string } = {
-      css: "css",
-      html: "html",
-      js: "javascript",
-      jsx: "jsx",
-      ts: "typescript",
-      tsx: "tsx",
-      astro: "astro",
-      md: "markdown",
-      mdx: "markdown",
-    };
-    const language = languageMap[fileExt] || "html";
-
-    return `
-      <div class="dark-theme dark:block hidden">
-        <pre><code class="language-${language}">${processedContent}</code></pre>
-      </div>
-      <div class="light-theme dark:hidden block">
-        <pre><code class="language-${language}">${processedContent}</code></pre>
-      </div>
-    `;
-  } catch (error) {
-    console.error(`Error reading file: ${error}`);
-    return `Error: Could not read file ${filepath}`;
-  }
-}
-
-const componentId = Math.random().toString(36).substr(2, 9);
-
+// Get the HTML content from the slot
 const slotContent = await Astro.slots.render("default");
 
+// The preview content is the raw HTML
 const previewContent = slotContent;
 
+// Clean up the HTML content for code display (remove scripts and styles)
 const htmlContent = slotContent
   .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
   .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, "")
   .trim();
-
-const codeContent = filePath
-  ? await getFileContent(filePath)
-  : await getCodeContent(htmlContent, "html");
 ---
 
-<div class="not-content rounded-lg border border-black shadow-sm">
+<div class="not-content rounded-lg border border-black shadow-sm mb-6">
   <div class="bg-black rounded-lg">
     <div
       class="flex justify-between items-center bg-black rounded-t-lg border-b border-black"
@@ -138,8 +97,8 @@ const codeContent = filePath
       class="bg-black p-4 hidden rounded-b-lg"
       role="tabpanel"
     >
-      <div class="sl-markdown-content prose dark:prose-invert max-w-none">
-        <Fragment set:html={codeContent.trim()} />
+      <div class="sl-markdown-content prose dark:prose-invert max-w-none max-h-[500px] overflow-auto">
+        <CodeBlock lang="html" code={htmlContent} />
       </div>
     </div>
   </div>

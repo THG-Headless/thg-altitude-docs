@@ -4,7 +4,7 @@ description: A primitive accordion
 ---
 
 import { Aside } from "@components/docs";
-import ShowComponent from "@components/docs/browser-components/v0.2.0/doc-helpers/ShowComponent.astro";
+import ComponentPreview from "@components/docs/ComponentPreview.astro";
 import SummaryAccordion from "@components/docs/browser-components/v0.2.0/accordion/SummaryAccordion.html";
 import NamedSummaryAccordion from "@components/docs/browser-components/v0.2.0/accordion/NamedSummaryAccordion.html";
 
@@ -30,17 +30,17 @@ If using the Altitude Commerce starter kits, there is a Javascript based solutio
 
 This accordion has a basic open close mechanic from the details/summary tag used.
 
-<ShowComponent>
+<ComponentPreview>
   <SummaryAccordion />
-</ShowComponent>
+</ComponentPreview>
 
 ### Named Summary Accordion
 
 Building on the initial Summary accordion, the use of the name attribute on the details tag allows only one section to be open at a time.
 
-<ShowComponent >
+<ComponentPreview>
   <NamedSummaryAccordion />
-</ShowComponent>
+</ComponentPreview>
 {/* 
 ### Style Override Example
 

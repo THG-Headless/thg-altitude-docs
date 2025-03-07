@@ -143,12 +143,8 @@ async function generateNavFromContent(productId: string) {
       directoryMap[parentPath].items = directoryMap[parentPath].items || [];
       directoryMap[parentPath].items?.push(fileNavItem);
       
-      // Update directory order based on the minimum order of its children
-      if (fileNavItem.order !== undefined) {
-        if (directoryMap[parentPath].order === undefined || fileNavItem.order < directoryMap[parentPath].order!) {
-          directoryMap[parentPath].order = fileNavItem.order;
-        }
-      }
+      // We don't propagate order from children to parents anymore
+      // This ensures that 'order' only affects items at the same level
     } else {
       // This is a top-level file, add it directly to the root items
       directoryMap[href] = fileNavItem;
@@ -180,12 +176,8 @@ async function generateNavFromContent(productId: string) {
         directoryMap[parentPath].items = directoryMap[parentPath].items || [];
         directoryMap[parentPath].items?.push(directoryMap[path]);
         
-        // Propagate order up to parent directory
-        if (directoryMap[path].order !== undefined) {
-          if (directoryMap[parentPath].order === undefined || directoryMap[path].order! < directoryMap[parentPath].order!) {
-            directoryMap[parentPath].order = directoryMap[path].order;
-          }
-        }
+        // We don't propagate order from children to parents anymore
+        // This ensures that 'order' only affects items at the same level
         
         // Mark this directory as processed so we don't add it to the root
         directoryMap[path].processed = true;
@@ -247,7 +239,8 @@ const hasOnlyCurrentPage = nav.length === 1 && nav[0].href === currentPath;
 const hasContent = nav.length > 0 && !hasOnlyCurrentPage;
 
 function isActive(href: string): boolean {
-  return currentPath === href || currentPath.startsWith(`${href}/`);
+  // Only consider exact matches as active
+  return currentPath === href;
 }
 
 function isSectionActive(items: NavItem[] | undefined): boolean {

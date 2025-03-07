@@ -1,0 +1,43 @@
+---
+// Check if we have a script slot
+const hasScriptSlot = await Astro.slots.has('script');
+
+// Get the JavaScript code
+let jsCode = '';
+if (hasScriptSlot) {
+  // If we have a script slot, use that
+  const scriptContent = await Astro.slots.render('script');
+  // Extract the JavaScript code from the script tag
+  const scriptMatch = scriptContent.match(/<script[^>]*>([\s\S]*?)<\/script>/);
+  jsCode = scriptMatch ? scriptMatch[1] : '';
+} else {
+  // Otherwise, use the default slot as JavaScript
+  jsCode = await Astro.slots.render('default');
+}
+
+// Generate a unique ID for this script instance
+const scriptId = `ps-${Math.random().toString(36).substring(2, 9)}`;
+---
+
+{hasScriptSlot && <slot />}
+
+<script define:vars={{ jsCode, scriptId }}>
+// Wrap the code in a function so it can be called multiple times
+window[scriptId] = function() {
+  try {
+    // Execute the code
+    new Function(jsCode)();
+  } catch (error) {
+    console.error(`Error in PageScript (${scriptId}):`, error);
+  }
+};
+
+// Initialize on DOMContentLoaded (for initial page load)
+document.addEventListener('DOMContentLoaded', window[scriptId]);
+
+// Initialize on astro:page-load (for view transitions)
+document.addEventListener('astro:page-load', window[scriptId]);
+
+// Also execute immediately
+window[scriptId]();
+</script>

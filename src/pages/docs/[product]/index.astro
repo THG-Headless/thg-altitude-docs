@@ -1,77 +1,12 @@
 ---
-export const prerender = true;
 import DocsLayout from '../../../layouts/DocsLayout.astro';
 import DocsSidebar from '../../../components/DocsSidebar.astro';
-import { getCollection, type CollectionEntry } from 'astro:content';
+import { getCollection } from 'astro:content';
 import { products } from '../../../config/products';
 import { getProductVersions, getLatestVersion, isVersionFolder } from '../../../utils/versions';
 
-export async function getStaticPaths() {
-  const docs = await getCollection('docs');
-  
-  // Filter only index files
-  const indexDocs = docs.filter(doc => doc.id.endsWith('/index.mdx') || doc.id.endsWith('/index.md'));
-  
-  // Define the type for paths
-  type PathItem = {
-    params: { product: string }; // Make product required, not optional
-    props: { doc: CollectionEntry<'docs'> };
-  };
-  
-  const paths: PathItem[] = [];
-  
-  indexDocs.forEach(doc => {
-    // Get the path parts
-    const pathParts = doc.id.split('/');
-    
-    if (pathParts.length >= 1) {
-      const productId = pathParts[0];
-      
-      // Handle direct product index (e.g., "cloud/index.mdx")
-      if (pathParts.length === 2) {
-        paths.push({
-          params: { product: productId },
-          props: { doc }
-        });
-      }
-      
-      // Handle versioned index (e.g., "cloud/v2.3.0/index.mdx")
-      if (pathParts.length >= 3 && isVersionFolder(pathParts[1])) {
-        const version = pathParts[1];
-        
-        // Create a path for /docs/[product]/[version]
-        paths.push({
-          params: { product: `${productId}/${version}` },
-          props: { doc }
-        });
-      }
-      
-      // Handle nested index files (e.g., "elements/variations/index.mdx")
-      if (pathParts.length > 2 && !isVersionFolder(pathParts[1])) {
-        // Create a path parameter that includes all parts except the last one (which is "index.mdx")
-        // For example, for "elements/variations/index.mdx", we want "elements/variations"
-        const nestedPath = pathParts.slice(0, -1).join('/');
-        
-        // Only create paths for top-level product pages, not for nested pages
-        // This prevents the "Missing parameter: product" error
-        if (nestedPath.split('/').length === 1) {
-          paths.push({
-            params: { product: nestedPath },
-            props: { doc }
-          });
-        }
-      }
-    }
-  });
-  
-  // Debug output
-  console.log(paths.map(p => p.params.product));
-  
-  return paths;
-}
-
-const { product: productParam = "" } = Astro.params;
-const { doc } = Astro.props;
+// Ensure parameters are defined
+const productParam = Astro.params.product || '';
 
 // Split the product parameter to handle different path types
 const productParts = productParam.split('/');
@@ -93,14 +28,29 @@ const currentPath = Astro.url.pathname;
 const isDirectProductAccess = currentPath === `/docs/${productId}` || currentPath === `/docs/${productId}/`;
 
 if (isDirectProductAccess && !version) {
-  // Get all versions for this product
-  const versions = await getProductVersions(productId);
+  // Try to find content for the direct product path
+  const indexPath = `${productId}/index`;
+  const possiblePaths = [
+    `${indexPath}.md`,
+    `${indexPath}.mdx`
+  ];
   
-  // If versions exist, redirect to the latest version
-  if (versions.length > 0) {
-    const latestVersion = getLatestVersion(versions);
-    if (latestVersion) {
-      return Astro.redirect(`/docs/${productId}/${latestVersion}`);
+  const docs = await getCollection('docs');
+  const doc = docs.find(doc => possiblePaths.includes(doc.id));
+  
+  // If no direct content found, check for versions
+  if (!doc) {
+    console.log(`No direct content found for ${productId}, checking for versions`);
+    // Get all versions for this product
+    const versions = await getProductVersions(productId);
+    
+    // If versions exist, redirect to the latest version
+    if (versions.length > 0) {
+      const latestVersion = getLatestVersion(versions);
+      if (latestVersion) {
+        console.log(`Redirecting to latest version: ${latestVersion}`);
+        return Astro.redirect(`/docs/${productId}/${latestVersion}`);
+      }
     }
   }
 }
@@ -115,16 +65,48 @@ const product = products[productId] || {
   quickLinks: []
 };
 
-// @ts-ignore - Astro content collections typing issue
-const { Content, headings } = await doc.render();
+// Get the entry from the collection
+let Content;
+let headings = [];
+let docData: { title?: string; description?: string } = {};
+
+try {
+  // Construct the document ID for the index file
+  const indexPath = `${productId}/index`;
+  
+  // Try both .md and .mdx extensions
+  const possiblePaths = [
+    `${indexPath}.md`,
+    `${indexPath}.mdx`
+  ];
+  
+  // Find the document
+  const docs = await getCollection('docs');
+  const doc = docs.find(doc => possiblePaths.includes(doc.id));
+  
+  if (doc) {
+    console.log('Found doc:', doc.id);
+    docData = doc.data;
+    
+    // Render the content
+    const result = await (doc as any).render();
+    Content = result.Content;
+    headings = result.headings;
+    console.log('Content available:', !!Content);
+  } else {
+    console.error('Index doc not found for:', productId);
+  }
+} catch (error) {
+  console.error(`Error rendering content: ${error}`);
+}
 ---
 
 <DocsLayout
-  title={doc.data.title}
-  description={doc.data.description}
+  title={docData.title || `${product.name} Documentation`}
+  description={docData.description || `Documentation for ${product.name}`}
   product={product}
   headings={headings}
 >
   <DocsSidebar slot="sidebar" product={product} />
-  <Content />
+  {Content ? <Content /> : <p>Documentation content not available.</p>}
 </DocsLayout>

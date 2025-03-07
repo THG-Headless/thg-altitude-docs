@@ -1,24 +1,24 @@
 ---
-export const prerender = true;
 import BlogLayout from '../../layouts/BlogLayout.astro';
 import { getCollection } from 'astro:content';
 
-export async function getStaticPaths() {
-  const blogEntries = await getCollection('blog');
-  
-  return blogEntries.map(entry => {
-    const slug = entry.id.split('/').pop() || '';
-    return {
-      params: { slug },
-      props: { entry },
-    };
-  });
+// Get the slug from the URL
+const slug = Astro.params.slug || '';
+
+// Find the blog entry with the matching slug
+const blogEntries = await getCollection('blog');
+const entry = blogEntries.find(entry => {
+  const entrySlug = entry.id.split('/').pop() || '';
+  return entrySlug === slug;
+});
+
+// Handle case where entry is not found
+if (!entry) {
+  return Astro.redirect('/blog');
 }
 
-const { entry } = Astro.props;
-
-// @ts-ignore - Astro content collections typing issue
-const { Content } = await entry.render();
+// Render the content
+const { Content } = await (entry as any).render();
 ---
 
 <BlogLayout

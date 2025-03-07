@@ -1,5 +1,4 @@
 ---
-export const prerender = true;
 import { parseSemanticColors } from '@utils/browser-components/v0.2.0/SemanticColorParser';
 
 // Simplified hardcoded CSS content with just a few semantic color groups
@@ -433,65 +432,95 @@ const states = ['Hover', 'Focus', 'Active', 'Disabled'] as const;
     }
   };
 
-  // Handle class name copying
-  document.querySelectorAll('.copy-trigger').forEach((trigger) => {
-    trigger.addEventListener('click', (e) => {
-      const button = e.currentTarget as HTMLButtonElement;
-      const wrapper = button.closest('.class-name-wrapper');
-      const message = wrapper?.querySelector('.copy-message');
-      const instruction = wrapper?.querySelector('.copy-instruction');
-      handleCopy(button.dataset.copy || '', message, instruction);
+  // Handle class name copy click
+  function handleCopyTriggerClick(e: Event) {
+    const button = e.currentTarget as HTMLButtonElement;
+    const wrapper = button.closest('.class-name-wrapper');
+    const message = wrapper?.querySelector('.copy-message');
+    const instruction = wrapper?.querySelector('.copy-instruction');
+    handleCopy(button.dataset.copy || '', message, instruction);
+  }
+
+  // Handle var trigger mouseenter
+  function handleVarTriggerMouseEnter(e: Event, tooltip: HTMLElement) {
+    const button = e.currentTarget as HTMLElement;
+    const varName = button.dataset.variable;
+    const varValue = button.dataset.value;
+    const rect = button.getBoundingClientRect();
+
+    // Update tooltip content
+    const nameElement = tooltip.querySelector('.var-name');
+    const valueElement = tooltip.querySelector('.var-value');
+    
+    if (nameElement) nameElement.textContent = varName ?? '';
+    if (valueElement) valueElement.textContent = varValue ?? '';
+
+    // Position tooltip above the trigger
+    tooltip.style.left = `${rect.left + rect.width / 2}px`;
+    tooltip.style.top = `${rect.top - 8}px`;
+    tooltip.style.transform = 'translate(-50%, -100%)';
+
+    // Show tooltip
+    tooltip.classList.add('visible');
+  }
+
+  // Handle var trigger mouseleave
+  function handleVarTriggerMouseLeave(tooltip: HTMLElement) {
+    tooltip.classList.remove('visible');
+  }
+
+  // Handle var trigger click
+  async function handleVarTriggerClick(e: Event, tooltip: HTMLElement) {
+    const button = e.currentTarget as HTMLElement;
+    const varName = button.dataset.variable;
+    await navigator.clipboard.writeText(varName || '');
+
+    const instruction = tooltip.querySelector('.copied-instruction');
+    const copiedMessage = tooltip.querySelector('.copied-message') as HTMLElement;
+
+    if (instruction && copiedMessage) {
+      instruction.classList.add('hidden');
+      copiedMessage.classList.remove('hidden');
+      copiedMessage.style.display = 'flex';
+
+      setTimeout(() => {
+        instruction.classList.remove('hidden');
+        copiedMessage.classList.add('hidden');
+        copiedMessage.style.display = 'none';
+      }, 2000);
+    }
+  }
+
+  // Initialize all event listeners
+  function initializeSemanticColors() {
+    const tooltip = document.querySelector('#tooltip') as HTMLElement;
+    if (!tooltip) return;
+
+    // Handle class name copying
+    document.querySelectorAll('.copy-trigger').forEach((trigger) => {
+      // Remove existing listeners to prevent duplicates
+      trigger.removeEventListener('click', handleCopyTriggerClick);
+      // Add new listener
+      trigger.addEventListener('click', handleCopyTriggerClick);
     });
-  });
 
-  const tooltip = document.querySelector('#tooltip') as HTMLElement;
-  let activeButton: HTMLElement | null = null;
-
-  // Handle tooltip positioning and content
-  document.querySelectorAll('.var-trigger').forEach((trigger) => {
-    trigger.addEventListener('mouseenter', (e) => {
-      const button = e.currentTarget as HTMLElement;
-      const varName = button.dataset.variable;
-      const varValue = button.dataset.value;
-      const rect = button.getBoundingClientRect();
-
-      // Update tooltip content
-      tooltip.querySelector('.var-name')!.textContent = varName ?? '';
-      tooltip.querySelector('.var-value')!.textContent = varValue ?? '';
-
-      // Position tooltip above the trigger
-      tooltip.style.left = `${rect.left + rect.width / 2}px`;
-      tooltip.style.top = `${rect.top - 8}px`;
-      tooltip.style.transform = 'translate(-50%, -100%)';
-
-      // Show tooltip
-      tooltip.classList.add('visible');
-      activeButton = button;
+    // Handle tooltip positioning and content
+    document.querySelectorAll('.var-trigger').forEach((trigger) => {
+      // Remove existing listeners to prevent duplicates
+      trigger.removeEventListener('mouseenter', (e) => handleVarTriggerMouseEnter(e, tooltip));
+      trigger.removeEventListener('mouseleave', () => handleVarTriggerMouseLeave(tooltip));
+      trigger.removeEventListener('click', (e) => handleVarTriggerClick(e, tooltip));
+      
+      // Add new listeners
+      trigger.addEventListener('mouseenter', (e) => handleVarTriggerMouseEnter(e, tooltip));
+      trigger.addEventListener('mouseleave', () => handleVarTriggerMouseLeave(tooltip));
+      trigger.addEventListener('click', (e) => handleVarTriggerClick(e, tooltip));
     });
+  }
 
-    trigger.addEventListener('mouseleave', () => {
-      tooltip.classList.remove('visible');
-    });
-
-    trigger.addEventListener('click', async (e) => {
-      const button = e.currentTarget as HTMLElement;
-      const varName = button.dataset.variable;
-      await navigator.clipboard.writeText(varName || '');
-
-      const instruction = tooltip.querySelector('.copied-instruction');
-      const copiedMessage = tooltip.querySelector('.copied-message') as HTMLElement;
-
-      if (instruction && copiedMessage) {
-        instruction.classList.add('hidden');
-        copiedMessage.classList.remove('hidden');
-        copiedMessage.style.display = 'flex';
-
-        setTimeout(() => {
-          instruction.classList.remove('hidden');
-          copiedMessage.classList.add('hidden');
-          copiedMessage.style.display = 'none';
-        }, 2000);
-      }
-    });
-  });
+  // Initialize on DOMContentLoaded (for initial page load)
+  document.addEventListener('DOMContentLoaded', initializeSemanticColors);
+  
+  // Initialize on astro:page-load (for view transitions)
+  document.addEventListener('astro:page-load', initializeSemanticColors);
 </script>

@@ -59,20 +59,39 @@ const { color, getColorValue } = Astro.props;
 </button>
 
 <script>
-  document.querySelectorAll('button').forEach((button) => {
-    button.addEventListener('click', (e) => {
-      const tooltip = button.querySelector(
-        'div[class*="opacity-0 group-hover:opacity-100"]'
-      );
-      if (tooltip) {
-        const originalText =
-          tooltip.querySelector('.text-gray-600')?.textContent;
-        tooltip.querySelector('.text-gray-600')!.textContent = 'Copied!';
+  // Handler function for click events
+  function handleButtonClick(e: Event) {
+    const button = e.currentTarget as HTMLElement;
+    const tooltip = button.querySelector(
+      'div[class*="opacity-0 group-hover:opacity-100"]'
+    );
+    
+    if (tooltip) {
+      const textElement = tooltip.querySelector('.text-gray-600');
+      if (textElement) {
+        const originalText = textElement.textContent || 'Click to copy variable name';
+        textElement.textContent = 'Copied!';
 
         setTimeout(() => {
-          tooltip.querySelector('.text-gray-600')!.textContent = originalText;
+          textElement.textContent = originalText;
         }, 2000);
       }
+    }
+  }
+
+  // Function to initialize buttons
+  function initButtons() {
+    document.querySelectorAll('button').forEach((button) => {
+      // Remove existing event listeners to prevent duplicates
+      button.removeEventListener('click', handleButtonClick);
+      // Add the event listener
+      button.addEventListener('click', handleButtonClick);
     });
-  });
+  }
+
+  // Initialize on DOMContentLoaded (for initial page load)
+  document.addEventListener("DOMContentLoaded", initButtons);
+  
+  // Initialize on astro:page-load (for view transitions)
+  document.addEventListener("astro:page-load", initButtons);
 </script>

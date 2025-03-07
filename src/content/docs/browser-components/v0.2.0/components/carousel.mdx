@@ -4,7 +4,7 @@ description: Carousel
 ---
 
 import { Aside } from "@components/docs";
-import ShowComponent from "@components/docs/browser-components/v0.2.0/doc-helpers/ShowComponent.astro";
+import ComponentPreview from "@components/docs/ComponentPreview.astro";
 import BasicCarousel from "@components/docs/browser-components/v0.2.0/carousel/BasicCarousel.html";
 import Tight from "@components/docs/browser-components/v0.2.0/carousel/CarouselTight.html";
 import SnapStart from "@components/docs/browser-components/v0.2.0/carousel/CarouselSnapStart.html";
@@ -37,17 +37,17 @@ For the best user experience, and best accessibility it is recommended to implem
 
 The basic html structure of the carousel is seen below, applying the base styles without providing any more complex behaviour such as scroll snapping.
 
-<ShowComponent>
+<ComponentPreview>
   <BasicCarousel />
-</ShowComponent>
+</ComponentPreview>
 
 ### Tight Carousel
 
 Applying the `carousel-tight` class will remove the gap between the items.
 
-<ShowComponent>
+<ComponentPreview>
   <Tight />
-</ShowComponent>
+</ComponentPreview>
 
 ### Snapping Styles
 
@@ -57,41 +57,41 @@ A number of snapping styles have been provided, giving you the option for how yo
 
 The `carousel-snap-start` class will snap the items to the left edge of the carousel.
 
-<ShowComponent>
+<ComponentPreview>
   <SnapStart />
-</ShowComponent>
+</ComponentPreview>
 
 #### End Snap
 
 The `carousel-snap-end` class will snap the items to the right edge of the carousel.
 
-<ShowComponent>
+<ComponentPreview>
   <SnapEnd />
-</ShowComponent>
+</ComponentPreview>
 
 #### Center Snap
 
 The `carousel-snap-center` class will snap the items to the middle of the carousel.
 
-<ShowComponent>
+<ComponentPreview>
   <SnapCenter />
-</ShowComponent>
+</ComponentPreview>
 
 #### Snap Alignment
 
 By adding the `carousel-align` class, additional padding is added to the carousel such that all items will follow the snapping style.
 
-<ShowComponent>
+<ComponentPreview>
   <SnapPad />
-</ShowComponent>
+</ComponentPreview>
 
 ### Carousel Content
 
 Content can be added as well as images, and should be placed within a div with the class `carousel-content` applied.
 
-<ShowComponent>
+<ComponentPreview>
   <CarouselContent />
-</ShowComponent>
+</ComponentPreview>
 
 If the content of the carousels includes elements that are interactive such as buttons, then this will mean that a keyboard user will have to navigate through all of the items in the carousel to get to the next section of the site.
 
@@ -110,23 +110,23 @@ If the user is on a item within the carousel, they should be able to:
 - The user should be able to navigate through any interactive elements for the item
 - Pressing the escape key should bring their focus out of the item, and back to the carousel
 
-<ShowComponent>
+<ComponentPreview>
   <CarouselInteractive />
-</ShowComponent>
+</ComponentPreview>
 
 ### Banner Carousel
 
 By adding the `carousel-banner` class, the items will become full width, with the content and image placed next to each other.
 
-<ShowComponent>
+<ComponentPreview>
   <CarouselBanner />
-</ShowComponent>
+</ComponentPreview>
 
 If a carousel item contains only one child, it will be full width regardless of the banner image width variable.
 
-<ShowComponent>
+<ComponentPreview>
   <CarouselBannerImageOnly />
-</ShowComponent>
+</ComponentPreview>
 
 ## CSS Variables
 

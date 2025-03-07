@@ -1,69 +1,16 @@
 ---
-export const prerender = true;
 import DocsLayout from '../../../layouts/DocsLayout.astro';
 import DocsSidebar from '../../../components/DocsSidebar.astro';
-import { getCollection, type CollectionEntry } from 'astro:content';
+import { getCollection } from 'astro:content';
 import { products } from '../../../config/products';
-import { getProductVersions, getLatestVersion, isVersionFolder } from '../../../utils/versions';
+import { isVersionFolder } from '../../../utils/versions';
 
-export async function getStaticPaths() {
-  const docs = await getCollection('docs');
-  
-  // Include all docs, including index files
-  // We'll handle both regular files and index files
-  const allDocs = docs.filter(doc => {
-    // Skip versioned docs as they are handled by their own routes
-    const pathParts = doc.id.split('/');
-    if (pathParts.length >= 2 && isVersionFolder(pathParts[1])) {
-      return false;
-    }
-    
-    // Skip product index files as they are handled by their own routes
-    if (doc.id.split('/').length === 2 && (doc.id.endsWith('/index.mdx') || doc.id.endsWith('/index.md'))) {
-      return false;
-    }
-    
-    return true;
-  });
-  
-  return allDocs.map(doc => {
-    // Split the path to get product and slug
-    const pathParts = doc.id.split('/');
-    const product = pathParts[0];
-    
-    // Remove the product from the path and join the rest to form the slug
-    const slugParts = pathParts.slice(1);
-    
-    // Check if this is an index file
-    const isIndexFile = doc.id.endsWith('/index.mdx') || doc.id.endsWith('/index.md');
-    
-    // For index files, remove the "index" part from the slug
-    if (isIndexFile) {
-      slugParts.pop();
-    } else {
-      // For regular files, remove file extension from the last part
-      if (slugParts.length > 0) {
-        const lastPart = slugParts[slugParts.length - 1];
-        if (lastPart) {
-          slugParts[slugParts.length - 1] = lastPart.replace(/\.(md|mdx)$/, '');
-        }
-      }
-    }
-    
-    const slug = slugParts.join('/');
-    
-    return {
-      params: { product, slug },
-      props: { doc }
-    };
-  });
-}
+// Ensure parameters are defined
+const productId = Astro.params.product || '';
 
-const { product: productId, slug } = Astro.params;
-const { doc } = Astro.props;
-
-// We should NOT redirect non-root pages like /docs/platform/changelog/
-// Only redirect if this is a direct access to a product root page
+// TypeScript type assertion for slugPath
+type SlugPath = string | string[] | undefined;
+const typedSlugPath = Astro.params.slug as SlugPath;
 
 // Get product info from config
 const product = products[productId] || {
@@ -75,15 +22,118 @@ const product = products[productId] || {
   quickLinks: []
 };
 
-const { Content, headings } = await doc.render();
+// Get the entry from the collection
+let Content;
+let headings = [];
+let docData: { title?: string; description?: string } = {};
+
+try {
+  // Construct the document ID based on URL parameters
+  let slugString = '';
+  
+  // Handle both string and array slug paths
+  if (typeof typedSlugPath === 'string') {
+    slugString = typedSlugPath;
+  } else if (Array.isArray(typedSlugPath)) {
+    slugString = typedSlugPath.join('/');
+  }
+  
+  console.log('Looking for document with slug:', slugString);
+  
+  // Try to find the document with the exact path first
+  const exactPath = `${productId}/${slugString}`;
+  const exactPathWithExt = [
+    `${exactPath}.md`,
+    `${exactPath}.mdx`
+  ];
+  
+  // Try to find the document with index file
+  const indexPath = [
+    `${exactPath}/index.md`,
+    `${exactPath}/index.mdx`
+  ];
+  
+  // Get all possible paths
+  const possiblePaths = [...exactPathWithExt, ...indexPath];
+  console.log('Possible paths:', possiblePaths);
+  
+  // Find the document
+  const docs = await getCollection('docs');
+  
+  // Debug: Log all docs
+  console.log('All docs:', docs.map(d => d.id));
+  
+  // Debug: Log possible paths
+  console.log('Looking for these paths:', possiblePaths);
+  
+  // Handle all paths consistently, including special files like "changelog"
+  {
+    // Try to find an exact match for regular paths
+    const doc = docs.find(doc => possiblePaths.includes(doc.id));
+    
+    if (doc) {
+      console.log('Found doc:', doc.id);
+      docData = doc.data;
+      
+      // Render the content
+      const result = await (doc as any).render();
+      Content = result.Content;
+      headings = result.headings;
+      console.log('Content available:', !!Content);
+    } else {
+      console.log('Doc not found for path:', slugString);
+      console.log('Looking for these paths:', possiblePaths);
+      
+      // Try a more flexible approach - check if any doc starts with the path
+      const flexibleDoc = docs.find(doc =>
+        possiblePaths.some(path => doc.id.startsWith(path))
+      );
+      
+      if (flexibleDoc) {
+        console.log('Found doc with flexible matching:', flexibleDoc.id);
+        docData = flexibleDoc.data;
+        
+        // Render the content
+        const result = await (flexibleDoc as any).render();
+        Content = result.Content;
+        headings = result.headings;
+        console.log('Content available (flexible):', !!Content);
+      } else {
+        console.log('No doc found even with flexible matching');
+        // Try direct match with the product and slug
+        const directPath = `${productId}/${slugString}`;
+        console.log('Trying direct match with:', directPath);
+        const directDoc = docs.find(doc =>
+          doc.id === `${directPath}.md` ||
+          doc.id === `${directPath}.mdx`
+        );
+        
+        if (directDoc) {
+          console.log('Found doc with direct matching:', directDoc.id);
+          docData = directDoc.data;
+          
+          // Render the content
+          const result = await (directDoc as any).render();
+          Content = result.Content;
+          headings = result.headings;
+          console.log('Content available (direct):', !!Content);
+        } else {
+          console.log('No doc found with any matching strategy');
+        }
+      }
+    }
+  }
+} catch (error) {
+  console.error(`Error rendering content: ${error}`);
+}
 ---
 
 <DocsLayout
-  title={doc.data.title}
-  description={doc.data.description}
+  title={docData.title || `${product.name} Documentation`}
+  description={docData.description || `Documentation for ${product.name}`}
   product={product}
   headings={headings}
 >
   <DocsSidebar slot="sidebar" product={product} />
-  <Content />
+  {Content ? <Content /> : <p>Documentation content not available.</p>}
 </DocsLayout>

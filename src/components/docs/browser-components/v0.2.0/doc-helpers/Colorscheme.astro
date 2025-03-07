@@ -1,5 +1,4 @@
 ---
-export const prerender = true;
 import { parseColourScheme } from "@utils/browser-components/v0.2.0/colourParser";
 import ColorSwatch from "./ColorSwatch.astro";
 
@@ -227,29 +226,44 @@ const semanticMap: Record<ColorFamily, Record<string, string>> = {
 </style>
 
 <script>
-  document.querySelectorAll("button").forEach((button) => {
-    button.addEventListener("click", (e) => {
-      const group = (e.currentTarget as HTMLElement).closest(".group");
-      const copiedMessage = group?.querySelector(".copied-message");
-      const instruction = group?.querySelector(".copied-instruction");
+  // Handler function for click events
+  function handleCopyClick(e: Event) {
+    const group = (e.currentTarget as HTMLElement).closest(".group");
+    const copiedMessage = group?.querySelector(".copied-message");
+    const instruction = group?.querySelector(".copied-instruction");
 
-      if (copiedMessage && instruction) {
-        // Hide instruction first
-        instruction.classList.add("hidden");
+    if (copiedMessage && instruction) {
+      // Hide instruction first
+      instruction.classList.add("hidden");
 
-        // Show copied message
-        copiedMessage.classList.remove("hidden");
-        copiedMessage.classList.add("flex");
+      // Show copied message
+      copiedMessage.classList.remove("hidden");
+      copiedMessage.classList.add("flex");
 
-        setTimeout(() => {
-          // Hide copied message
-          copiedMessage.classList.remove("flex");
-          copiedMessage.classList.add("hidden");
+      setTimeout(() => {
+        // Hide copied message
+        copiedMessage.classList.remove("flex");
+        copiedMessage.classList.add("hidden");
 
-          // Show instruction again
-          instruction.classList.remove("hidden");
-        }, 2000);
-      }
+        // Show instruction again
+        instruction.classList.remove("hidden");
+      }, 2000);
+    }
+  }
+
+  // Function to initialize copy buttons
+  function initCopyButtons() {
+    document.querySelectorAll("button").forEach((button) => {
+      // Remove existing event listeners to prevent duplicates
+      button.removeEventListener("click", handleCopyClick);
+      // Add the event listener
+      button.addEventListener("click", handleCopyClick);
     });
-  });
+  }
+
+  // Initialize on DOMContentLoaded (for initial page load)
+  document.addEventListener("DOMContentLoaded", initCopyButtons);
+  
+  // Initialize on astro:page-load (for view transitions)
+  document.addEventListener("astro:page-load", initCopyButtons);
 </script>

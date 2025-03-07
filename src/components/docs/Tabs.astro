@@ -14,7 +14,7 @@
 
 <script>
   // Client-side JavaScript for tab switching
-  document.addEventListener('DOMContentLoaded', () => {
+  function initializeTabs() {
     const tabContainers = document.querySelectorAll('.tabs');
     
     tabContainers.forEach(container => {
@@ -69,7 +69,6 @@
       
       // Add keyboard navigation
       container.addEventListener('keydown', (e) => {
-        // Cast event to KeyboardEvent and target to HTMLElement
         const event = e as KeyboardEvent;
         const target = event.target as HTMLElement;
         if (target && target.classList.contains('tab-button')) {
@@ -89,7 +88,18 @@
         }
       });
     });
-  });
+  }
+
+  // Initialize on DOMContentLoaded
+  document.addEventListener('DOMContentLoaded', initializeTabs);
+  
+  // Also initialize on view transitions
+  document.addEventListener('astro:page-load', initializeTabs);
+  
+  // Initialize immediately for the current render
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    setTimeout(initializeTabs, 0);
+  }
 </script>
 
 <style is:global>
@@ -119,8 +129,8 @@
   }
   
   .tab-button[aria-selected="true"] {
-    border-bottom-color: #FFF;
-    color: #FFF;
+    border-bottom-color: var(--color-primary-400, #3b82f6);
+    color: var(--color-white, #3b82f6);
     background-color: var(--color-bg-tabs-active, #ffffff08);
   }
   

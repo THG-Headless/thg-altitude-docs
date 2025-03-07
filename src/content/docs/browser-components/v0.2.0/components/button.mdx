@@ -3,7 +3,7 @@ title: Button
 description: A versatile button component with multiple styles and emphasis levels
 ---
 
-import ShowComponent from "@components/docs/browser-components/v0.2.0/doc-helpers/ShowComponent.astro";
+import ComponentPreview from "@components/docs/ComponentPreview.astro";
 import Buttons from "@components/docs/browser-components/v0.2.0/buttons/Buttons.html";
 import ControlButton from "@components/docs/browser-components/v0.2.0/buttons/ControlButton.html";
 import ControlBar from "@components/docs/browser-components/v0.2.0/buttons/ControlBar.html";
@@ -21,9 +21,9 @@ Buttons use the `btn` class, along with your chosen skin, e.g. `skin-primary-emp
 
 Don't forget to also include the `interactive` class so that the button receives the skins hover, active, focus and disabled
 
-<ShowComponent>
+<ComponentPreview>
   <Buttons />
-</ShowComponent>
+</ComponentPreview>
 
 ### Icon Support
 
@@ -37,21 +37,21 @@ Add the `disabled` attribute to a button to indicate that it's not interactive.
 
 We may want to have our borders have a low, or no border by default, but also have consistent widths on our buttons with emphasised borders. For this reason, the `bordered` class can be used to specify the button should have an emphasised border. The height is adjusted, ensuring that both bordered and non bordered buttons are a consistent width.
 
-<ShowComponent>
+<ComponentPreview>
   <ControlButton />
-</ShowComponent>
+</ComponentPreview>
 
 ### Button Bars
 
 Placing buttons together as a bar can be made easy using the `btn-bar` class applied to a parent div. Vertical button bars can also be created, using the `btn-bar-vertical` class.
 
-<ShowComponent>
+<ComponentPreview>
   <ControlBar />
-</ShowComponent>
+</ComponentPreview>
 
-<ShowComponent>
+<ComponentPreview>
   <ControlBarVertical />
-</ShowComponent>
+</ComponentPreview>
 
 ## CSS Variables
 

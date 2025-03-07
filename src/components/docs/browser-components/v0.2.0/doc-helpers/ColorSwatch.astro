@@ -83,23 +83,40 @@ const {
 </style>
 
 <script>
-  document.querySelectorAll('[aria-label^="Copy"]').forEach((button) => {
-    button.addEventListener("click", (e) => {
-      const group = (e.currentTarget as HTMLElement).closest(".group");
-      const copiedMessage = group?.querySelector(".copied-message");
-      const instruction = group?.querySelector(".copied-instruction");
+  // Handler function for click events
+  function handleCopyClick(e: Event) {
+    e.preventDefault();
+    
+    // Cast to get access to currentTarget
+    const event = e as unknown as { currentTarget: HTMLElement };
+    const group = event.currentTarget.closest(".group");
+    const copiedMessage = group?.querySelector(".copied-message");
+    const instruction = group?.querySelector(".copied-instruction");
 
-      if (copiedMessage && instruction) {
-        instruction.classList.add("hidden");
-        copiedMessage.classList.remove("hidden");
-        copiedMessage.classList.add("flex");
+    if (copiedMessage && instruction) {
+      instruction.classList.add("hidden");
+      copiedMessage.classList.remove("hidden");
+      copiedMessage.classList.add("flex");
 
-        setTimeout(() => {
-          copiedMessage.classList.remove("flex");
-          copiedMessage.classList.add("hidden");
-          instruction.classList.remove("hidden");
-        }, 2000);
-      }
+      setTimeout(() => {
+        copiedMessage.classList.remove("flex");
+        copiedMessage.classList.add("hidden");
+        instruction.classList.remove("hidden");
+      }, 2000);
+    }
+  }
+
+  // Function to initialize copy buttons
+  function initCopyButtons() {
+    document.querySelectorAll('[aria-label^="Copy"]').forEach((button) => {
+      // Add the event listener
+      button.addEventListener("click", handleCopyClick);
     });
-  });
+  }
+
+  // Initialize on DOMContentLoaded (for initial page load)
+  document.addEventListener("DOMContentLoaded", initCopyButtons);
+  
+  // Initialize on astro:page-load (for view transitions)
+  document.addEventListener("astro:page-load", initCopyButtons);
 </script>
