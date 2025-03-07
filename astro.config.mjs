@@ -8,10 +8,12 @@ import altitude from '@thg-altitude/astro-adapter';
 import tailwindcss from "@tailwindcss/vite";
 import expressiveCode from 'astro-expressive-code';
 
+import vercel from '@astrojs/vercel';
+
 export default defineConfig({
   site: 'https://docs.thgaltitude.com',
   output: 'server',
-  adapter: altitude({}),
+  adapter: vercel(),
   build: {
     assets: 'statics'
   },
