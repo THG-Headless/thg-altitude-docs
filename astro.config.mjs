@@ -6,13 +6,10 @@ import vue from '@astrojs/vue';
 import altitude from '@thg-altitude/astro-adapter';
 
 import tailwindcss from "@tailwindcss/vite";
-import expressiveCode from 'astro-expressive-code';
-
-import vercel from '@astrojs/vercel';
 
 export default defineConfig({
   output: 'server',
-  adapter: vercel(),
+  adapter: altitude(),
   build: {
     assets: 'statics'
   },
