@@ -1,7 +1,20 @@
 ---
 export const prerender = true;
-import cssContent from "../../../../../content/docs/browser-components/v0.2.0/sample-css/typography.css?raw";
 import { parseTypographyScheme } from "@utils/browser-components/v0.2.0/typographyParser";
+
+// Hardcoded CSS content
+const cssContent = `@theme {
+  /* Font Weights */
+  --font-thin: 100;
+  --font-extra-light: 200;
+  --font-light: 300;
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semi-bold: 600;
+  --font-bold: 700;
+  --font-extra-bold: 800;
+  --font-black: 900;
+}`;
 
 const typography = parseTypographyScheme(cssContent);
 ---

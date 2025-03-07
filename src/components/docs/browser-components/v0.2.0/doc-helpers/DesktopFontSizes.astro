@@ -1,7 +1,27 @@
 ---
 export const prerender = true;
-import cssContent from "../../../../../content/docs/browser-components/v0.2.0/sample-css/typography.css?raw";
 import { parseTypographyScheme } from "@utils/browser-components/v0.2.0/typographyParser";
+
+// Hardcoded CSS content
+const cssContent = `@theme {
+  /* Desktop Sizes */
+  --text-desktop-2xl: 45px;
+  --line-height-desktop-2xl: 56px;
+  --text-desktop-xl: 37px;
+  --line-height-desktop-xl: 48px;
+  --text-desktop-2lg: 30px;
+  --line-height-desktop-2lg: 40px;
+  --text-desktop-lg: 24px;
+  --line-height-desktop-lg: 32px;
+  --text-desktop-md: 20px;
+  --line-height-desktop-md: 28px;
+  --text-desktop-body: 16px;
+  --line-height-desktop-body: 24px;
+  --text-desktop-sm: 14px;
+  --line-height-desktop-sm: 20px;
+  --text-desktop-xs: 13px;
+  --line-height-desktop-xs: 20px;
+}`;
 
 const typography = parseTypographyScheme(cssContent);
 

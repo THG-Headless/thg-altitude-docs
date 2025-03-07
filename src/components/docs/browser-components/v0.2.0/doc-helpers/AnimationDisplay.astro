@@ -1,8 +1,15 @@
 ---
 export const prerender = true;
-import cssContent from "../../../../../content/docs/browser-components/v0.2.0/sample-css/animation.css?raw";
 import { parseAnimationScheme } from "@utils/browser-components/v0.2.0/animationParser";
 import type { AnimationVariable } from "@utils/browser-components/v0.2.0/animationParser";
+
+// Hardcoded CSS content
+const cssContent = `@theme {
+  --duration-speed-none: 0s;
+  --duration-speed-quick: 0.1s;
+  --duration-speed-default: 0.2s;
+  --duration-speed-slow: 0.3s;
+}`;
 
 const animationVariables = parseAnimationScheme(cssContent);
 ---

@@ -1,7 +1,46 @@
 ---
 export const prerender = true;
-import cssContent from '../../../../../content/docs/browser-components/v0.2.0/sample-css/semanticColours.css?raw';
 import { parseSemanticColors } from '@utils/browser-components/v0.2.0/SemanticColorParser';
+
+// Simplified hardcoded CSS content with just a few semantic color groups
+const cssContent = `/* Semantic Colors */
+@theme {
+  /* Default */
+  --color-background: var(--color-white);
+  --color-background-hover: var(--color-neutral-50);
+  --color-background-focus: var(--color-neutral-50);
+  --color-background-active: var(--color-neutral-200);
+  --color-background-disabled: var(--color-neutral-50);
+
+  --color-foreground: var(--color-black);
+  --color-foreground-hover: var(--color-neutral-700);
+  --color-foreground-focus: var(--color-neutral-700);
+  --color-foreground-active: var(--color-neutral-600);
+  --color-foreground-disabled: var(--color-neutral-400);
+
+  --color-border: var(--color-black);
+  --color-border-hover: var(--color-neutral-300);
+  --color-border-focus: var(--color-neutral-400);
+  --color-border-active: var(--color-neutral-500);
+  --color-border-disabled: var(--color-neutral-200);
+
+  /* Primary Semantic Sets */
+  --color-primary-emphasised-background: var(--color-primary);
+  --color-primary-emphasised-foreground: var(--color-white);
+  --color-primary-emphasised-border: transparent;
+  --color-primary-emphasised-background-hover: var(--color-primary-600);
+  --color-primary-emphasised-foreground-hover: var(--color-white);
+  --color-primary-emphasised-border-hover: transparent;
+  --color-primary-emphasised-background-focus: var(--color-primary-600);
+  --color-primary-emphasised-foreground-focus: var(--color-white);
+  --color-primary-emphasised-border-focus: transparent;
+  --color-primary-emphasised-background-active: var(--color-primary-700);
+  --color-primary-emphasised-foreground-active: var(--color-white);
+  --color-primary-emphasised-border-active: transparent;
+  --color-primary-emphasised-background-disabled: var(--color-primary-200);
+  --color-primary-emphasised-foreground-disabled: var(--color-neutral-400);
+  --color-primary-emphasised-border-disabled: transparent;
+}`;
 
 const semanticGroups = parseSemanticColors(cssContent);
 

@@ -7,13 +7,14 @@ import altitude from '@thg-altitude/astro-adapter';
 
 import tailwindcss from "@tailwindcss/vite";
 import expressiveCode from 'astro-expressive-code';
-import fs from 'fs';
-import path from 'path';
 
 export default defineConfig({
   site: 'https://docs.thgaltitude.com',
   output: 'server',
   adapter: altitude({}),
+  build: {
+    assets: 'ssr-assets'
+  },
   integrations: [expressiveCode({
     themes: ['github-dark-default'],
   }), mdx({
@@ -39,17 +40,7 @@ export default defineConfig({
     plugins: [
       tailwindcss({
         globalStyle: "./src/styles/global.css"
-      }),
-      {
-        name: 'vite-plugin-raw-css',
-        transform(code, id) {
-          if (id.endsWith('?raw')) {
-            const realPath = id.replace('?raw', '');
-            const fileContent = fs.readFileSync(path.resolve(realPath), 'utf-8');
-            return `export default ${JSON.stringify(fileContent)};`;
-          }
-        }
-      }
+      })
     ],
     resolve: {
       // Use react-dom/server.edge instead of react-dom/server.browser for React 19.
@@ -57,6 +48,12 @@ export default defineConfig({
       alias: import.meta.env.PROD && {
         "react-dom/server": "react-dom/server.edge",
       },
+    },
+    ssr: {
+      external: ['node:buffer', 'node:fs', 'node:path'],
+    },
+    optimizeDeps: {
+      include: ['react', 'react-dom', 'class-variance-authority', 'clsx', 'tailwind-merge']
     }
   }
 });

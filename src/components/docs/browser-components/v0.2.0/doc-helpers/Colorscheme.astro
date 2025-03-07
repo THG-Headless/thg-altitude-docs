@@ -1,8 +1,43 @@
 ---
 export const prerender = true;
-import cssContent from "../../../../../content/docs/browser-components/v0.2.0/sample-css/colour.css?raw";
 import { parseColourScheme } from "@utils/browser-components/v0.2.0/colourParser";
 import ColorSwatch from "./ColorSwatch.astro";
+
+// Simplified hardcoded CSS content with just the essential color variables
+const cssContent = `@theme {
+  /* Global Colors */
+  --color-primary: oklch(0.43 0.0147 248.17);
+  --color-secondary: oklch(0.67 0.15 250);
+  --color-tertiary: oklch(0.65 0.2 300);
+  --color-neutral: oklch(0.64 0 0);
+  --color-success: oklch(0.5 0.15 150);
+  --color-attention: oklch(0.55 0.12 250);
+  --color-error: oklch(0.55 0.2 30);
+  --color-promotion: oklch(0.6 0.25 30);
+
+  /* Primary Colors */
+  --color-primary-500: oklch(from var(--color-primary) l c h);
+  --color-primary-400: oklch(from var(--color-primary-500) calc(1 - (1 - l) * 0.6) calc(c * 0.8) h);
+  --color-primary-50: oklch(from var(--color-primary-100) calc(1 - (1 - l) * 0.6) calc(c * 0.8) h);
+  --color-primary-600: oklch(from var(--color-primary-500) calc(l * 0.8) calc(c * 1.1) h);
+  --color-primary-950: oklch(from var(--color-primary-900) calc(l * 0.8) calc(c * 1.1) h);
+
+  /* Secondary Colors */
+  --color-secondary-500: oklch(from var(--color-secondary) l c h);
+  --color-secondary-400: oklch(from var(--color-secondary-500) calc(1 - (1 - l) * 0.6) calc(c * 0.8) h);
+  --color-secondary-50: oklch(from var(--color-secondary-100) calc(1 - (1 - l) * 0.6) calc(c * 0.8) h);
+  --color-secondary-600: oklch(from var(--color-secondary-500) calc(l * 0.8) calc(c * 1.1) h);
+  --color-secondary-950: oklch(from var(--color-secondary-900) calc(l * 0.8) calc(c * 1.1) h);
+
+  /* Tertiary Colors */
+  --color-tertiary-500: oklch(from var(--color-tertiary) l c h);
+  --color-tertiary-400: oklch(from var(--color-tertiary-500) calc(1 - (1 - l) * 0.6) calc(c * 0.8) h);
+  --color-tertiary-50: oklch(from var(--color-tertiary-100) calc(1 - (1 - l) * 0.6) calc(c * 0.8) h);
+  --color-tertiary-600: oklch(from var(--color-tertiary-500) calc(l * 0.8) calc(c * 1.1) h);
+  --color-tertiary-950: oklch(from var(--color-tertiary-900) calc(l * 0.8) calc(c * 1.1) h);
+
+  /* Other color families with similar patterns... */
+}`;
 
 const colours = parseColourScheme(cssContent);
 

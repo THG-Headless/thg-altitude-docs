@@ -1,7 +1,27 @@
 ---
 export const prerender = true;
-import cssContent from "../../../../../content/docs/browser-components/v0.2.0/sample-css/typography.css?raw";
 import { parseTypographyScheme } from "@utils/browser-components/v0.2.0/typographyParser";
+
+// Hardcoded CSS content
+const cssContent = `@theme {
+  /* Mobile Font Sizes */
+  --text-mobile-2xl: 32px;
+  --line-height-mobile-2xl: 40px;
+  --text-mobile-xl: 28px;
+  --line-height-mobile-xl: 36px;
+  --text-mobile-2lg: 24px;
+  --line-height-mobile-2lg: 32px;
+  --text-mobile-lg: 21px;
+  --line-height-mobile-lg: 28px;
+  --text-mobile-md: 18px;
+  --line-height-mobile-md: 24px;
+  --text-mobile-body: 16px;
+  --line-height-mobile-body: 24px;
+  --text-mobile-sm: 14px;
+  --line-height-mobile-sm: 20px;
+  --text-mobile-xs: 13px;
+  --line-height-mobile-xs: 20px;
+}`;
 
 const typography = parseTypographyScheme(cssContent);
 
