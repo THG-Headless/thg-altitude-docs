@@ -8,6 +8,7 @@ import altitude from '@thg-altitude/astro-adapter';
 import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
+  site: 'http://thgaltitude.com/'
   output: 'server',
   adapter: altitude(),
   build: {
