@@ -13,7 +13,7 @@ export default defineConfig({
   output: 'server',
   adapter: altitude({}),
   build: {
-    assets: 'ssr-assets'
+    assets: 'statics'
   },
   integrations: [expressiveCode({
     themes: ['github-dark-default'],
