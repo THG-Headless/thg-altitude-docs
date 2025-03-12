@@ -251,15 +251,15 @@ pre[class*="language-"].pt-8 code {
 /* Blog Styles */
 
 .blog-content h2 {
-  @apply text-3xl font-semibold text-stone-900 dark:text-white mb-6 mt-12 border-b border-stone-200 dark:border-stone-800 pb-2;
+  @apply text-3xl font-semibold mb-6 mt-12 border-b border-stone-200 dark:border-stone-800 pb-2;
 }
 
 .blog-content h3 {
-  @apply text-lg text-stone-900 dark:text-white mb-4 mt-8;
+  @apply text-lg mb-4 mt-8;
 }
 
 .blog-content p {
-  @apply mb-6 leading-7 text-stone-700 dark:text-stone-300;
+  @apply mb-6 leading-7;
 }
 
 .blog-content a {

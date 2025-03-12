@@ -22,7 +22,7 @@ const formattedDate = pubDate ? new Intl.DateTimeFormat('en-US', {
 
 <BaseLayout {title} {description}>
   <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-    <article class="prose prose-slate dark:prose-invert max-w-none">
+    <article class="prose prose-invert max-w-none">
       {image ? (
         <div class="mb-8 -mx-4 sm:-mx-6 lg:-mx-8 overflow-hidden rounded-lg">
           <img src={image} alt={title} class="w-full h-64 sm:h-80 object-cover" />
@@ -39,7 +39,7 @@ const formattedDate = pubDate ? new Intl.DateTimeFormat('en-US', {
       )}
       
       <header class="mb-8">
-        <h1 class="text-4xl text-stone-900 dark:text-white mb-4">{title}</h1>
+        <h1 class="text-4xl text-white mb-4">{title}</h1>
         
         <div class="flex flex-wrap items-center text-stone-500 dark:text-stone-400 text-sm">
           {formattedDate && (
