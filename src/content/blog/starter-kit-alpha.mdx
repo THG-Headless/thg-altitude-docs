@@ -9,34 +9,29 @@ tags: ["announcement", "commerce"]
 
 ## Introducing the Commerce Starter Kit
 
-Today, we are excited to announce the addition of the Commerce Starter Kit to our <a href="/kits" target="_blank">Starter Kit Directory</a>.
-
-Built on top of THG Commerce, the Commerce Starter Kit accelerates building commerce storefronts on Altitude. It provides core functionality out of the box, including:
+Today, we are excited to announce the addition of the Commerce Starter Kit to our <a href="/kits" target="_blank">Starter Kit Directory</a>. It is an Astro + React template for a commerce storefront, built on top of the Commerce API. The core functionality includes:
 
 - List Pages
 - Product Pages
 - Search
 - Basket
+- Session Management
 
-And it's not just features - the kit is optimised for performance, accessibility and SEO. Neat!
+The kit is pre-optimised for performance, accessibility and SEO, and as with all Starter Kits, it is designed to be customised and extended as required.
 
-The kit also integrates with with Altitude's Account to take advantage of managed features such as Login, Register and Order History.
+## Commerce Ecosystem
 
-## Commerce, Your Way
+The Commerce Starter Kit takes advantage of the <a href='/products/astro-integration' target='_blank'>Astro Integration</a> and <a href='/products/elements' target='_blank'>Elements</a> packages, exposing simplified APIs for functionality such as internationalisation and abstracting away complex business logic for Facets and Variations components. Also benefit from future updates via package version bumps.
 
-Customisability is at the heart of the starter kit philosophy. We've done the heavy lifting to provide core functionality, allowing you to focus on building a unique shopping experience for customers.
-
-Want to tweak the product cards? No problem. Fancy adding a store locator? Go ahead. The kit becomes yours - designed to be customised and extended to meet your needs.
+The kit also integrates with Altitude's Account for managed login and register functionality.
 
 ## Multi-Tenancy
 
-The Commerce Starter Kit harnesses the power of <a href="/docs/platform/v2.3.0/edge/kv-store" target="_blank">Altitude KV Stores</a> to provide an extensible multi-tenancy pattern. Host storefronts for multiple brands, each with their own unique look and feel, from a single Altitude site.
+The Commerce Starter Kit uses <a href="/docs/platform/v2.3.0/edge/kv-store" target="_blank">Altitude KV Stores</a> to provide an extensible multi-tenancy pattern. This enables the hosting of storefronts for multiple uniquely-styled brands from a single Altitude site. The advantage of a KV-driven architecture is that it enables tenant config updates without requiring a site redeployment.
 
-And the best part? Update tenant config without a site redeployment.
+## What's next?
 
-## More features? Yes please.
-
-We wanted to give you early access to see what the kit has to offer. But watch this space - we have further updates planned for Beta version, including:
+We're extending the base feature set as part of our Beta release. Upcoming features include:
 
 - Quick Buy
 - Subscriptions
