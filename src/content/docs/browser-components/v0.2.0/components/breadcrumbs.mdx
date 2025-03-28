@@ -1,0 +1,48 @@
+---
+title: Breadcrumbs
+description: Navigation breadcrumbs
+---
+
+import ComponentPreview from '@components/docs/ComponentPreview.astro';
+import Breadcrumbs from '@components/docs/browser-components/v0.2.0/breadcrumbs/Breadcrumbs.html';
+
+# Breadcrumbs
+
+## Overview
+
+Breadcrumbs help users understand their position on a website and navigate to previous pages by showing a hierarchical trail back to the homepage.
+
+## Example Usage
+
+The breadcrumbs component uses semantic HTML and arrow separators. Each breadcrumb item is clickable except for the current page, which is marked with `aria-current`. The component supports customization through CSS variables for spacing, typography, and arrow styling.
+
+<ComponentPreview>
+  <Breadcrumbs />
+</ComponentPreview>
+
+
+## CSS Variables
+
+| Variable                 | Default Value        | Description                  |
+| ------------------------ | -------------------- | ---------------------------- |
+| `--breadcrumb-padding`   | `0 0.5rem`           | Padding around the content   |
+| `--breadcrumb-font-size` | `0 0.75rem`          | Font size for text           |
+| `--breadcrumb-font-weight`| `300`               | Font weight for text         |
+| `--breadcrumb-arrow-size`| `0.5rem`             | Height and width of arrow    |
+| `--breadcrumb-arrow-weight`| `1px`              | Weight of arrow              |
+| `--breadcrumb-gap`       | `0.5rem`             | Gap between arrow and text   |
+
+
+### Accessibility
+
+#### Implemented Accessibility Features
+
+- [x] Focus outline visible enclosing the whole element on keyboard navigation
+- [x] `aria-current` label included on last breadcrumb
+- [x] Proper use of semantic HTML with `<nav>` element
+
+
+#### Accessibility Considerations when Implementing
+
+- [ ] Handle dynamic content changes by adding `aria-current` to the last breadcrumb
+- [ ] Replace `href='#'` with the correct path described by the breadcrumb section
