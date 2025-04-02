@@ -24,15 +24,15 @@ Anything that can be done with CSS, you can do within the Altitude Design System
 - As the design system is in pure CSS, anything can be built upon, customised or overwritten by Developers.
 - The layered model of abstraction within the design system lets us mix and match our styles however we please, while still keeping them tied to our site wide styles.
 
-## Semantic Driven Styling
+## Semantic Styling
 
 Styling should maintain consistency across semantically equivalent elements while ensuring distinct styling for semantically different ones to prevent unwanted theme update side effects.
 
 - Through the use of the [skins system](/docs/browser-components/v0.2.0/design/skins) styles are referenced semantically.
-- This means that when editing a skin:
-  - It is easy to know what it will effect from its name
-  - We wont accidentally change something that shared the same or colours, but is semantically independent
-- This has the added bonus of significantly reducing decision fatigue, while ensuring design consistency. Creating a form? Use 'skin-form' to make sure it looks the same as all your others, without needing to keep your styles the same across multiple files.
+- This means that when editing a component's skin:
+  - It is easy to know what it will affect from its name
+  - There is a low risk of accidentally changing an unrelated component
+- This has the added bonus of significantly reducing decision fatigue, while ensuring design consistency. Creating a form? Use `skin-form` to make sure it looks the same as all your others, without needing to keep your styles the same across multiple files.
 
 ## From 1 to 1,000 Tenants
 
