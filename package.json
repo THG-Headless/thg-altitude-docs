@@ -18,7 +18,7 @@
     "@astrojs/vue": "^5.0.7",
     "@thg-altitude/astro-adapter": "^5.0.1",
     "@thg-altitude/elements": "^2.0.3",
-    "@thg-altitude/standalone-components-css": "^0.1.27",
+    "@thg-altitude/standalone-components-css": "0.2.4",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
     "astro": "^5.4.1",
