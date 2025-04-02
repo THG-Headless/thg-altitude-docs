@@ -292,4 +292,26 @@ pre[class*="language-"].pt-8 code {
 
 .blog-content img {
   @apply rounded-lg my-6 mx-auto;
+}      
+
+/* Breadcrumb style override examples */
+.breadcrumb-line-separator {
+  --breadcrumb-icon-border-top: 1px;
+  --breadcrumb-icon-height: 1rem;
+  --breadcrumb-icon-width: 0;
+  --breadcrumb-icon-rotate: 0;
+  --breadcrumb-icon-border-top: 0;
+  --breadcrumb-gap-left: 0.75rem;
+  --breadcrumb-gap-right: 0.75rem;
+}
+
+.breadcrumb-slash-separator {
+  --breadcrumb-icon-border-top: 1px;
+  --breadcrumb-icon-height: 1rem;
+  --breadcrumb-icon-width: 0.25rem;
+  --breadcrumb-icon-rotate: 15deg;
+  --breadcrumb-icon-border-top: 0;
+  --breadcrumb-gap-left: 0.25rem;
+  --breadcrumb-gap-right: 0.4rem;
+  --breadcrumb-font-weight-last: var(--font-weight-normal);
 }

@@ -20,6 +20,44 @@ The breadcrumbs component uses semantic HTML and CSS styled separators. Each bre
   <Breadcrumbs />
 </ComponentPreview>
 
+### Style Override Examples
+The separators between breadcrumb items are created using CSS styling of a single div and can be customised to create different visual styles using the CSS variables provided.
+
+```css
+.breadcrumb-line-separator {
+  --breadcrumb-icon-border-top: 1px;
+  --breadcrumb-icon-height: 1rem;
+  --breadcrumb-icon-width: 0;
+  --breadcrumb-icon-rotate: 0;
+  --breadcrumb-icon-border-top: 0;
+  --breadcrumb-gap-left: 0.75rem;
+  --breadcrumb-gap-right: 0.75rem;
+}
+```
+<ComponentPreview>
+  <div class="breadcrumb-line-separator">
+    <Breadcrumbs />
+  </div>
+</ComponentPreview>
+
+```css
+.breadcrumb-slash-separator {
+    --breadcrumb-icon-border-top: 1px;
+    --breadcrumb-icon-height: 1rem;
+    --breadcrumb-icon-width: 0.25rem;
+    --breadcrumb-icon-rotate: 15deg;
+    --breadcrumb-icon-border-top: 0;
+    --breadcrumb-gap-left: 0.25rem;
+    --breadcrumb-gap-right: 0.4rem;
+    --breadcrumb-font-weight-last: var(--font-weight-normal);
+}
+```
+<ComponentPreview>
+    <div class="breadcrumb-slash-separator">
+    <Breadcrumbs />
+  </div>
+</ComponentPreview>
+
 
 ## CSS Variables
 
