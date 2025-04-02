@@ -30,7 +30,7 @@ Styling should maintain consistency across semantically equivalent elements whil
 
 - Through the use of the [skins system](/docs/browser-components/v0.2.0/design/skins) styles are referenced semantically.
 - This means that when editing a component's skin:
-  - It is easy to know what it will affect from its name
+  - It is easy to know what it will affect from its name. (i.e modifying `skin-form` will modify all forms on the site, assuming that they use the `skin-form` class)
   - There is a low risk of accidentally changing an unrelated component
 - This has the added bonus of significantly reducing decision fatigue, while ensuring design consistency. Creating a form? Use `skin-form` to make sure it looks the same as all your others, without needing to keep your styles the same across multiple files.
 
