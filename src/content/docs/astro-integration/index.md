@@ -28,33 +28,29 @@ The below reference covers all of the different configuration options for the As
 ```js
 //config/site.js
 export default {
-  // configuration options here...
+  domains: ['www.exampledomain1.com', 'www.exampledomain1.de']
+  commerce: {
+  endpoint: 'https://horizon-api.www.example.com/graphql'
+}
 }
 ```
 
 ## Domains options
 
-### domains.default
 
-**Type**: `String` \
-**Required: True**
-
-The default domain of a site excluding protocol. This value is used in conjuction with i18n, see [internationalisation](/guides/i18n/#astro-integration) for further information on this value.
-
-### domains.variants
+### domains
 
 **Type:** `Array[]` \
 **Required: True**
 
-Contains all additional domains associated with a site inclusive of the default. This is the value the integration uses to map to this config. The header `x-altitude-instance` can be used to switch between different configs for local development, see the [multi tenancy](/guides/multi-tenancy/#tenant-switching) guide for further information on how this works.
+
+Contains all domains associated with a site, excluding protocol. If the header `x-altitude-instance` matches any of the items in this array, this config will be read. The header can be used to switch between different configs for local development, see the [multi tenancy](/guides/multi-tenancy/#tenant-switching) guide for further information on how this works. It can also be used to map to different locales for the same tenant. (i.e www.exampledomain.com and www.exampledomain.de)
+
+The first item in the array is taken to be the default domain of the site. This value is used in conjuction with i18n, see [internationalisation](/guides/i18n/#astro-integration) for further information on this value.
 
 ```javascript
-domains: {
-  default: "www.example.com",
-  variants: ["wwww.example.com", "uat.www.example.com"]
-}
+domains: ["wwww.example.com", "uat.www.example.com"]
 ```
-
 ## Commerce
 
 ### commerce.endpoint
@@ -107,7 +103,7 @@ x-example-new-header : request.headers.get('old-header-name')
 
 An array of KV options can be supplied. Below are the options that should be supplied per entry. See the [Edge KV](/guides/edge-kv/#astro-integration) guide for more details.
 
-This field is required even if all locale specific configs have their own KV entries. So use this section either for a sensible set of default values or leave it as an empty array if you are sure that all locales have correct KV configs.
+This field is required even if all locale-specific configs have their own KV entries. So use this section either for a sensible set of default values or leave it as an empty array if you are sure that all locales have correct KV configs.
 
 ```javascript
 kv: [
