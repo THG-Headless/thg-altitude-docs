@@ -1,5 +1,5 @@
 ---
-title: Edge Configuration
+title: Version 2.2 Edge Configuration
 ---
 
 # Reference
@@ -14,6 +14,7 @@ title: Edge Configuration
 | cache               | No       | Array[[Cache Configuration](#cache)]                             |            |                                                                           |
 | conditionalHeaders  | No       | Array[[Conditional Header Configuration](#conditional-headers)]  |            | Defines conditional headers                                               |
 | preflightRequest    | No       | [Preflight Request Configuration](#preflight)                    |            | Config for optional preflight request |
+| redirectExceptions    | No       | [Redirect Exception Configuration](#redirect-exceptions)                    |            | Config for redirect exceptions|
 
 
 ## Routes
@@ -74,29 +75,7 @@ For source code which requires a build step, the following values are added unde
 | filename        | No       | String | \_worker.js | Specifying the app entrypoint file for the route                                                          |
 | staticDirectory | Yes      | String | ssr-assets  | The location of the static assets created by the build (do not repeat the build output directory in this) |
 | staticFilename  | No       | String | gbr.svg     | Specifying a single static asset within the staticDirectory                                               |
-| nodeSettings    | No       | [Node Settings](#node-settings) |      | Configuration of NodeJS for this build                                                  |
 
-### Variables (Build Time)
-
-Altitude automatically generates a `.env` file in the root of your project at build time. Any existing `.env` file in the repository will be replaced with the variables specified for your environment.
-
-This functionality works seamlessly with [Vite-based tooling](https://vite.dev/guide/env-and-mode) but may require additional configuration for other frameworks.
-
-Example `.env` file:
-
-```ini
-# API keys
-API_KEY=your_api_key_here
-SECRET_KEY=your_secret_key_here
-
-# Environment settings
-ENVIRONMENT_URL=https://thisisconfig.com
-```
-
-#### Node Settings
-| Key             | Required | Default | Type   | Examples | Description                                                                                               |
-| --------------- | -------- | ------- | ------ | -------- |---------------------------------------------------------------------------------------- |
-| version         | No       | 18.15.0 | String | 22.13.1  | The version of NodeJS to build the route with. Supported node versions correspond to image tags found [here](https://gallery.ecr.aws/docker/library/node)|
 
 ### Adding a New Route
 
@@ -116,7 +95,7 @@ If you need to adjust your sites cache configuration by path, you can specify a 
 | ---------- | -------- | --------------------------------------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | pathRules  | No       | [Glob Matching Configuration](#glob-matching) |          | A set of glob rules which identify when the cache settings should be activated. If this is not specifed, the cache configuration will be global.                                                         |
 | key        | No       | [Cache Key Configuration](#cache-keys)        |          |                                                                                                                                                                                                          |
-| ttlSeconds | No       | Integer                                       | 100      | This will be used to specify the time that the response of the route should be stored in the cache, in seconds. The timing specified first in the array will take priority if multiple ttlSeconds match. |
+| ttlSeconds | No       | Integer                                       | 100      | This will be used to specify the time that the response of the route should be stored in the cache, in seconds. The timing specified first in the array will take priority if multiple ttlSeconds match. This will only take effect if there is no cache-control header present on the origin response. |
 
 ### Cache Keys
 
@@ -229,4 +208,20 @@ preflightRequest:
         from: 'x-member-tier'
     pathRules:
         - /info
+```
+
+## Redirect Exceptions
+The [rules](/edge/rules/) engine allows you to define redirects and rewrites. Sometimes, you want to bypass those rules for certain path patterns. Specifying a list of globs in `redirectExceptions` defines which path patterns should bypass the rules engine.
+
+| Key | Required | Type | Examples | Description |
+|---|---|---|---|---|
+| paths | Yes | Array[String] | | List of path globs which you do not want to be passed to the rules engine |
+
+### Example
+
+```yaml
+redirectExceptions:
+  paths:
+    - /c/**.list
+    - /app.list
 ```
