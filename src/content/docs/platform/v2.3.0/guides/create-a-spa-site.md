@@ -20,6 +20,9 @@ routes:
       command: <your projects build command>
       output:
         directory: <your projects build directory>
+redirectExceptions:
+  paths:
+    - '/**/*.*'
 ```
 
 ## 2. Setup Rules
@@ -32,7 +35,7 @@ When using an SPA you can rewrite paths to resolve to one index.html file. We ne
 {
   "rules": [
     {
-      "source": "/([^?/.]+)(?<!.)(?=/$|$|?)",
+      "source": "/[^\.]*$",
       "target": "/index.html",
       "queryParams": [],
       "preserveQueryParams": true,
@@ -43,7 +46,7 @@ When using an SPA you can rewrite paths to resolve to one index.html file. We ne
 }
 ```
 
-The sourceUrl field is defined using a regular expression pattern. The pattern `\/([^\?/.]+)(?<!\.)(?=\/$|$|\?)` matches any path segment that does not follow a dot (`.`) or a forward slash (`/`) and is followed by a slash (`/`), the end of the URL, or a query string. The captured path segment is represented as `$1`.
+The sourceUrl field is defined using a regular expression pattern. The pattern `/[^\.]*$` matches any path segment that does not contain a dot (`.`). This ensures that page requests get re-written to /index.html, but requests for static assets do not.
 
 You could also adjust the rule to add it as a Temporary or permanent redirect if desired.
 
