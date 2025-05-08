@@ -46,7 +46,7 @@ A cache key serves as a unique identifier for each requested resource, and can c
 
 For example, if your site contains localised content based upon a locale cookie, we can pass this cookie into the cache key so that each locale maintains different cached responses and there can be no bleed.
 
-An example of an `Altitude.yaml` file with caching enabled is below. For more information on the configuration, see [the edge configuration](/reference/file-based-configuration/v2-1/).
+An example of an `Altitude.yaml` file with caching enabled is below. For more information on the configuration, see [the edge configuration](../reference/file-based-configuration).
 
 ```yaml
 version: v2.1
@@ -109,7 +109,7 @@ When path is selected as the `purgeType`, setting this to true will purge all pa
 
 An example of how the curl would look like for cache purging:
 
-Please follow the guide [How to use Altitude API](/guides/how-to-use-altitude-api/) to get your bearer token.
+Please follow the guide [How to use Altitude API](../guides/how-to-use-altitude-api/) to get your bearer token.
 
 ```
  curl -i --location 'https://api.platform.thgaltitude.com/v1/sites/:siteId/domain/purge-cache' --header 'Accept: application/json' --header 'Content-Type: application/json' --header "Authorization: Bearer $token" --data '{"domainName": "www.foo.com", "purgeType": "path", "key": "/bar", "allPathWildcards": true}'

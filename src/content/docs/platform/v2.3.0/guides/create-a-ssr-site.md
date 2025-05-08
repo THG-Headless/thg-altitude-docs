@@ -30,4 +30,4 @@ Now you're ready to build and deploy.
 
 ## Further Reading
 
-- Learn [how to deploy](/guides/create-a-site#deploy) on Altitude
+- Learn [how to deploy](./create-a-site#deploy) on Altitude

@@ -21,7 +21,7 @@ Function folders can be nested inside other function folders but it is recommend
         `-- package.json
 ```
 ## Anatomy of a Function
-We currently support Cloudflare as an edge function provider. In order to use this provider it is necessary for your function code to build to a single Javascript file after selecting the Cloudflare edge function provider in your [`altitude.yaml`](https://618a188c.thgaltitude.com/en/docs/v1/guides/altitudeyaml) config file. Building to a single Javascript file can be done by adding a build command to the scripts block in that functions `package.json` e.g.
+We currently support Cloudflare as an edge function provider. In order to use this provider it is necessary for your function code to build to a single Javascript file after selecting the Cloudflare edge function provider in your [`altitude.yaml`](../reference/file-based-configuration) config file. Building to a single Javascript file can be done by adding a build command to the scripts block in that functions `package.json` e.g.
 ```json
 {
   "name": "example_function",
@@ -39,7 +39,7 @@ We currently support Cloudflare as an edge function provider. In order to use th
   "license": "ISC"
 }
 ```
-For some tasks such as edge server side rendered (SSR) websites we provide easy to use starter kits available on [Altitude](https://www.platform.thgaltitude.com). This gives you an extensible easy to customise set of functions, with build commands pre-configured, so you can just focus on delivering your website rather than wiring edge functions together. More information on templates and starter kits can be found [here](https://618a188c.thgaltitude.com/en/docs/v1/storefronts).
+For some tasks such as edge server side rendered (SSR) websites we provide easy to use starter kits available on [Altitude](https://www.platform.thgaltitude.com). This gives you an extensible easy to customise set of functions, with build commands pre-configured, so you can just focus on delivering your website rather than wiring edge functions together. More information on templates and starter kits can be found [here](../kits/introduction).
 ### Cloudflare Functions
 To create a Cloudflare function you should create a Javascript file that exports a function called fetch like so:
 ```javascript

@@ -146,6 +146,10 @@ By adding this `rewrite` rule, incoming URLs will be transformed to point to HTM
 
 ## Validation and Limits
 
-The platform will not allow regex rules that do not contain matching groups. This is because regex rules are more expensive to compute than basic rules.
+The platform will not allow regex rules that do not contain any regex elements. This is because regex rules are more expensive to compute than basic rules.
 
 There is currently a limit of 15,000 basic rules and 100 regex rules per rulegroup.
+
+## Regex specification
+
+The exact specification of rules supported is defined by the [rust regex crate](https://docs.rs/regex/latest/regex/). Lookahead and lookbehind asserts are not allowed due to performance reasons.

@@ -35,36 +35,7 @@ After selecting the environment, you can input your BigQuery table configuration
 
 ### Default Altitude table columns
 
-When creating the table in BigQuery, the default Altitude column headers will need to be added. These default column headers can be found listed below.
-
-- timestamp
-- client_ip
-- geo_country
-- geo_city
-- host
-- url
-- request_method
-- request_protocol
-- request_referer
-- request_user_agent
-- request_header_bytes_read
-- request_body_bytes_read
-- response_state
-- response_status
-- response_reason
-- response_body_size
-- response_header_bytes_written
-- fastly_server
-- fastly_is_edge
-- time_elapsed
-- ja4_fingerprint
-- purpose
-- x_redirects_cache
-- x_experimentation_cache
-- redirect_preflight_start_time
-- redirect_preflight_end_time
-- experimentation_preflight_start_time
-- experimentation_preflight_end_time
+When creating the table in BigQuery, the Altitude platform columns will need to be added. These column names and types are [here](/statics/bq_schema.json)
 
 ### Configure custom column headers
 

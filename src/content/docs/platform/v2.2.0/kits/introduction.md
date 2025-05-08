@@ -45,6 +45,6 @@ Great for highly interactive applications where most of the rendering happens in
 
 ## Getting Started
 
-To get started with a Starter Kit, follow the [Create a Website](/docs/altitude-platform/guides/create-a-site) guide and select one of the available templates during the site creation process.
+To get started with a Starter Kit, follow the [Create a Website](../guides/create-a-site) guide and select one of the available templates during the site creation process.
 
 For more advanced users who want to create their own starter kits, we'll be adding detailed documentation on how to create and publish custom starter kits to the Altitude Platform.

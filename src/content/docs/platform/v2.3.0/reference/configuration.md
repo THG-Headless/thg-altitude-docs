@@ -76,6 +76,23 @@ For source code which requires a build step, the following values are added unde
 | staticFilename  | No       | String | gbr.svg     | Specifying a single static asset within the staticDirectory                                               |
 | nodeSettings    | No       | [Node Settings](#node-settings) |      | Configuration of NodeJS for this build                                                  |
 
+### Variables (Build Time)
+
+Altitude automatically generates a `.env` file in the root of your project at build time. Any existing `.env` file in the repository will be replaced with the variables specified for your environment.
+
+This functionality works seamlessly with [Vite-based tooling](https://vite.dev/guide/env-and-mode) but may require additional configuration for other frameworks.
+
+Example `.env` file:
+
+```ini
+# API keys
+API_KEY=your_api_key_here
+SECRET_KEY=your_secret_key_here
+
+# Environment settings
+ENVIRONMENT_URL=https://thisisconfig.com
+```
+
 #### Node Settings
 | Key             | Required | Default | Type   | Examples | Description                                                                                               |
 | --------------- | -------- | ------- | ------ | -------- |---------------------------------------------------------------------------------------- |

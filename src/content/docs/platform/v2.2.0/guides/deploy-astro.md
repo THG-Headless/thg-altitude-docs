@@ -39,8 +39,8 @@ Altitude depends on one file existing in your project and this helps describe th
 
 Depending on the output mode selected above refer to these guides on tailoring your `altitude.yaml` file appropriately.
 
-- [Create an SSR Site](/guides/create-a-ssr-site/)
-- [Create an SSG Site](/guides/create-a-ssr-site/)
-- [Create an SPA Site](/guides/create-a-ssr-site/)
+- [Create an SSR Site](./create-a-ssr-site/)
+- [Create an SSG Site](./create-a-ssr-site/)
+- [Create an SPA Site](./create-a-ssr-site/)
 
 ### 4. Done! 🎉

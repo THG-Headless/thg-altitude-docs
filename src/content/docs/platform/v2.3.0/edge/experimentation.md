@@ -10,7 +10,7 @@ Experimentation, also known as A/B testing is a technique used to serve differen
 
 Altitude platform supports experimentation, but currently only on e-commerce sites. The e-commerce tooling can be used to configure experiment names, values and ratios, which will automatically feed through to sites running on altitude platform.
 
-The implementation computes experiment groups on the edge, so [edge caching](/edge/cache/) is still possible when experiments are running. Customer's experiment groups are automatically added to the CDN cache key (you don't need to specify this in your `altitude.yaml`).
+The implementation computes experiment groups on the edge, so [edge caching](./cache) is still possible when experiments are running. Customer's experiment groups are automatically added to the CDN cache key (you don't need to specify this in your `altitude.yaml`).
 
 When experiments are running on your site, the http header `x-altitude-experimentation` is passed to all your origins, with the following format:
 

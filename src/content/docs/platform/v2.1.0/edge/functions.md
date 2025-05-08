@@ -45,7 +45,7 @@ We currently support Cloudflare as an edge function provider. In order to use th
 }
 ```
 
-For some tasks such as edge server side rendered (SSR) websites we provide easy to use starter kits available on [Altitude](https://www.platform.thgaltitude.com). This gives you an extensible easy to customise set of functions, with build commands pre-configured, so you can just focus on delivering your website rather than wiring edge functions together. More information on templates and starter kits can be found in the [Starter Kits](/docs/altitude-platform/kits/introduction) section.
+For some tasks such as edge server side rendered (SSR) websites we provide easy to use starter kits available on [Altitude](https://www.platform.thgaltitude.com). This gives you an extensible easy to customise set of functions, with build commands pre-configured, so you can just focus on delivering your website rather than wiring edge functions together. More information on templates and starter kits can be found in the [Starter Kits](../kits/introduction) section.
 
 ### Cloudflare Functions
 To create a Cloudflare function you should create a Javascript file that exports a function called fetch like so:
