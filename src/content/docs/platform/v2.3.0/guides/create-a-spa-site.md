@@ -29,7 +29,7 @@ redirectExceptions:
 
 When creating a single-page application frameworks will typically produce a single `index.html` file after building your project. This acts as the entrypoint for all pages.
 
-When using an SPA you can rewrite paths to resolve to one index.html file. We need to add some rules to allow the SPA to work as expected. Using the guide on rules found [here](/edge/rules/), we need to add a rule to enable this functionality. Please use the following input within the batch rules creation.
+When using an SPA you can rewrite paths to resolve to one index.html file. We need to add some rules to allow the SPA to work as expected. Using the guide on rules found [here](../edge/rules/), we need to add a rule to enable this functionality. Please use the following input within the batch rules creation.
 
 ```json
 {
@@ -56,5 +56,5 @@ Now you're ready to build and deploy.
 
 ## Further Reading
 
-- Learn [how to deploy](/guides/create-a-site#deploy) on Altitude
-- Lean more about rules [here](/edge/rules)
+- Learn [how to deploy](./create-a-site#deploy) on Altitude
+- Lean more about rules [here](../edge/rules)
