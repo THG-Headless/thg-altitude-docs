@@ -6,9 +6,9 @@ In this guide, you will learn how to use the CLI tool to automate the deployment
 
 ## Prerequisites
 
-Before you can use Github CI/CD integration, you must have an Altitude site with a Github repository associated with it. If you don't have a site yet, follow the instructions [here](/guides/create-a-site) to create one.
+Before you can use Github CI/CD integration, you must have an Altitude site with a Github repository associated with it. If you don't have a site yet, follow the instructions [here](../guides/create-a-site) to create one.
 
-You also need to have an Altitude API client. If you haven't created one yet, follow the instructions [here](https://618a188c.thgaltitude.com/en/docs/v1/cli/installation) to set it up. When you create an API client, you will be given a `Client ID` and a `Client Secret`. Store these two values in your Github repository as environment secrets using the following keys:
+You also need to have an Altitude API client. If you haven't created one yet, follow the instructions [here](../reference/cli-commands) to set it up. When you create an API client, you will be given a `Client ID` and a `Client Secret`. Store these two values in your Github repository as environment secrets using the following keys:
 
 ```
 ALTITUDE_CLIENT_ID: <Your Altitude API Client ID>

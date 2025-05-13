@@ -13,7 +13,8 @@ title: Version 2.2 Edge Configuration
 | routes              | Yes      | Array[[Routes Configuration](#routes)]                           |            |                                                                           |
 | cache               | No       | Array[[Cache Configuration](#cache)]                             |            |                                                                           |
 | conditionalHeaders  | No       | Array[[Conditional Header Configuration](#conditional-headers)]  |            | Defines conditional headers                                               |
-| preflightRequest    | No       | [Preflight Request Configuration](#preflight)                    |            | Config for optional preflight request |
+| preflightRequest    | No       | [Preflight Request Configuration](#preflight)                    |            | Config for optional preflight request                                     |
+| redirectExceptions  | No       | [Redirect Exception Configuration](#redirect-exceptions)         |            | Config for redirect exceptions                                            |
 
 
 ## Routes
@@ -94,7 +95,7 @@ If you need to adjust your sites cache configuration by path, you can specify a 
 | ---------- | -------- | --------------------------------------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | pathRules  | No       | [Glob Matching Configuration](#glob-matching) |          | A set of glob rules which identify when the cache settings should be activated. If this is not specifed, the cache configuration will be global.                                                         |
 | key        | No       | [Cache Key Configuration](#cache-keys)        |          |                                                                                                                                                                                                          |
-| ttlSeconds | No       | Integer                                       | 100      | This will be used to specify the time that the response of the route should be stored in the cache, in seconds. The timing specified first in the array will take priority if multiple ttlSeconds match. |
+| ttlSeconds | No       | Integer                                       | 100      | This will be used to specify the time that the response of the route should be stored in the cache, in seconds. The timing specified first in the array will take priority if multiple ttlSeconds match. This will only take effect if there is no cache-control header present on the origin response. |
 
 ### Cache Keys
 
@@ -207,4 +208,20 @@ preflightRequest:
         from: 'x-member-tier'
     pathRules:
         - /info
+```
+
+## Redirect Exceptions
+The [rules](/edge/rules/) engine allows you to define redirects and rewrites. Sometimes, you want to bypass those rules for certain path patterns. Specifying a list of globs in `redirectExceptions` defines which path patterns should bypass the rules engine.
+
+| Key | Required | Type | Examples | Description |
+|---|---|---|---|---|
+| paths | Yes | Array[String] | | List of path globs which you do not want to be passed to the rules engine |
+
+### Example
+
+```yaml
+redirectExceptions:
+  paths:
+    - /c/**.list
+    - /app.list
 ```
