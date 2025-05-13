@@ -14,29 +14,6 @@ Available Soon:
 
 ---
 
-# Installation
-
-```sh
-npm i @thg-altitude/astro-integration
-```
-
-## Invoking the integration
-
-The build config and `altitudeMiddleware` function should be imported and passed as an argument to the integration as shown below.
-
-```js
-// astro.config.mjs
-import { defineConfig } from 'astro/config';
-import tenant from './config/site.js'
-
-export default defineConfig({
-  output: 'server',
-  integrations: [
-    altitudeMiddleware(tenant)
-] 
-})
-```
-
 # Configuration
 
 The below reference covers all of the different configuration options for the Astro Integration providing further flexibility for your application.
