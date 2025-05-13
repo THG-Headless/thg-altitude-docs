@@ -20,9 +20,9 @@ Available Soon:
 npm i @thg-altitude/astro-integration
 ```
 
-## Usage
+## Invoking the integration
 
-Add the astro-integration to your `astro.config.mjs` file:
+The build config and `altitudeMiddleware` function should be imported and passed as an argument to the integration as shown below.
 
 ```js
 // astro.config.mjs
@@ -36,12 +36,6 @@ export default defineConfig({
 ] 
 })
 ```
-```js
-// config/site.js
-
-
-
-```
 
 # Configuration
 
@@ -53,24 +47,24 @@ export default {
 }
 ```
 
-## Domains options
+## Build Config Keys
 
-### domains
+### Domains
 
 **Type:** `Array[]` \
 **Required: True**
 
 
-Contains all domains associated with a site, excluding protocol. This can be a single domain or many domains (if multitenancy is enabled). If the header `x-altitude-instance` matches any of the items in this array, this build config will be read. The header can be used to switch between different configs for local development, see the [multi tenancy](/guides/multi-tenancy/#tenant-switching) guide for further information on how this works. It can also be used to map to different locales for the same tenant. (i.e www.exampledomain.com and www.exampledomain.de)
+Contains all domains associated with a site, excluding protocol. If i18n is enabled (TODO: add guide to enable i18n), this will contains each GTLD for which you want to  be a single domain or many domains (if multitenancy is enabled). If the header `x-altitude-instance` matches any of the items in this array, this build config will be read. The header can be used to switch between different configs for local development, see the [multi tenancy](/guides/multi-tenancy/#tenant-switching) guide for further information on how this works. It can also be used to map to different locales for the same tenant. (i.e www.exampledomain.com and www.exampledomain.de)
 
 The first item in the array is taken to be the default domain of the site. This value is used in conjuction with i18n, see [internationalisation](/guides/i18n/#astro-integration) for further information on this value.
 
 ```javascript
 domains: ["wwww.example.com", "uat.www.example.com"]
 ```
-## Commerce
+### Commerce
 
-### commerce.endpoint
+#### commerce.endpoint
 
 **Type:** `String` \
 **Required: False**
@@ -83,7 +77,7 @@ commerce: {
 }
 ```
 
-### commerce.headers
+#### commerce.headers
 
 **Type:** `Object` \
 **Required: False**
@@ -113,7 +107,7 @@ x-example-secret-header: import.meta.env.SECRET_HEADER_NAME
 x-example-new-header : request.headers.get('old-header-name')
 ```
 
-## KV
+### KV
 
 **Type:** `Array[]` \
 **Required: True**
@@ -133,21 +127,21 @@ kv: [
 ]
 ```
 
-### \<Object>.key
+#### \<Object>.key
 
 **Type:** `String` \
 **Required: True**
 
 The key to be retrieved in your Cloudflare KV store.
 
-### \<Object>.namespace
+#### \<Object>.namespace
 
 **Type:** `String` \
 **Required: True**
 
-This value will be used to attach the contents of the KV key to a specified namespace on the altitude global context e.g. `altitude.runtime.kv.<namespace>`. More details on the altitude namespace can be found [here](/packages/astro-integration/#altitude-global-context)
+This value will be used to attach the contents of the KV key to a specified namespace on the altitude global context e.g. `altitude.runtime.kv.<namespace>`. More details on the altitude namespace can be found [here](#altitude-global-context)
 
-### \<Object>.local
+#### \<Object>.local
 
 **Type:** `Any` \
 **Required: True**
@@ -169,28 +163,10 @@ kv: [
 ]
 ```
 
-## Custom
+### Custom keys
 
-Custom keys can also be supplied to the build config, such as environment variables. These values will not affect the configuration of the integration but will be provided on the [altitude global context](/packages/astro-integration/#altitude-global-context) at runtime. This is useful for multi tenancy when values need to change based on each tenants config. Further information can be found in the [multi tenancy guide](/guides/multi-tenancy/#multi-tenancy-config)
+Custom keys can also be supplied to the build config, such as environment variables. These values will not affect the configuration of the integration but will be provided on the [altitude global context](#altitude-global-context) at runtime. This is useful for multi tenancy when values need to change based on each tenants config. Further information can be found in the [multi tenancy guide](/guides/multi-tenancy/#multi-tenancy-config)
 
-## Invoking the integration
-
-The build config and `altitudeMiddleware` function should be imported and passed as an argument to the integration as shown below.
-
-```js
-//astro.config.js
-import { altitudeMiddleware } from '@thg-altitude/astro-integration'
-import buildConfig from './config/site'
-
-export default defineConfig({
-  integrations: [
-    altitudeMiddleware(
-      buildConfig
-    ),
-  ],
-  // ...other Astro config setup
-})
-```
 
 ## Methods
 
