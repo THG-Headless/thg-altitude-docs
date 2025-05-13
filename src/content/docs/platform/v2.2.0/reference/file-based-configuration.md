@@ -13,8 +13,8 @@ title: Version 2.2 Edge Configuration
 | routes              | Yes      | Array[[Routes Configuration](#routes)]                           |            |                                                                           |
 | cache               | No       | Array[[Cache Configuration](#cache)]                             |            |                                                                           |
 | conditionalHeaders  | No       | Array[[Conditional Header Configuration](#conditional-headers)]  |            | Defines conditional headers                                               |
-| preflightRequest    | No       | [Preflight Request Configuration](#preflight)                    |            | Config for optional preflight request |
-| redirectExceptions    | No       | [Redirect Exception Configuration](#redirect-exceptions)                    |            | Config for redirect exceptions|
+| preflightRequest    | No       | [Preflight Request Configuration](#preflight)                    |            | Config for optional preflight request                                     |
+| redirectExceptions    | No     | [Redirect Exception Configuration](#redirect-exceptions)         |            | Config for redirect exceptions                                            |
 
 
 ## Routes
