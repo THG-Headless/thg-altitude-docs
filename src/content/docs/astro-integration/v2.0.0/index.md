@@ -562,6 +562,7 @@ Array containing all the locales a sites config supports.
 
 - `['en-gb', 'fr-fr']`
 
+@deprecated
 ### altitude.localeDomains
 
 An object containing the ISO 639-1 code and domain path it corresponds to.
