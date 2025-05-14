@@ -39,14 +39,14 @@ export default {
 **Type**: `String` \
 **Required: True**
 
-The default domain of a site excluding protocol. This value is used in conjuction with i18n, see [internationalisation](/guides/i18n/#astro-integration) for further information on this value.
+The default domain of a site excluding protocol. This value is used in conjuction with i18n, see [internationalisation](/docs/astro-integration/guides/i18n) for further information on this value.
 
 ### domains.variants
 
 **Type:** `Array[]` \
 **Required: True**
 
-Contains all additional domains associated with a site inclusive of the default. This is the value the integration uses to map to this config. The header `x-altitude-instance` can be used to switch between different configs for local development, see the [multi tenancy](/docs/astro-integration/guides/multitenancy/#tenant-switching) guide for further information on how this works.
+Contains all additional domains associated with a site inclusive of the default. This is the value the integration uses to map to this config. The header `x-altitude-instance` can be used to switch between different configs for local development, see the [multi tenancy](/docs/astro-integration/guides/multitenancy) guide for further information on how this works.
 
 ```javascript
 domains: {
@@ -62,7 +62,7 @@ domains: {
 **Type:** `String` \
 **Required: False**
 
-The commerce api endpoint the specified site uses. This value will be used with the [commerce api](/packages/astro-integration/#commerce-api) method and must be provided if your application intends to use this method.
+The commerce api endpoint the specified site uses. This value will be used with the [commerce api](#commerce-api) method and must be provided if your application intends to use this method.
 
 ```javascript
 commerce: {

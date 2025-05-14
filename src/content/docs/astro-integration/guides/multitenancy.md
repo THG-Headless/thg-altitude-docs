@@ -6,6 +6,7 @@ description: Serve multiple brands from a single Altitude site.
 Multi-tenancy is a pattern in which multiple brands may be served from the same codebase. It can be used to quickly onboard a new brand, or 'tenant', via a new configuration, as a fast route to scale.
 
 ---
+# Multi-tenancy
 
 ## Custom Domains
 
