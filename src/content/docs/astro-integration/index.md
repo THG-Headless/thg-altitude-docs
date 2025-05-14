@@ -46,7 +46,7 @@ The default domain of a site excluding protocol. This value is used in conjuctio
 **Type:** `Array[]` \
 **Required: True**
 
-Contains all additional domains associated with a site inclusive of the default. This is the value the integration uses to map to this config. The header `x-altitude-instance` can be used to switch between different configs for local development, see the [multi tenancy](/guides/multi-tenancy/#tenant-switching) guide for further information on how this works.
+Contains all additional domains associated with a site inclusive of the default. This is the value the integration uses to map to this config. The header `x-altitude-instance` can be used to switch between different configs for local development, see the [multi tenancy](/docs/astro-integration/guides/multitenancy/#tenant-switching) guide for further information on how this works.
 
 ```javascript
 domains: {
