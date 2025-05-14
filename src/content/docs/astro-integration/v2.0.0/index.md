@@ -562,14 +562,13 @@ Array containing all the locales a sites config supports.
 
 - `['en-gb', 'fr-fr']`
 
-@deprecated
-### altitude.localeDomains
+### altitude.localeDomains (deprecated)
 
 An object containing the ISO 639-1 code and domain path it corresponds to.
 
 - `{'en-gb': 'https://www.example.com', 'fr-fr': 'https://www.example.fr'}`
 
-### altitude.preferredLocale
+### altitude.preferredLocale (deprecated)
 
 ISO 639-1 code that resolves to the 'prefix' in the i18n section of the build config. If none are provided or invalid, `null` will be returned.
 
