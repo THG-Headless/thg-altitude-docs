@@ -19,3 +19,22 @@ After:
 www.example.com => rewrite => www.example.com/en-gb/
 www.example.com/en-gb/ => www.example.com/en-gb/en-gb  (404)
 ```
+
+## Options deprecated
+
+We used to be able to pass an 'options' object to enable cookierouting. This is now deprecated 
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+import buildConfig from './config/site.js'
+
+export default defineConfig({
+  output: 'server',
+  integrations: [
+    altitudeMiddleware(buildConfig,
+    options // deprecated
+    )
+] 
+})
+```
