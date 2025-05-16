@@ -508,7 +508,7 @@ The Astro route injection uses pattern matching to direct requests to the endpoi
 
 ### Configuring the endpoint
 
-Firstly, there is a requirement to add `api` to the tenant build config `exclusionList` to avoid localisation rewrites, which would result in the route 404ing. More information on this can be found in the documentation: https://docs.alliance.thgaltitude.com/guides/i18n/#i18nexclusionlist
+Firstly, there is a requirement to add `api` to the tenant build config `exclusionList` to avoid localisation rewrites, which would result in the route 404ing. More information on this can be found in the [documentation](./guides/i18n/#i18nexclusionlist)
 
 ```js
 // tenant config obj
@@ -574,7 +574,7 @@ The integration will provide additional information about the config resolvement
 
 ### altitude.runtime.config
 
-The build config object the integration has resolved to. For applications using the integrations [localisation](/guides/i18n/#astro-integration) solution this will be the locale specific config.
+The build config object the integration has resolved to. For applications using the integration's [localisation](./guides/i18n) solution this will be the locale specific config.
 
 ### altitude.runtime.kv.\<namespace>
 
@@ -582,7 +582,7 @@ The value of [KV](/packages/astro-integration/#kv) retrieved using the key provi
 
 <h2 id="internationalisation">Internationalisation</h2>
 
-These keys will be provided on the altitude namespace for applications that are using the built in i18n solution. Further information can be found [here](/guides/i18n/#astro-integration)
+These keys will be provided on the altitude namespace for applications that are using the built in i18n solution. Further information can be found [here](./guides/i18n)
 
 ### altitude.locale
 
