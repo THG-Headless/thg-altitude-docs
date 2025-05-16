@@ -61,15 +61,14 @@ pages
 └── 404.astro
 ```
 
-You **must** have the 404.astro page at outside the [locale] directory, otherwise for it to be picked up. 
+You **must** have the 404.astro page at outside the [locale] directory, or it will not be picked up
 
 At request time, astro-integration will read the x-altitude-instance header (in dev mode) or the [X-Forwarded-Host](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/X-Forwarded-Host) header (in production) to decide which tenantConfig to read.
 
-To mitigate the risk of duplicate content, any requests directly to the prefix that have not been subject to a rewrite will 404.
 
 Example request pattern:
 
 ```
 www.example.com => rewrite => www.example.com/en-gb/
-www.example.com/en-gb/ => www.example.com/en-gb/ (404)
+www.example.com/en-gb/ => www.example.com/en-gb/en-gb 
 ```
