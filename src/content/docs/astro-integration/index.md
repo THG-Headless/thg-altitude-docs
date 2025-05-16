@@ -46,7 +46,7 @@ The default domain of a site excluding protocol. This value is used in conjuctio
 **Type:** `Array[]` \
 **Required: True**
 
-Contains all additional domains associated with a site inclusive of the default. This is the value the integration uses to map to this config. The header `x-altitude-instance` can be used to switch between different configs for local development, see the [multi tenancy](./guides/multitenancy) guide for further information on how this works.
+Contains all additional domains associated with a site inclusive of the default. This is the value the integration uses to map to this config. The header `x-altitude-instance` can be used to switch between different configs for local development, see the [multi tenancy](/docs/astro-integration/guides/multitenancy) guide for further information on how this works.
 
 ```javascript
 domains: {
@@ -105,7 +105,7 @@ x-example-new-header : request.headers.get('old-header-name')
 **Type:** `Array[]` \
 **Required: True**
 
-An array of KV options can be supplied. Below are the options that should be supplied per entry. See the [Edge KV](./guides/edge-kv) guide for more details.
+An array of KV options can be supplied. Below are the options that should be supplied per entry. See the [Edge KV](/docs/astro-integration/guides/edge-kv) guide for more details.
 
 This field is required even if all locale specific configs have their own KV entries. So use this section either for a sensible set of default values or leave it as an empty array if you are sure that all locales have correct KV configs.
 
@@ -158,7 +158,7 @@ kv: [
 
 ## Custom
 
-Custom keys can also be supplied to the build config, such as environment variables. These values will not affect the configuration of the integration but will be provided on the [altitude global context](/packages/astro-integration/#altitude-global-context) at runtime. This is useful for multi tenancy when values need to change based on each tenants config. Further information can be found in the [multi tenancy guide](./guides/multitenancy)
+Custom keys can also be supplied to the build config, such as environment variables. These values will not affect the configuration of the integration but will be provided on the [altitude global context](#altitude-global-context) at runtime. This is useful for multi tenancy when values need to change based on each tenants config. Further information can be found in the [multi tenancy guide](/docs/astro-integration/guides/multitenancy)
 
 ## Invoking the integration
 
@@ -247,7 +247,7 @@ The keys used for copy on site can be exposed using headers. This will allow the
 
 ### Commerce API
 
-The integration provides out the box commerce api fetching on the server exposing the method as `altitude.commerce.api`. The method enables applications to configure the operation, variables and headers to retrieve commerce data for a given site or tenant. The endpoint the method will use for these calls will be the `commerce.endpoint` supplied in an application or tenants [build config](/packages/astro-integration/#configuration).
+The integration provides out the box commerce api fetching on the server exposing the method as `altitude.commerce.api`. The method enables applications to configure the operation, variables and headers to retrieve commerce data for a given site or tenant. The endpoint the method will use for these calls will be the `commerce.endpoint` supplied in an application or tenants [build config](#configuration).
 
 #### operationFields.operation
 
@@ -508,7 +508,7 @@ The Astro route injection uses pattern matching to direct requests to the endpoi
 
 ### Configuring the endpoint
 
-Firstly, there is a requirement to add `api` to the tenant build config `exclusionList` to avoid localisation rewrites, which would result in the route 404ing. More information on this can be found in the [documentation](./guides/i18n/#i18nexclusionlist)
+Firstly, there is a requirement to add `api` to the tenant build config `exclusionList` to avoid localisation rewrites, which would result in the route 404ing. More information on this can be found in the [documentation](/docs/astro-integration/guides/i18n/#i18nexclusionlist)
 
 ```js
 // tenant config obj
@@ -574,15 +574,15 @@ The integration will provide additional information about the config resolvement
 
 ### altitude.runtime.config
 
-The build config object the integration has resolved to. For applications using the integration's [localisation](./guides/i18n) solution this will be the locale specific config.
+The build config object the integration has resolved to. For applications using the integration's [localisation](/docs/astro-integration/guides/i18n) solution this will be the locale specific config.
 
 ### altitude.runtime.kv.\<namespace>
 
-The value of [KV](/packages/astro-integration/#kv) retrieved using the key provided. This will be attached using the namespace value provided in the KV for the key retrieved.
+The value of [KV](#kv) retrieved using the key provided. This will be attached using the namespace value provided in the KV for the key retrieved.
 
 <h2 id="internationalisation">Internationalisation</h2>
 
-These keys will be provided on the altitude namespace for applications that are using the built in i18n solution. Further information can be found [here](./guides/i18n)
+These keys will be provided on the altitude namespace for applications that are using the built in i18n solution. Further information can be found [here](/docs/astro-integration/guides/i18n)
 
 ### altitude.locale
 
