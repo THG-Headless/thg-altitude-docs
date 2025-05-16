@@ -46,7 +46,7 @@ The default domain of a site excluding protocol. This value is used in conjuctio
 **Type:** `Array[]` \
 **Required: True**
 
-Contains all additional domains associated with a site inclusive of the default. This is the value the integration uses to map to this config. The header `x-altitude-instance` can be used to switch between different configs for local development, see the [multi tenancy](/docs/astro-integration/guides/multitenancy) guide for further information on how this works.
+Contains all additional domains associated with a site inclusive of the default. This is the value the integration uses to map to this config. The header `x-altitude-instance` can be used to switch between different configs for local development, see the [multi tenancy](./guides/multitenancy) guide for further information on how this works.
 
 ```javascript
 domains: {
@@ -158,7 +158,7 @@ kv: [
 
 ## Custom
 
-Custom keys can also be supplied to the build config, such as environment variables. These values will not affect the configuration of the integration but will be provided on the [altitude global context](/packages/astro-integration/#altitude-global-context) at runtime. This is useful for multi tenancy when values need to change based on each tenants config. Further information can be found in the [multi tenancy guide](/guides/multi-tenancy/#multi-tenancy-config)
+Custom keys can also be supplied to the build config, such as environment variables. These values will not affect the configuration of the integration but will be provided on the [altitude global context](/packages/astro-integration/#altitude-global-context) at runtime. This is useful for multi tenancy when values need to change based on each tenants config. Further information can be found in the [multi tenancy guide](./guides/multitenancy)
 
 ## Invoking the integration
 
