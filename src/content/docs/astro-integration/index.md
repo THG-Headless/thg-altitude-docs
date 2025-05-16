@@ -75,7 +75,7 @@ commerce: {
 **Type:** `Object` \
 **Required: False**
 
-This block allows headers to be added to a request to the [commerce endpoint](/packages/astro-integration/#altitude-commerce-endpoint) on the server side. The name of the header is the key, and the value an object with a type key of "env"|"request" to specify if the value should be taken from environment variables, or from another request header. This is useful for sensitive headers that should not be accessible in the browser, and retaining the value of a header that may get overwritten or masked as it passes through proxies, e.g. client_ip.
+This block allows headers to be added to a request to the [commerce endpoint](#altitude-commerce-endpoint) on the server side. The name of the header is the key, and the value an object with a type key of "env"|"request" to specify if the value should be taken from environment variables, or from another request header. This is useful for sensitive headers that should not be accessible in the browser, and retaining the value of a header that may get overwritten or masked as it passes through proxies, e.g. client_ip.
 
 ```javascript
 commerce: {
@@ -105,7 +105,7 @@ x-example-new-header : request.headers.get('old-header-name')
 **Type:** `Array[]` \
 **Required: True**
 
-An array of KV options can be supplied. Below are the options that should be supplied per entry. See the [Edge KV](/guides/edge-kv/#astro-integration) guide for more details.
+An array of KV options can be supplied. Below are the options that should be supplied per entry. See the [Edge KV](./guides/edge-kv) guide for more details.
 
 This field is required even if all locale specific configs have their own KV entries. So use this section either for a sensible set of default values or leave it as an empty array if you are sure that all locales have correct KV configs.
 
@@ -132,7 +132,7 @@ The key to be retrieved in your Cloudflare KV store.
 **Type:** `String` \
 **Required: True**
 
-This value will be used to attach the contents of the KV key to a specified namespace on the altitude global context e.g. `altitude.runtime.kv.<namespace>`. More details on the altitude namespace can be found [here](/packages/astro-integration/#altitude-global-context)
+This value will be used to attach the contents of the KV key to a specified namespace on the altitude global context e.g. `altitude.runtime.kv.<namespace>`. More details on the altitude namespace can be found [here](#altitude-global-context)
 
 ### \<Object>.local
 
