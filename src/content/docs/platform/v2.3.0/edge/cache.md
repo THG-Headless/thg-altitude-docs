@@ -69,51 +69,65 @@ cache:
 ```
 
 The result of adding this cache would be:
+
 - For any path with a prefix `/foo`, you would have a cache-control header of `max-age=100`.
 - For any path with a prefix `/foo` excluding paths with a prefix `/foo/bar`, you would be able to differ your cache by changing the `X-Foo` request header.
 - For any other paths, the default settings remain.
 
 ## Cache Purging
 
-Cache purging can now be performed using the API endpoint `POST sites/:siteId/domain/purge-cache` with the body parameters `domainName`, `purgeType`, `key`, and `allPathWildcards`.
+Cache purging allows you to immediately update content delivered to users when you make changes to your site. Rather than waiting for the content to expire, you can use the API endpoint `POST sites/:siteId/purge-cache/:envName` which supports 6 purge types: domain, path, key, all, redirects and experimentation. The body parameter `purgeType` is always required and its value must be one of the six types, while the remaining parameters will depend on the purge type you have selected.
 
-Below is a detailed explanation of all the body parameters expected by the endpoint:
+`purgeType: "domain"`
 
-#### domainName
+This will purge all cached content belonging to a particular domain. It requires the following parameter:
 
-The domain you want to purge, for example, `www.foobar.com`.
+- `domainName`: The domain you want to purge, e.g. `"www.foo.com"`.
 
-#### purgeType
+`purgeType: "path"`
 
-This is an enum that accepts one of the following values:
+This will purge cached content related to a particular path. It requires the following parameter:
 
-- `path`: Allows you to purge a specific path.
-- `surrogate-key`: Allows you to purge a specific surrogate key returned by your site.
-- `all`: Purges all paths on the domain.
+- `path`: The path you want to purge, e.g. `"/c/"`. **Note:** even though a URL path may not end in a trailing slash, the label corresponding to a cached object will always, so we always require a trailing slash here.
 
-#### key
+Additionally, the following parameters are also accepted:
 
-This field depends on the value selected for field `purgeType`.
+- `domainName`: If specified, the path will only be purged on this domain. Otherwise, it will be purged across the entire environment.
+- `prefix`: Default: `false`. If set to `true`, we will not only purge the content on this path but we will also purge any sub-paths, for example if we purge `/products/` with prefix purging enabled, we will also purge `"/products/item1/"`, `"/products/item2/"`, etc.
 
-For purgeType:
+`purgeType: "key"`
 
-- `path`: The key should be the path you want to purge.
-- `surrogate-key`: The key should be the surrogate key.
-- `all`: The key field is not needed since it purges all paths.
+This will purge cached content in the environment labelled with the specified key. It requires the following parameter:
 
-#### allPathWildcards
+- `key`: The key you want to purge e.g. `"blog"`
 
-When path is selected as the `purgeType`, setting this to true will purge all paths with the key as the prefix of the path.
+`purgeType: "all"`
 
-### CURL request
+This will purge all cached content in the environment. No additional parameters are required. **Note:** it may take a few minutes for the request to be processed across all edge servers.
 
-An example of how the curl would look like for cache purging:
+`purgeType: "redirects"`
+
+This will purge cached content related to redirects of the specified rule group. It accepts the following parameter:
+
+- `ruleGroupId`: The rule group you want to purge e.g. `"ruleGroup123"`. If omitted, all redirects will be purged on this environment.
+
+`purgeType: "experimentation"`
+
+This will purge cached content for all experiments on an environment. No additional parameters are required.
+
+#### Example: Purging the path /bar/ on domain www.foo.com with prefix purging enabled:
+
+```
+ curl -i --location 'https://api.platform.thgaltitude.com/v1/sites/:siteId/purge-cache/:envName' --header 'Accept: application/json' --header 'Content-Type: application/json' --header "Authorization: Bearer $token" --data '{ "purgeType": "path", "domainName": "www.foo.com", "path": "/bar/", "prefix": true}'
+```
 
 Please follow the guide [How to use Altitude API](../guides/how-to-use-altitude-api/) to get your bearer token.
 
-```
- curl -i --location 'https://api.platform.thgaltitude.com/v1/sites/:siteId/domain/purge-cache' --header 'Accept: application/json' --header 'Content-Type: application/json' --header "Authorization: Bearer $token" --data '{"domainName": "www.foo.com", "purgeType": "path", "key": "/bar", "allPathWildcards": true}'
-```
+### Purging via Altitude UI
+
+Cache purging can also be requested via the Altitude UI for purge types: `domain`, `path`, `key` and `all`
+
+![Cache purge example](/statics/screenshots/cache/cache-purge-example.png)
 
 ## Request Collapsing
 
@@ -126,14 +140,16 @@ Request collapsing is a performance optimisation to reduce origin load when mult
 Request collapsing will only happen on GETs where all the incoming requests share the same cache key.
 
 To disable this behaviour for a particular path, you should:
-* add a VCL snippet in your altitude yaml to disable caching (which also disables request collapsing)
-    ```- name: bypass_req_collapse
-    content: |
-      if (req.url.path == "/personalised/") {
-        return(pass);
-      }
-    type: recv
-    priority: 100
-* ensure that you add the `private` directive to the `Cache-Control` header on the response.
+
+- add a VCL snippet in your altitude yaml to disable caching (which also disables request collapsing)
+  ```- name: bypass_req_collapse
+  content: |
+    if (req.url.path == "/personalised/") {
+      return(pass);
+    }
+  type: recv
+  priority: 100
+  ```
+- ensure that you add the `private` directive to the `Cache-Control` header on the response.
 
 To read more about this, see [here](https://www.fastly.com/documentation/guides/concepts/edge-state/cache/request-collapsing/).
