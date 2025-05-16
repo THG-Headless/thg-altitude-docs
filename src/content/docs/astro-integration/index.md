@@ -551,7 +551,7 @@ Currently this endpoint uses 4 values in the body:
 
 Application currently only applies to the use of the Multi-Tenanted Account option, with a value of 'account'.opaqueCookieDomain allows access the correct domains when setting response headers.
 
-Variables handles any input needed by the Horizon query. The horizonApq setting allows enabling [persisted queries](/packages/astro-integration/#options.apqEnabled)
+Variables handles any input needed by the Horizon query. The horizonApq setting allows enabling [persisted queries](#commerce-api)
 
 ```
 const variables {...}
