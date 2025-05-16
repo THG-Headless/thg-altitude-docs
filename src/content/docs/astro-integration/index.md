@@ -39,14 +39,14 @@ export default {
 **Type**: `String` \
 **Required: True**
 
-The default domain of a site excluding protocol. This value is used in conjuction with i18n, see [internationalisation](/guides/i18n/#astro-integration) for further information on this value.
+The default domain of a site excluding protocol. This value is used in conjuction with i18n, see [internationalisation](/docs/astro-integration/guides/i18n) for further information on this value.
 
 ### domains.variants
 
 **Type:** `Array[]` \
 **Required: True**
 
-Contains all additional domains associated with a site inclusive of the default. This is the value the integration uses to map to this config. The header `x-altitude-instance` can be used to switch between different configs for local development, see the [multi tenancy](/guides/multi-tenancy/#tenant-switching) guide for further information on how this works.
+Contains all additional domains associated with a site inclusive of the default. This is the value the integration uses to map to this config. The header `x-altitude-instance` can be used to switch between different configs for local development, see the [multi tenancy](/docs/astro-integration/guides/multitenancy) guide for further information on how this works.
 
 ```javascript
 domains: {
@@ -62,7 +62,7 @@ domains: {
 **Type:** `String` \
 **Required: False**
 
-The commerce api endpoint the specified site uses. This value will be used with the [commerce api](/packages/astro-integration/#commerce-api) method and must be provided if your application intends to use this method.
+The commerce api endpoint the specified site uses. This value will be used with the [commerce api](#commerce-api) method and must be provided if your application intends to use this method.
 
 ```javascript
 commerce: {
@@ -75,7 +75,7 @@ commerce: {
 **Type:** `Object` \
 **Required: False**
 
-This block allows headers to be added to a request to the [commerce endpoint](/packages/astro-integration/#altitude-commerce-endpoint) on the server side. The name of the header is the key, and the value an object with a type key of "env"|"request" to specify if the value should be taken from environment variables, or from another request header. This is useful for sensitive headers that should not be accessible in the browser, and retaining the value of a header that may get overwritten or masked as it passes through proxies, e.g. client_ip.
+This block allows headers to be added to a request to the [commerce endpoint](#altitude-commerce-endpoint) on the server side. The name of the header is the key, and the value an object with a type key of "env"|"request" to specify if the value should be taken from environment variables, or from another request header. This is useful for sensitive headers that should not be accessible in the browser, and retaining the value of a header that may get overwritten or masked as it passes through proxies, e.g. client_ip.
 
 ```javascript
 commerce: {
@@ -105,7 +105,7 @@ x-example-new-header : request.headers.get('old-header-name')
 **Type:** `Array[]` \
 **Required: True**
 
-An array of KV options can be supplied. Below are the options that should be supplied per entry. See the [Edge KV](/guides/edge-kv/#astro-integration) guide for more details.
+An array of KV options can be supplied. Below are the options that should be supplied per entry. See the [Edge KV](/docs/astro-integration/guides/edge-kv) guide for more details.
 
 This field is required even if all locale specific configs have their own KV entries. So use this section either for a sensible set of default values or leave it as an empty array if you are sure that all locales have correct KV configs.
 
@@ -132,7 +132,7 @@ The key to be retrieved in your Cloudflare KV store.
 **Type:** `String` \
 **Required: True**
 
-This value will be used to attach the contents of the KV key to a specified namespace on the altitude global context e.g. `altitude.runtime.kv.<namespace>`. More details on the altitude namespace can be found [here](/packages/astro-integration/#altitude-global-context)
+This value will be used to attach the contents of the KV key to a specified namespace on the altitude global context e.g. `altitude.runtime.kv.<namespace>`. More details on the altitude namespace can be found [here](#altitude-global-context)
 
 ### \<Object>.local
 
@@ -158,7 +158,7 @@ kv: [
 
 ## Custom
 
-Custom keys can also be supplied to the build config, such as environment variables. These values will not affect the configuration of the integration but will be provided on the [altitude global context](/packages/astro-integration/#altitude-global-context) at runtime. This is useful for multi tenancy when values need to change based on each tenants config. Further information can be found in the [multi tenancy guide](/guides/multi-tenancy/#multi-tenancy-config)
+Custom keys can also be supplied to the build config, such as environment variables. These values will not affect the configuration of the integration but will be provided on the [altitude global context](#altitude-global-context) at runtime. This is useful for multi tenancy when values need to change based on each tenants config. Further information can be found in the [multi tenancy guide](/docs/astro-integration/guides/multitenancy)
 
 ## Invoking the integration
 
@@ -247,7 +247,7 @@ The keys used for copy on site can be exposed using headers. This will allow the
 
 ### Commerce API
 
-The integration provides out the box commerce api fetching on the server exposing the method as `altitude.commerce.api`. The method enables applications to configure the operation, variables and headers to retrieve commerce data for a given site or tenant. The endpoint the method will use for these calls will be the `commerce.endpoint` supplied in an application or tenants [build config](/packages/astro-integration/#configuration).
+The integration provides out the box commerce api fetching on the server exposing the method as `altitude.commerce.api`. The method enables applications to configure the operation, variables and headers to retrieve commerce data for a given site or tenant. The endpoint the method will use for these calls will be the `commerce.endpoint` supplied in an application or tenants [build config](#configuration).
 
 #### operationFields.operation
 
@@ -508,7 +508,7 @@ The Astro route injection uses pattern matching to direct requests to the endpoi
 
 ### Configuring the endpoint
 
-Firstly, there is a requirement to add `api` to the tenant build config `exclusionList` to avoid localisation rewrites, which would result in the route 404ing. More information on this can be found in the documentation: https://docs.alliance.thgaltitude.com/guides/i18n/#i18nexclusionlist
+Firstly, there is a requirement to add `api` to the tenant build config `exclusionList` to avoid localisation rewrites, which would result in the route 404ing. More information on this can be found in the [documentation](/docs/astro-integration/guides/i18n/#i18nexclusionlist)
 
 ```js
 // tenant config obj
@@ -551,7 +551,7 @@ Currently this endpoint uses 4 values in the body:
 
 Application currently only applies to the use of the Multi-Tenanted Account option, with a value of 'account'.opaqueCookieDomain allows access the correct domains when setting response headers.
 
-Variables handles any input needed by the Horizon query. The horizonApq setting allows enabling [persisted queries](/packages/astro-integration/#options.apqEnabled)
+Variables handles any input needed by the Horizon query. The horizonApq setting allows enabling [persisted queries](#commerce-api)
 
 ```
 const variables {...}
@@ -574,15 +574,15 @@ The integration will provide additional information about the config resolvement
 
 ### altitude.runtime.config
 
-The build config object the integration has resolved to. For applications using the integrations [localisation](/guides/i18n/#astro-integration) solution this will be the locale specific config.
+The build config object the integration has resolved to. For applications using the integration's [localisation](/docs/astro-integration/guides/i18n) solution this will be the locale specific config.
 
 ### altitude.runtime.kv.\<namespace>
 
-The value of [KV](/packages/astro-integration/#kv) retrieved using the key provided. This will be attached using the namespace value provided in the KV for the key retrieved.
+The value of [KV](#kv) retrieved using the key provided. This will be attached using the namespace value provided in the KV for the key retrieved.
 
 <h2 id="internationalisation">Internationalisation</h2>
 
-These keys will be provided on the altitude namespace for applications that are using the built in i18n solution. Further information can be found [here](/guides/i18n/#astro-integration)
+These keys will be provided on the altitude namespace for applications that are using the built in i18n solution. Further information can be found [here](/docs/astro-integration/guides/i18n)
 
 ### altitude.locale
 
