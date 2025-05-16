@@ -8,21 +8,19 @@ Multi-tenancy is a pattern in which multiple brands may be served from the same 
 
 ## Prerequisites: 
 
-- astro-integration running in single tenancy mode. See [guide](../guides/getting-started)
+- astro-integration set up in single tenancy mode. See [guide](../guides/getting-started)
   
 ## Step 1: convert buildConfig to an array
 
-By default, astro-integration runs in single tenanted mode. This means the first argument passed to `altitudeMiddleware` is an object which matches this [schema](https://github.com/THG-AltitudeSiteBuilds/astro-integration/blob/main/config_schemas/schemaV1.json). To enable multitenancy, all you need to do is pass an array of configs instead of a single config: 
-
-In multitenancy mode, astro-integration is passed an array of tenantConfigs:  
+By default, astro-integration runs in single tenanted mode. This means the first argument passed to `altitudeMiddleware` is an object matching the [build config schema](https://github.com/THG-AltitudeSiteBuilds/astro-integration/blob/main/config_schemas/schemaV1.json). Enable multitenancy by passing an array instead:
 
 ```jsx
 // astro.config.mjs
-import tenantArray from './config/index.js';
+import [tenant1, tenant2] from './config/index.js';
 export default defineConfig({
 	integrations: [
 	altitudeMiddleware(
-		tenantArray
+		tenantsArray
 		// ...options
 	)]
 })

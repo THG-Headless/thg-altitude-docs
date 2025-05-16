@@ -38,6 +38,7 @@ The custom 404.astro page should remain at the root of the pages directory to se
 
 ```jsx
 pages
+├── [...https].astro
 ├── [locale]
 │   ├── [...https].astro
 │   ├── basket.astro
@@ -59,6 +60,8 @@ pages
 │   └── search.astro
 └── 404.astro
 ```
+
+You **must** have the 404.astro page at outside the [locale] directory, otherwise for it to be picked up. 
 
 At request time, astro-integration will read the x-altitude-instance header (in dev mode) or the [X-Forwarded-Host](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/X-Forwarded-Host) header (in production) to decide which tenantConfig to read.
 
