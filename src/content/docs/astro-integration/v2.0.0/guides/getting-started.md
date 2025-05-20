@@ -43,13 +43,11 @@ Define each of the site configs in their own respective file:
 
 import { env } from "@thg-altitude/astro-integration";
 export default {
-  site: "www.siteone.com",
+  domains: ["www.siteone.com"],
   commerce: {
     endpoint: "",
   },
-  blog: {
-    secret: env("SITEONE_ENV_REFERENCE"),
-  },
+  kv: ''
 };
 ```
 
@@ -78,5 +76,7 @@ export default defineConfig({
   ],
 });
 ```
+
+To switch between www.siteone.com and www.sitetwo.com, change your x-altitude-instance header from www.sisteone.com to www.sitetwo.com using the [ModHeader extension](https://chromewebstore.google.com/detail/modheader-modify-http-hea/idgpnmonknjnojddfkpgkljpfnnfcklj?hl=en). 
 
 see the [multitenancy reference](../reference/multi-tenancy) for more info
