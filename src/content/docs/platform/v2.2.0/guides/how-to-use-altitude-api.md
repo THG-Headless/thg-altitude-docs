@@ -8,7 +8,7 @@ To access any endpoint in the Altitude API, you will need a bearer token. This t
 
 ## Create API client
 
-**Note:** You must be an org owner to create API clients. Please check out this guide: [Understanding user roles](/guides/understanding-user-roles/).
+**Note:** You must be an org owner to create API clients. Please check out this guide: [Understanding user roles](../guides/understanding-user-roles/).
 
 Navigate to the org settings page (https://www.platform.thgaltitude.com/settings). Create a new api client in `API Clients` section.
 

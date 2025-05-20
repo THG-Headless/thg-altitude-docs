@@ -12,8 +12,8 @@ The pattern is still a low cost route to delivering content on the edge, however
 A variant of the rendering method that pairs with SSG is a web app implementation called SPA. SPA is a flavour of implementation for a website which promotes JavaScript being used to load (hydrate) pages to the browser rather than relying on traditional route of requesting a web page the SPA removes aspects of the fetch that typically occurs per page load making for a quicker second (and onward) load.
 
 #### Further Reading
-- Learn how to [Deploy an SSG](/guides/deploy-a-ssg-site/) on Altitude
-- Learn how to [Deploy an SPA](/guides/deploy-a-spa-site/) on Altitude
+- Learn how to [Deploy an SSG](../guides/create-a-ssg-site/) on Altitude
+- Learn how to [Deploy an SPA](../guides/create-a-spa-site/) on Altitude
 
 ## SSR (Server-side Rendering)
 The SSR rendering method grew in popularity as edge compute infastructures became more performant and viable alternatives to a CDN. A server-side rendered page is typically a page that is generated in a server, typically on-the-fly as customers view the pages.
@@ -22,4 +22,4 @@ This method of rendering is ideal for environments where change is frequent and 
 
 #### Further Reading
 
-- Learn how to [Deploy an SSR](/guides/deploy-a-ssr-site/) on Altitude
+- Learn how to [Deploy an SSR](../guides/create-a-ssr-site/) on Altitude

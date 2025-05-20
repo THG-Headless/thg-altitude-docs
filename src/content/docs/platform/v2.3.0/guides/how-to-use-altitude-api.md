@@ -8,7 +8,7 @@ To access any endpoint in the Altitude API, you will need a bearer token. This t
 
 ## Create API client
 
-**Note:** You must be an org owner to create API clients. Please check out this guide: [Understanding user roles](/guides/understanding-user-roles/).
+**Note:** You must be an org owner to create API clients. Please check out this guide: [Understanding user roles](../guides/understanding-user-roles/).
 
 Navigate to the org settings page (https://www.platform.thgaltitude.com/settings). Create a new api client in `API Clients` section.
 
@@ -26,7 +26,7 @@ export ALTITUDE_SECRET_KEY = <Your Client Secret>
 Once you have exported the variables mentioned above, use the following curl command to get a bearer token by hitting our OAuth endpoint:
 
 ```
-curl --request POST --url "https://thgaltitude.eu.auth0.com/oauth/token" --header "content-type: application/x-www-form-urlencoded" --data "grant_type=client_credentials&client_id=$ALTITUDE_CLIENT_ID&client_secret=$ALTITUDE_CLIENT_SECRET&audience=https://api.platform.thgaltitude.com/"
+curl --request POST --url "https://thgaltitude.eu.auth0.com/oauth/token" --header "content-type: application/x-www-form-urlencoded" --data "grant_type=client_credentials&client_id=$ALTITUDE_CLIENT_ID&client_secret=$ALTITUDE_SECRET_KEY&audience=https://api.platform.thgaltitude.com/"
 ```
 
 In your terminal, export the following variable:

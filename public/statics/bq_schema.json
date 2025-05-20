@@ -1,0 +1,183 @@
+[
+  {
+    "mode": "NULLABLE",
+    "name": "timestamp",
+    "type": "TIMESTAMP"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "client_ip",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "geo_country",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "geo_city",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "host",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "url",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "request_method",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "request_protocol",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "request_referer",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "request_user_agent",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "response_state",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "response_status",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "response_reason",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "response_body_size",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "fastly_server",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "fastly_is_edge",
+    "type": "BOOLEAN"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "x_horizon_status_code",
+    "type": "STRING"
+  },
+  {
+    "description": "Time taken to make the horizon query in milliseconds",
+    "mode": "NULLABLE",
+    "name": "x_horizon_request_duration",
+    "type": "INTEGER"
+  },
+  {
+    "description": "Time taken for request in microseconds.",
+    "mode": "NULLABLE",
+    "name": "time_elapsed",
+    "type": "STRING"
+  },
+  {
+    "description": "The size of the request headers.",
+    "mode": "NULLABLE",
+    "name": "request_header_bytes_read",
+    "type": "STRING"
+  },
+  {
+    "description": "The size of the request body.\n",
+    "mode": "NULLABLE",
+    "name": "request_body_bytes_read",
+    "type": "STRING"
+  },
+  {
+    "description": "The size of the response headers.",
+    "mode": "NULLABLE",
+    "name": "response_header_bytes_written",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "ja4_fingerprint",
+    "type": "STRING"
+  },
+  {
+    "description": "prefetch or not",
+    "mode": "NULLABLE",
+    "name": "purpose",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "x_experimentation_cache",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "x_redirects_cache",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "custom_preflight_cache",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "redirect_preflight_start_time",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "redirect_preflight_end_time",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "experimentation_preflight_start_time",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "experimentation_preflight_end_time",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "custom_preflight_start_time",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "custom_preflight_end_time",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "cf_ray",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "horizon_ray",
+    "type": "STRING"
+  }
+]
