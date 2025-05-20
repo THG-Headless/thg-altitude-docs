@@ -21,7 +21,10 @@ import buildConfig from './config/site.js'
 export default defineConfig({
   output: 'server',
   integrations: [
-    altitudeMiddleware(buildConfig)
+      altitudeMiddleware({
+            buildConfig : tenants,
+            api: { enabled: true, graphql: gqlIndex }
+        }),
 ] 
 })
 ```

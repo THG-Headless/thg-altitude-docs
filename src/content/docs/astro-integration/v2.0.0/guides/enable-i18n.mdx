@@ -3,6 +3,11 @@ title: Enabling i18n
 order: 2
 ---
 
+import { Aside } from "@components/docs";
+
+<Aside type="caution">
+    i18n is not currently supported in single-tenancy mode
+</Aside>
 
 ## Prerequisites:
 
@@ -10,27 +15,42 @@ Before you begin, make sure you have:
 
 - astro-integration running in multitenancy mode. See [guide](../guides/enable-multitenancy)
 
-(Note: i18n is not supported for single-tenancy mode at this time.)
-
 ## Step 1: Add i18n keys to each buildConfig in the tenants array
 
 Make sure *every* tenant in the `tenants` array that you are passing to `altitudeMiddleware` has an i18n key.
 
-To check that this is working, run `npm run dev` in the console, you should see the following: 
-
+```js
+import tenants from './config/index';
+// astro.config.js
+export default defineConfig({
+    integrations: [
+        altitudeMiddleware({
+            siteConfig: tenants,
+            api: { enabled: true, graphql: gqlIndex }
+        }),
+    ],
 ```
-15:40:31 [info] Detected multi-tenancy config (i18n enabled)
+
+```js
+import tenant1 from './tenant1';
+import tenant2 from './tenant2';
+import altitudedemo from './altitudedemo';
+
+export default [tenant1, tenant2, altitudedemo];
 ```
 
+`tenant1.js` and `tenant2.js` should both have an i18n key. To see all the required fields, see the [i18n config reference](../reference/config/#i18n).
+
+```js
 ## Step 2: Support rewrites in astro folder structure
 
 When i18n is enabled, astro-integration rewrites every request to `/pathname` to `/localePrefix/pathname` 
 
-<div class="callout info">
+<Aside type="info">
 
 For example, if localePrefix is `/en-gb` then a request to `/` will be rewritten to `/en-gb/` and a request to `/basket` will be rewritten to `/en-gb/basket`
 
-</div>
+</Aside>
 
 This means that your storefront must have the appropriate request handlers. This can be achieved by nesting your normal handlers in the `/pages` directory into `pages/[locale`, 
 

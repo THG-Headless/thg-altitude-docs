@@ -3,7 +3,7 @@ title: Enabling Multitenancy
 order: 1
 ---
 
-Multi-tenancy is a pattern in which multiple brands may be served from the same codebase. It can be used to quickly onboard a new brand, or ‘tenant’, via a new configuration, as a fast route to scale.
+see the [Multitenancy reference](/docs/astro-integration/v2.0.0/reference/multi-tenancy) for more background.
 
 
 ## Prerequisites: 

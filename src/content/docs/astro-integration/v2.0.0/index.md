@@ -6,17 +6,11 @@ description: Astro Integration configuration reference guide.
 Middleware and utilities to make developing Altitude websites with Astro even better.
 
 - 👯‍♂️ **Multitenancy** Support for multi-tenancy via GTLD-based tenant-switching.
-- 🌎 **Internationalisation:** Support for internationalisation via [GTLD](https://en.wikipedia.org/wiki/Generic_top-level_domain)-based localisation
+- 🌎 **i18n:** Support for i18n via [GTLD](https://en.wikipedia.org/wiki/Generic_top-level_domain)-based localisation, powered by the Altitude Platform [Edge KV store](http://localhost:8080/docs/platform/v2.3.0/edge/kv-store)
 - 🚀 **Performance Patterns:** Edge performance optimisations out of the box.
 - 🔌 **Commerce APIs:** Access to the commerce API with ready-made helpers and proxies
 
 ---
-
-# Installation
-
-```sh
-npm i @thg-altitude/astro-integration
-```
 
 
 # Configuration
@@ -149,24 +143,7 @@ kv: [
 
 Custom keys can also be supplied to the build config, such as environment variables. These values will not affect the configuration of the integration but will be provided on the [altitude global context](#altitude-global-context) at runtime. This is useful for multi tenancy when values need to change based on each tenants config. Further information can be found in the [multi tenancy guide](/docs/astro-integration/guides/multitenancy)
 
-## Invoking the integration
 
-The build config and `altitudeMiddleware` function should be imported and passed as an argument to the integration as shown below.
-
-```js
-//astro.config.js
-import { altitudeMiddleware } from '@thg-altitude/astro-integration'
-import buildConfig from './config/site'
-
-export default defineConfig({
-  integrations: [
-    altitudeMiddleware(
-      buildConfig
-    ),
-  ],
-  // ...other Astro config setup
-})
-```
 
 ## Methods
 
