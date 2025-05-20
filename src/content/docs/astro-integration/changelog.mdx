@@ -23,6 +23,7 @@ This page contains a summary of the changelog for astro integration. A full chan
 - removed support for cookie routing
 - `locals.altitude.preferredLocale`, `locals.altitude.localeDomains` are now deprecated
 - We are no longer exposing `locals.altitude.localeCookie`
+- Several keys previously available on the global context in v1.x (such as `localeCookie`) are no longer exposed in v2. If you are migrating, review your usage of global context keys and update your code accordingly.
 
 ## v1.7.7
 
