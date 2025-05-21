@@ -286,3 +286,7 @@ Custom keys can also be supplied to the build config at locale level as well.
 
 Custom keys can also be supplied to the build config, such as environment variables. These values will not affect the configuration of the integration but will be provided on the [altitude global context](#altitude-global-context) at runtime. This is useful for multi tenancy when values need to change based on each tenants config. Further information can be found in the [multi tenancy guide](/docs/astro-integration/v2.0.0/reference/multi-tenancy)
 
+
+# Reference
+
+- the full schema is available [here](https://github.com/THG-AltitudeSiteBuilds/astro-integration/blob/main/config_schemas/schemaV2.json) 

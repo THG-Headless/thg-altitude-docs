@@ -18,20 +18,20 @@ The build config and `altitudeMiddleware` function should be imported and passed
 ```js
 // astro.config.mjs
 import { defineConfig } from 'astro/config';
-import tenants from './config/site.js'
+import config from './config/site.js'
 
 export default defineConfig({
   output: 'server',
   integrations: [
       altitudeMiddleware({
-            buildConfig : tenants,
+            config,
             api: { enabled: true, graphql: gqlIndex }
         }),
 ] 
 })
 ```
 
-Where 'buildConfig' is an object that is defined in [schema](https://github.com/THG-AltitudeSiteBuilds/astro-integration/blob/main/config_schemas/schemaV2.json) 
+For a list of required and optional keys for site.js, please see the [config reference](../reference/config)
 
 
 ### Multi-tenancy mode
@@ -80,3 +80,8 @@ export default defineConfig({
 To switch between www.siteone.com and www.sitetwo.com, change your x-altitude-instance header from www.sisteone.com to www.sitetwo.com using the [ModHeader extension](https://chromewebstore.google.com/detail/modheader-modify-http-hea/idgpnmonknjnojddfkpgkljpfnnfcklj?hl=en). 
 
 see the [multitenancy reference](../reference/multi-tenancy) for more info
+
+
+## Config validation
+
+In development mode, the first thing that astro-integration will do is validate the config or configs you have passed to it to make sure they match the schema (see the [config reference](../reference/config)) for the required keys. 
