@@ -1,5 +1,5 @@
 ---
-title: "Configuration"
+title: "Build config keys"
 ---
 
 # Configuration
@@ -75,7 +75,7 @@ x-example-new-header : request.headers.get('old-header-name')
 ## KV
 
 **Type:** `Array[]` \
-**Required: True**
+**Required: False**
 
 An array of KV options can be supplied. Below are the options that should be supplied per entry. See the [Edge KV](/docs/astro-integration/guides/edge-kv) guide for more details.
 

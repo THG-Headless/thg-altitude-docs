@@ -31,8 +31,15 @@ export default defineConfig({
 })
 ```
 
-For a list of required and optional keys for site.js, please see the [config reference](../reference/config)
+The only required key is 'domains', so the most basic config might look like: 
 
+```js
+export default {
+  domains: ['www.exampledomain1.com']
+};
+```
+
+For a full list of keys see the [config reference](../reference/config)
 
 ### Multi-tenancy mode
 
@@ -47,7 +54,6 @@ export default {
   commerce: {
     endpoint: "",
   },
-  kv: ''
 };
 ```
 
