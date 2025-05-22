@@ -1,0 +1,94 @@
+---
+title: Enabling i18n 🌎 
+order: 2
+---
+
+import { Aside } from "@components/docs";
+
+<Aside type="note">
+    i18n is currently only supported in multi-tenancy mode.
+</Aside>
+
+## Prerequisites:
+
+Before you begin, make sure you have: 
+
+- astro-integration running in multitenancy mode. See [guide](../getting-started/#multitenancy) for more information.
+
+## Step 1: Add i18n keys to each buildConfig in the tenants array
+
+Make sure *every* tenant in the `tenants` array that you are passing to `altitudeMiddleware` has an i18n key.
+
+```js
+import tenants from './config/index';
+// astro.config.js
+export default defineConfig({
+    integrations: [
+        altitudeMiddleware({
+            config : tenants,
+            api: { enabled: true, graphql: gqlIndex }
+        }),
+    ],
+    })
+```
+
+```js
+import tenant1 from './tenant1';
+import tenant2 from './tenant2';
+import altitudedemo from './altitudedemo';
+
+export default [tenant1, tenant2, altitudedemo];
+```
+
+`tenant1.js` and `tenant2.js` should both have an i18n key. To see all the required fields, see the [i18n config reference](docs/astro-integration/v2.0.0/reference/config/#i18n).
+
+## Step 2: Support rewrites in astro folder structure
+
+When i18n is enabled, astro-integration rewrites every request to `/pathname` to `/localePrefix/pathname` 
+
+<Aside type="note">
+
+For example, if localePrefix is `/en-gb` then a request to `/` will be rewritten to `/en-gb/` and a request to `/basket` will be rewritten to `/en-gb/basket`. A request to `/en-gb/` will be rewritten to `/en-gb/en-gb/` and (presumably) 404 if no route has been set up for that path.
+
+</Aside>
+
+This means that your storefront must have the appropriate request handlers. This can be achieved by nesting your normal handlers in the `/pages` directory into `pages/[locale]`, 
+
+The custom 404.astro page should remain at the root of the pages directory to serve any custom 404 pages.
+
+Example directory structure:
+
+```text
+pages
+├── [...https].astro
+├── [locale]
+│   ├── [...https].astro
+│   ├── basket.astro
+│   ├── c
+│   │   └── [...slug]
+│   │       └── index.astro
+│   ├── create-review
+│   │   └── [...handle]
+│   │       └── index.astro
+│   ├── index.astro
+│   ├── kv
+│   │   └── sessionSettings.js
+│   ├── p
+│   │   └── [...handle]
+│   │       └── index.astro
+│   ├── reviews
+│   │   └── [sku].astro
+│   ├── robots.txt.js
+│   └── search.astro
+└── 404.astro
+```
+
+You **must** have the 404.astro page at outside the [locale] directory, or custom 404 pages will not work. The 404 page will be served for any request that does not match a route in the [locale] directory.
+
+At request time, astro-integration will read the x-altitude-instance header (in dev mode) or the [X-Forwarded-Host](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/X-Forwarded-Host) header (in production) to decide which tenantConfig to read.
+
+
+## New context variables
+
+When i18n is enabled, the following new variables are available in the context of your pages. `altitude.locale` and `altitude.availableLocales`. See the [global context reference](../reference/global-context) for more information on their types and usage.
+

@@ -121,6 +121,10 @@ export const products: Record<string, Product> = {
       {
         title: "Documentation",
         href: "/docs/astro-integration"
+      }, 
+      {
+        title: "Changelog",
+        href: "/docs/astro-integration/changelog"
       }
     ]
   },
