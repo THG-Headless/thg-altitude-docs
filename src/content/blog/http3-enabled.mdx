@@ -1,35 +1,37 @@
 ---
 title: "Announcement: HTTP/3 Functionality Enabled"
-description: ""
-pubDate: 2025-05-22
+description: "Altitude now supports HTTP/3, the latest web protocol offering faster load times, improved security, and better performance for your sites."
+pubDate: 2025-05-27
 author: "THG Altitude Team"
 image: "/statics/images/blog/logo.jpg"
 tags: ["Announcement", "HTTP/3", "QUIC", "Performance"]
 ---
 
-# HTTP/3 Functionality Enabled
-
-We are happy to announce that Altitude now supports HTTP/3 for sites deployed on our platform. Using HTTP/3, our sites will benefit from faster load times and improved security.
+We are thrilled to announce that Altitude now supports HTTP/3 for sites deployed on our platform. This marks a significant step forward in delivering faster, more secure, and reliable web experiences for our users.
 
 ## What is HTTP/3?
 
-HTTP/3 is the latest version of the HyperText Transfer Protocol. Unlike HTTP/2, HTTP/3 uses QUIC (Quick UDP Internet Connections) to improve performance over TCP.
+HTTP/3 is the latest version of the HyperText Transfer Protocol, designed to address the limitations of previous versions. Unlike HTTP/2, HTTP/3 uses QUIC (Quick UDP Internet Connections), a modern transport protocol that improves performance over traditional TCP.
 
 ## Benefits of HTTP/3
 
-- **Simplified Handshake**: The use of QUIC means TLS is combined into a single handshake, removing the need for multiple round trips required for TCP in HTTP/2 when establishing a connection.
+- **Simplified Handshake**: QUIC combines TLS into a single handshake, reducing the time required to establish a secure connection compared to HTTP/2.
 
-- **Zero Round Trip Time**: When resuming a connection, HTTP/3 has 0-RTT (Zero Round Trip Time), meaning that clients can immediately start sending data without the full handshake. This will be particularly helpful for repeat visits to a site.
+- **Zero Round Trip Time (0-RTT)**: HTTP/3 allows clients to resume connections instantly, enabling faster data transmission for repeat visits.
 
-- **No Head-of-Line Blocking**: HTTP/3 supports multiplexing, allowing multiple requests or responses to be sent simultaneously over a single connection. Unlike HTTP/2, where a lost packet could block all streams, HTTP/3 treats streams independently. This means only the affected stream is delayed, ensuring smoother and more reliable performance, even on networks with high packet loss.
+- **No Head-of-Line Blocking**: Multiplexing in HTTP/3 ensures that a lost packet only delays the affected stream, unlike HTTP/2, where all streams could be blocked, results in smoother user expereince.
 
-- **Improved Connection Migration**: When a mobile user switches networks, e.g., moving from Wi-Fi to a mobile/cellular connection, HTTP/3 will allow users to switch without any disruption to their browsing.
+- **Improved Connection Migration**: HTTP/3 supports seamless connection migration, allowing users to switch networks (e.g., from Wi-Fi to mobile data) without disrupting their browsing experience.
 
-- **Improved Security**: TLS is integrated into HTTP/3, meaning that encrypted connections are the default behavior.
+- **Enhanced Security**: With TLS integrated into HTTP/3, encrypted connections are the default, ensuring robust security for all communications.
 
 ## Why This Matters
 
 By enabling HTTP/3, sites on Altitude will now be faster and more reliable, leading to a better user experience for sites on the Altitude platform.
+
+## How To Use
+
+If your website is already hosted on the Altitude platform, you're already benefiting from HTTP/3—no additional work is required from developers or site owners. 
 
 
 
