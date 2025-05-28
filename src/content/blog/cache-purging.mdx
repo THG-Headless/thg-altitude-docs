@@ -9,11 +9,11 @@ tags: ["Explainer", "Cache", "Purging"]
 
 ## What is Caching
 
-Caching is a technique where we store frequently used data in temporary storage- a cache. This prevents the need to fetch data from the original source and reduces server load.
+Caching is a technique where we store frequently used data in temporary storage - a cache. This prevents the need to fetch data from the original source and reduces server load.
 
-Suppose a user visits the home page of a website. This page may contain HTML, CSS, JavaScript, and many images. Without caching, content would need to be fetched each time a user lands on the page, which would be costly. By caching the assets for the page, users get to the site very quickly and server load is reduced.
+Suppose a user visits the home page of a website. Without Caching, content for the web page would need to be fetched each time a user lands on the page, which would be costly. By caching the assets for the page, users get to the site very quickly and server load is reduced.
 
-Imagine a developer makes a change to the website, e.g., putting an item on sale that will be highlighted on the home page. Since the content is cached, users would still be served the old version of the site without the sale. This could result in customers missing a sale and reduced revenue for the company. Thus, we need a way of clearing the cache when changes are made or content is out of date. This is called cache purging.
+A developer then makes a change to the website, e.g., putting an item on sale that will be highlighted on the home page. Since the content is cached, users would still be served the old version of the site without the sale. This could result in customers missing a sale and reduced revenue for the company. Thus, we need a way of clearing the cache when changes are made or content is out of date. This is called cache purging.
 
 ## Cache Purging on Altitude Platform
 
@@ -26,16 +26,24 @@ On Altitude Platform, we have six types of cache purging:
 - **Redirects Purging**: Clear content for redirects for all redirects or specific rule groups.
 - **Experimentation Purging**: Purge the cache associated with an experiment.
 
-Having six options gives users a good amount of flexibility when targeting cached content they want to purge, minimizing unnecessary purges which reduces stress on infrastructure.
+Having six options gives users a good amount of flexibility when targeting cached content they want to purge - minimizing unnecessary purges reduces stress on infrastructure.
 
 ## Ways to use Altitude Cache Purging
 
 We have two ways of engaging with the cache purging feature. Users can use the Altitude Platform API Cache Purge endpoint - see example below. This allows users to integrate cache purging into their CI/CD pipeline, removing the need for manual management of the cache.
 
 #### Example: Purging the path /bar/ on domain www.foo.com with prefix purging enabled:
-
 ```
-curl -i --location 'https://api.platform.thgaltitude.com/v1/sites/:siteId/purge-cache/:envName' --header 'Accept: application/json' --header 'Content-Type: application/json' --header "Authorization: Bearer $token" --data '{ "purgeType": "path", "domainName": "www.foo.com", "path": "/bar/", "prefix": true}'
+curl -i --location 'https://api.platform.thgaltitude.com/v1/sites/:siteId/purge-cache/:envName' \
+  --header 'Accept: application/json' \
+  --header 'Content-Type: application/json' \
+  --header "Authorization: Bearer $token" \
+  --data '{
+    "purgeType": "path",
+    "domainName": "www.foo.com",
+    "path": "/bar/",
+    "prefix": true
+  }'
 ```
 
 Users can also use the Altitude Platform UI, which provides a user-friendly way to do path, domain, global, and key purging.
