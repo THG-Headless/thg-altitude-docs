@@ -52,20 +52,3 @@ Users can also use the Altitude Platform UI, which provides a user-friendly way 
 
 For more detail on how to use cache purging for your site deployed on Altitude Platform see the [Altitude Platform cache purging docs](https://thgaltitude.com/docs/platform/v2.3.0/edge/cache).
 
-## Use Cases
-
-### Landing Page Not Up to Date for a Sale
-
-For the scenario in the introduction, a developer would want to use path purging on the homepage (and potentially other pages associated with the sale) to clear the cache so that users can see the sale when they reach the site.
-
-### Content Management System (CMS) Integration
-
-If you use a CMS that is in charge of publishing content for blogs on a site, the CMS could be configured to purge the cache whenever a new blog is published. The CMS could use the path purging option or, if there are surrogate keys associated with the blog content, use the key purging option to clear the cache.
-
-### Change in a Site's Redirect Rules
-
-If you make a change to a redirect rule and want to ensure that all users are redirected to the correct page, you could purge the cache for a specific rule group.
-
-### Experimentation Coming to an End
-
-Suppose your website has finished A/B testing. You would want users to no longer see the experimental versions of the site. In this case, the developer would use the experimentation cache purge type to remove the experimentation content, ensuring that all users now see the same version of the site when the experiment is finished.
