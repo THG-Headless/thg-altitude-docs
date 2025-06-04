@@ -1,7 +1,7 @@
 ---
 title: "Altitude Cache Purging"
 description: "An overview of cache purging on Altitude Platform."
-pubDate: 2025-05-27
+pubDate: 2025-06-04
 author: "Scott Stirling"
 image: "/statics/images/blog/logo.jpg"
 tags: ["Explainer", "Cache", "Purging"]
@@ -19,7 +19,7 @@ A developer then makes a change to the website, e.g. putting an item on sale tha
 
 On Altitude Platform, we have six types of cache purging:
 
-- **Path Purging**: Purge specific paths, such as '/products/books/', with the option to purge the cache of all paths that contain "/products/books/" as a prefix. Users can also specify purging the path attached to specific domains with the default option purging the path on all domains on a specific environment.
+- **Path Purging**: Purge specific paths, such as '/products/books/', with the option to purge the cache of all paths that contain '/products/books/' as a prefix. Users can also specify purging the path attached to specific domains with the default option purging the path on all domains on a specific environment.
 - **Domain Purging**: Purge all content cached for a specific domain.
 - **Global Purging**: This clears all cached content for an environment.
 - **Key Purging**: This is a very targeted type of cache purging where specific content is targeted using its surrogate keys.
