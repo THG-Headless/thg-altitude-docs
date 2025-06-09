@@ -31,15 +31,54 @@ export default defineConfig({
 })
 ```
 
-The only required key is 'domains', so the most basic config might look like: 
+The config might look something like: 
 
 ```js
+// config/site.js
+import { fetchIcon } from '@thg-altitude/utils';
+import siteConfigFile from '../local/tenants/siteone.json';
+import siteLangFile from '../local/lang/siteone.en_gb.properties.json';
+
 export default {
-  domains: ['www.exampledomain1.com']
+  domains: ['www.siteone.com'],
+  tenantInstance: 'siteone',
+  commerce: {
+    endpoint: 'https://horizon-api.www.siteone.com/graphql'
+  },
+  kv: [
+    {
+      key: 'siteone',
+      namespace: 'config',
+      local: siteConfigFile
+    },
+    {
+      key: 'siteone.en_gb.properties',
+      namespace: 'lang',
+      local: siteLangFile
+    }
+  ],
+  icons: {
+    search: await fetchIcon('lucide', 'search'),
+    left: await fetchIcon('lucide', 'chevron-left'),
+    right: await fetchIcon('lucide', 'chevron-right')
+  },
+  i18n: {
+    locales: [
+      {
+        prefix: 'en-gb',
+        domain: 'www.siteone.com',
+        icons: {
+          flag: await fetchIcon('circle-flags', 'gb')
+        }
+      }
+    ],
+    fallbackLocale: 'en-gb',
+    exclusionList: ['api', 'images']
+  }
 };
 ```
 
-For a full list of keys see the [config reference](../reference/config)
+For a full list of optional keys see the [config reference](../reference/config)
 
 ### Multi-tenancy mode
 
@@ -90,4 +129,4 @@ see the [multitenancy reference](../reference/multi-tenancy) for more info
 
 ## Config validation
 
-In development mode, the first thing that astro-integration will do is validate the config or configs you have passed to it to make sure they match the schema (see the [config reference](../reference/config)) for the required keys. 
+In development mode, the first thing that astro-integration will do is validate the config or configs you have passed to it to make sure they match the schema (see the [config reference](../reference/config)) for the required keys.
