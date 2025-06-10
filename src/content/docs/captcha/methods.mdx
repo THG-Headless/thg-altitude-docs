@@ -1,0 +1,42 @@
+---
+title: "Methods"
+order: 2
+description: Methods provided by CAPTCHA package.
+---
+
+### Methods
+
+#### `render(container, id, options?)`
+Renders a CAPTCHA widget in the specified container.
+
+```typescript
+await captcha.render(
+    'container-id', // or HTMLElement
+    'unique-widget-id',
+    {
+        size?: 'normal' | 'compact' | 'invisible' | 'flexible'; // flexible only for Turnstile
+        onToken?: (token: string) => void;
+    }
+);
+```
+
+#### `execute(id)`
+Programmatically executes an invisible CAPTCHA (triggers the challenge).
+
+```typescript
+await captcha.execute('widget-id');
+```
+
+#### `getToken(id)`
+Retrieves the token for a solved CAPTCHA.
+
+```typescript
+const token = await captcha.getToken('widget-id');
+```
+
+#### `reset(id)`
+Resets a CAPTCHA widget to its initial state.
+
+```typescript
+captcha.reset('widget-id');
+```
