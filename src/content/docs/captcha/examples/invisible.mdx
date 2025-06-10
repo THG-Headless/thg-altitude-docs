@@ -1,0 +1,173 @@
+---
+title: "Invisible CAPTCHA"
+order: 2
+description: Invisible CAPTCHA implementation examples.
+---
+
+Invisible CAPTCHAs provide seamless bot protection without disrupting the user experience. They run in the background and only show a challenge when suspicious activity is detected.
+The set-up for invisible CAPTCHA differs slightly from visible CAPTCHA as they do not execute automatically on the render function running.
+
+## Configuration
+
+Set `invisible: true` in your Captcha config to enable invisible mode:
+
+```typescript
+const captcha = new Captcha({
+    provider: 'recaptcha', // or 'hcaptcha'/'turnsitle'
+    siteKey: 'your-site-key',
+    invisible: true // Automatically configures invisible mode
+});
+```
+Note: Turnstile doesn't require the invisible flag - its behavior is configured in the Cloudflare dashboard.
+
+```typescript
+import { Captcha } from '@thg-altitude/captcha';
+
+const invisibleCaptcha = new Captcha({
+    provider: 'recaptcha',
+    siteKey: 'your-invisible-recaptcha-key',
+    invisible: true
+});
+
+// Not required to specify size here
+await invisibleCaptcha.render('hidden-container', 'form-protection');
+
+// Execute on form submission
+document.getElementById('submit-btn').onclick = async () => {
+    try {
+        await invisibleCaptcha.execute('form-protection');
+        const token = await invisibleCaptcha.getToken('form-protection');
+        
+        // Submit form with token
+        await submitForm(token);
+    } catch (error) {
+        console.error('CAPTCHA verification failed:', error);
+        // Handle error (show message, etc.)
+    }
+}
+```
+
+
+## Framework Integration Examples
+
+### React
+```typescript
+import { useEffect, useRef } from 'react';
+import { Captcha } from '@thg-altitude/captcha';
+
+function ContactForm() {
+    const captchaRef = useRef<Captcha>();
+    const containerRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const initCaptcha = async () => {
+            captchaRef.current = new Captcha({
+                provider: 'recaptcha',
+                siteKey: 'your-site-key',
+                invisible: true
+            });
+
+            if (containerRef.current) {
+                await captchaRef.current.render(containerRef.current, 'contact-form');
+            }
+        };
+
+        initCaptcha();
+
+        return () => {
+            captchaRef.current?.reset('contact-form');
+        };
+    }, []);
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        
+        if (!captchaRef.current) return;
+        
+        try {
+            await captchaRef.current.execute('contact-form');
+            const token = await captchaRef.current.getToken('contact-form');
+            
+            // Submit your form with the token
+            console.log('CAPTCHA token:', token);
+            
+        } catch (error) {
+            console.error('CAPTCHA failed:', error);
+        }
+    };
+
+    return (
+        <form onSubmit={handleSubmit}>
+            <input type="text" placeholder="Name" required />
+            <input type="email" placeholder="Email" required />
+            <textarea placeholder="Message" required></textarea>
+            
+            {/* Hidden CAPTCHA container */}
+            <div ref={containerRef} style={{ display: 'none' }}></div>
+            
+            <button type="submit">Submit</button>
+        </form>
+    );
+}
+```
+
+###Vue 3
+```typescript
+<template>
+  <form @submit.prevent="handleSubmit">
+    <input v-model="form.name" type="text" placeholder="Name" required />
+    <input v-model="form.email" type="email" placeholder="Email" required />
+    <textarea v-model="form.message" placeholder="Message" required></textarea>
+    
+    <!-- Hidden CAPTCHA container -->
+    <div ref="captchaContainer" style="display: none;"></div>
+    
+    <button type="submit">Submit</button>
+  </form>
+</template>
+
+<script setup lang="ts">
+import { ref, onMounted, onUnmounted, reactive } from 'vue';
+import { Captcha } from '@thg-altitude/captcha';
+
+const captchaContainer = ref<HTMLDivElement>();
+let captcha: Captcha;
+
+const form = reactive({
+  name: '',
+  email: '',
+  message: ''
+});
+
+onMounted(async () => {
+  captcha = new Captcha({
+    provider: 'recaptcha',
+    siteKey: 'your-site-key',
+    invisible: true
+  });
+
+  if (captchaContainer.value) {
+    await captcha.render(captchaContainer.value, 'contact-form');
+  }
+});
+
+onUnmounted(() => {
+  captcha?.reset('contact-form');
+});
+
+const handleSubmit = async () => {
+  if (!captcha) return;
+  
+  try {
+    await captcha.execute('contact-form');
+    const token = await captcha.getToken('contact-form');
+    
+    // Submit your form with the token
+    console.log('CAPTCHA token:', token);
+    
+  } catch (error) {
+    console.error('CAPTCHA failed:', error);
+  }
+};
+</script>
+```

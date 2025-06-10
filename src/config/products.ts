@@ -177,6 +177,24 @@ export const products: Record<string, Product> = {
         href: "/docs/altitude-spark"
       }
     ]
+  },
+  "captcha":{
+    id: "captcha",
+    name: "Captcha",
+    description: "Captcha abstractions for simplified integration",
+    icon: "/statics/icons/altitude.svg",
+    href: "/products/captcha",
+    status: "beta",
+    quickLinks: [
+      {
+        title: "Overview",
+        href: "/products/captcha"
+      },
+      {
+        title: "Documentation",
+        href: "/docs/captcha"
+      }
+    ]
   }
 };
 
