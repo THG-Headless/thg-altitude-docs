@@ -5,7 +5,7 @@ description: Serve multiple brands from a single Altitude site.
 
 Multi-tenancy is a pattern in which multiple brands may be served from the same codebase. It can be used to quickly onboard a new brand, or 'tenant', via a new configuration, as a fast route to scale.
 
-To enable multi-tenancy for your site, see the [guide](/docs/astro-integration/v2.0.0/guides/getting-started/#multitenancy)
+To enable multi-tenancy for your site, see the [guide](/docs/astro-integration/v2.0.0/guides/getting-started#multi-tenancy-mode)
 
 ---
 # Multi-tenancy

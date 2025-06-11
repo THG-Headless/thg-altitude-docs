@@ -122,9 +122,9 @@ export default defineConfig({
 });
 ```
 
-To switch between www.siteone.com and www.sitetwo.com, change your x-altitude-instance header from www.sisteone.com to www.sitetwo.com using the [ModHeader extension](https://chromewebstore.google.com/detail/modheader-modify-http-hea/idgpnmonknjnojddfkpgkljpfnnfcklj?hl=en). 
+That's it! You can now switch between tenants 'siteone' and 'sitetwo' by switching the x-altitude-instance header between www.siteone.com and www.sitetwo.com. When running your app locally, we recommend using the [ModHeader extension](https://chromewebstore.google.com/detail/modheader-modify-http-hea/idgpnmonknjnojddfkpgkljpfnnfcklj?hl=en) to change headers.  
 
-see the [multitenancy reference](../reference/multi-tenancy) for more info
+See the [multitenancy reference](../reference/multi-tenancy) for more information.
 
 
 ## Config validation

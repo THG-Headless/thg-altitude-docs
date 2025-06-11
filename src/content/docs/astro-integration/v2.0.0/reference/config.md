@@ -1,5 +1,5 @@
 ---
-title: "Build config keys"
+title: "Config"
 ---
 
 # Configuration
@@ -19,12 +19,10 @@ export default {
 **Required: True**
 
 
-Contains all domains associated with a site, excluding protocol. If i18n is enabled (TODO: add guide to enable i18n), this will contains each GTLD for which you want to  be a single domain or many domains (if multitenancy is enabled). If the header `x-altitude-instance` matches any of the items in this array, this build config will be read. The header can be used to switch between different configs for local development, see the [multi tenancy](/guides/multi-tenancy/#tenant-switching) guide for further information on how this works. It can also be used to map to different locales for the same tenant. (i.e www.exampledomain.com and www.exampledomain.de)
-
-The first item in the array is taken to be the default domain of the site. This value is used in conjuction with i18n, see [internationalisation](/guides/i18n/#astro-integration) for further information on this value.
+Contains all domains associated with a site, excluding protocol. If i18n is enabled, this will contain all the domains for which you want localised copy. Make sure to include the same domain in `i18n.locales.<Object>.domain`. If i18n is not enabled, this array will contain a single item which is the GTLD for your site, which astro integration will read for the purposes of tenant resolution. If running in single-tenancy mode, this key won't be read by the integration. 
 
 ```javascript
-domains: ["wwww.example.com", "uat.www.example.com"]
+domains: ["wwww.example.com", "www.example.fr"]
 ```
 
 ## Commerce
@@ -132,7 +130,7 @@ kv: [
 
 Users of the integration have the ability to opt in to i18n to unlock localisation on their application. The integration is responsible for mapping to locale specific configs and validating a locale is supported when a request is made.
 
-to opt-in, see the [guide]('/docs/astro-integration/v2.0.0/guides/enable-i18n') on enabling i18n.
+to opt-in, see the [guide](/docs/astro-integration/v2.0.0/guides/enable-i18n) on enabling i18n.
 
 ### i18n.fallbackLocale
 

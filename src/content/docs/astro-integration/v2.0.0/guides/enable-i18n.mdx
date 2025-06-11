@@ -52,9 +52,7 @@ For example, if localePrefix is `/en-gb` then a request to `/` will be rewritten
 
 </Aside>
 
-This means that your storefront must have the appropriate request handlers. This can be achieved by nesting your normal handlers in the `/pages` directory into `pages/[locale]`, 
-
-The custom 404.astro page should remain at the root of the pages directory to serve any custom 404 pages.
+This means that your storefront must have the appropriate request handlers. Please nest your normal handlers in the `/pages` directory into `pages/[locale]`, 
 
 Example directory structure:
 
@@ -83,7 +81,13 @@ pages
 └── 404.astro
 ```
 
-You **must** have the 404.astro page at outside the [locale] directory, or custom 404 pages will not work. The 404 page will be served for any request that does not match a route in the [locale] directory.
+<Aside type="note">
+
+Astro integration relies on the 404.astro page being at the root of the pages directory, not nested inside the [locale] directory.
+
+</Aside>
+
+
 
 At request time, astro-integration will read the x-altitude-instance header (in dev mode) or the [X-Forwarded-Host](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/X-Forwarded-Host) header (in production) to decide which tenantConfig to read.
 
