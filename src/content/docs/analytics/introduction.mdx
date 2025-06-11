@@ -1,0 +1,55 @@
+---
+title: Get Started
+order: 1
+description: Get started with the Analytics package.
+---
+
+# Analytics
+
+A cross-platform analytics package for Astro, Next.js, and React Native applications.
+
+## Features
+
+- 🔄 **Cross-Platform**: Works with Astro, Next.js, and React Native
+- 🔍 **Type-Safe**: Built with TypeScript for robust type checking
+- ✅ **Schema Validation**: Uses Zod for runtime schema validation
+- 🌐 **Client & Server**: Supports both client-side and server-side tracking
+- 📊 **Google Analytics Events**: Pre-defined schemas for common GA4 events
+
+```bash
+# Install the package
+npm install @thg-altitude/analytics
+# or
+yarn add @thg-altitude/analytics
+# or
+pnpm add @thg-altitude/analytics
+```
+
+## Schema Validation
+
+THG Analytics uses Zod for schema validation, providing helpful warnings when event data doesn't match the expected schema:
+For example a user details event ([user details schema](./schemas))
+```tsx
+// This will work and send the event
+analytics.userDetails({
+    visitorLoginState: getCustomerName() ? 'LOGGED_IN' : 'LOGGED_OUT',
+    visitorId: getCustomerId() || 'unknown',
+    visitorEmailAddress: getCustomerEmail() || 'unknown'
+  });
+
+// This will log a warning and not send the event
+analytics.userDetails({
+    visitorLoginState: getCustomerName() ? 'LOGGED_IN' : 'LOGGED_OUT',
+    visitorId: getCustomerId() || 'unknown',
+    // visitorEmailAddress missing - will not send event
+  });
+
+```
+A warning will show in the console
+```
+Invalid event data for user_details: 
+{visitorEmailAddress: 
+  _errors: 
+    ['Required']
+}
+```

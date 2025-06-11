@@ -1,0 +1,447 @@
+---
+title: Event Schemas
+order: 3
+description: Reference guide for the Analytics package.
+---
+
+# Google Analytics and Custom Event Schemas 
+
+## Checkout Schema
+
+### Apply Coupon Success Schema
+**Event Name:** `apply_coupon_success`  
+**Parameters:**
+```typescript
+{
+  coupon_code: string,                   // Required - The coupon code that was successfully applied
+  eventData: {                           // Optional - Additional event tracking data
+    eventCategory: string,               // Category of the event ("Discount codes")
+    eventAction: string,                 // Action taken (e.g. "Valid")
+    eventLabel: string,                  // Label for the event (typically the coupon code)
+    eventPage: string                    // Page where the coupon was applied
+  }
+}
+```
+
+### Apply Coupon Fail Schema
+**Event Name:** `apply_coupon_fail`  
+**Parameters:**
+```typescript
+{
+  coupon_code: string,                   // Required - The coupon code that failed to apply
+  validation_errors: string,             // Required - Type of validation error that occurred
+  eventData: {                           // Optional - Additional event tracking data
+    eventCategory: string,               // Category of the event ("Discount codes")
+    eventAction: string,                 // Action taken (e.g., "Inactive", "Invalid")
+    eventLabel: string,                  // Label for the event (typically the coupon code)
+    eventPage: string                    // Current page path where the coupon was applied
+  }
+}
+```
+
+## Ecommerce Schema
+
+### Base ecommerce schemas
+Many of the ecommerce schemas share the same base schemas including:
+### Base product item schema
+```typescript
+{
+  item_id: string,                     // Required - Unique identifier for the item
+  item_name: string,                   // Required - Name of the item
+  item_brand: string,                  // Optional - Brand of the item
+  price: number,                       // Optional - Price of the item
+  quantity: number,                    // Optional - Quantity of the item
+  index: number,                       // Optional - Position of the item in a list
+  discount: number,                    // Optional - Discount amount applied to item
+  affiliation: string,                 // Optional - Store or affiliation
+  coupon: string,                      // Optional - Coupon code applied to item
+  item_category: string,               // Optional - Category of the item
+  item_list_name: string,              // Optional - Name of list where item appears
+  item_variant: string                 // Optional - Variant title of the item
+}
+```
+
+### Base ecommerce schema
+```typescript
+{
+  currency: string,                      // Required - Currency code (e.g., "GBP", "USD")
+  value: number,                         // Required - Sum of (price * quantity)
+  items: Array<BaseProductItem>          // Required - Array of products in the transaction
+}
+```
+
+### Basket Item Schema
+```typescript
+{
+  sku: string,                          // Required - Product SKU identifier
+  quantity: number,                     // Required - Number of this item
+  price: number,                        // Required - Regular price of the item
+  vipPrice: number,                     // Optional - VIP/Member price if applicable
+  isFreeGift: boolean                   // Optional - Whether item is a free gift
+}
+```
+
+### Product View Schema
+**Event Name:** `view_item`  
+This follows the base ecommerce schema.
+**Parameters:**
+```typescript
+{
+  currency: string,                      // Required - Currency code (e.g., "GBP", "USD")
+  value: number,                         // Required - Sum of (price * quantity)
+  items: Array<BaseProductItem>          // Required - Array of viewed items
+}
+```
+
+### Add to Cart Schema
+**Event Name:** `add_to_cart`  
+**Parameters:**
+```typescript
+{
+  currency: string,                      // Required - Currency code (e.g., "GBP", "USD")
+  value: number,                         // Required - Sum of (price * quantity)
+  items: Array<BaseProductItem>,         // Required - Array of products in the transaction
+  basketItems: Array<BasketItem>         // Optional - Array of items in the basket
+}
+```
+
+### Remove from Cart Schema
+**Event Name:** `remove_from_cart`  
+**Parameters:**
+```typescript
+{
+  currency: string,                      // Required - Currency code (e.g., "GBP", "USD")
+  value: number,                         // Required - Sum of (price * quantity)
+  items: Array<BaseProductItem>,         // Required - Array of removed items
+  basketItems: Array<BasketItem>         // Optional - Array of remaining basket items
+}
+```
+
+### Begin Checkout Schema
+**Event Name:** `begin_checkout`  
+**Parameters:**
+```typescript
+{
+  currency: string,                      // Required - Currency code (e.g., "GBP", "USD")
+  value: number,                         // Required - Sum of (price * quantity)
+  items: Array<BaseProductItem>          // Required - Array of items in checkout
+}
+```
+
+### Select Item Schema
+**Event Name:** `select_item`  
+**Parameters:**
+```typescript
+{
+  item_list_id: string,                  // Optional - ID of the list where item was shown
+  item_list_name: string,                // Optional - Name of the list where item was shown
+  items: Array<BaseProductItem>          // Required - Array with selected item (max 1 item)
+}
+```
+
+### View Item List Schema
+**Event Name:** `view_item_list`  
+**Parameters:**
+```typescript
+{
+  currency: string,                      // Required - Currency code (e.g., "GBP", "USD")
+  item_list_id: string,                  // Optional - ID of the viewed list
+  item_list_name: string,                // Optional - Name of the viewed list
+  items: Array<BaseProductItem>,         // Required - Array of items in the list
+  platformType: string                   // Optional - Platform type identifier
+}
+```
+
+### Select Free Gift Schema
+**Event Name:** `select_free_gift`  
+**Parameters:**
+```typescript
+{
+  currency: string,                      // Required - Currency code (e.g., "GBP", "USD")
+  ecommerce: {
+    product_name: string                 // Required - Name of the selected free gift
+  },
+  eventData: {
+    eventCategory: string,               // Required - Category (e.g., "freeProductSelection")
+    eventAction: string,                 // Required - Action (e.g., "Add Item")
+    eventLabel: string                   // Required - Product name
+  },
+  eventPage: string                      // Required - Current page path
+}
+```
+
+### Remove Free Gift Schema
+**Event Name:** `remove_free_gift`  
+**Parameters:**
+```typescript
+{
+  currency: string,                      // Required - Currency code (e.g., "GBP", "USD")
+  ecommerce: {
+    product_name: string                 // Required - Name of the removed free gift
+  },
+  eventData: {
+    eventCategory: string,               // Required - Category (e.g., "freeProductSelection")
+    eventAction: string,                 // Required - Action (e.g., "Removing Item")
+    eventLabel: string                   // Required - Product name
+  },
+  eventPage: string                      // Required - Current page path
+}
+```
+
+### View Free Gift Schema
+**Event Name:** `view_free_gift`  
+**Parameters:**
+```typescript
+{
+  eventData: {
+    eventCategory: string,               // Required - Fixed value "freeProductSelection"
+    eventAction: string,                 // Required - Fixed value "ViewedFreeGift"
+    eventLabel: string                   // Required - Product ID
+  },
+  eventPage: string                      // Required - Current page path
+}
+```
+
+## Miscellaneous Events
+
+### Page Not Found Schema
+**Event Name:** `page_not_found`  
+**Parameters:**
+```typescript
+{
+  eventData: {                           // Required - Event tracking data
+    eventCategory: string,               // Optional - Fixed value "Errors"
+    eventAction: string,                 // Optional - Fixed value "Page Not Found"
+    path: string                         // Required - Current page path
+  }
+}
+```
+
+### Logout Schema
+**Event Name:** `logout`  
+**Parameters:** None
+
+### Sign Up Schema
+**Event Name:** `sign_up`  
+**Parameters:**
+```typescript
+{
+  method: string,                        // Required - Method used for registration
+  user_id: string                        // Required - ID of the signed up user
+}
+```
+
+### User Details Schema
+**Event Name:** `user_details`  
+**Parameters:**
+```typescript
+{
+  visitorLoginState: 'LOGGED_IN' | 'LOGGED_OUT',  // Required - Current login state
+  visitorId: string | number,            // Required - Unique visitor identifier
+  visitorEmailAddress: string            // Required - Hashed email address
+}
+```
+
+## Navigation Events
+
+### Select Promotion Schema
+**Event Name:** `select_promotion`  
+**Parameters:**
+```typescript
+{
+  promotion_id: string,                  // Required - Unique identifier for the promotion
+  promotion_name: string,                // Required - Name of the promotion
+  promotion_page: string,                // Optional - Page where promotion appears
+  creative_name: string,                 // Required - Name of the creative
+  creative_slot: string                  // Optional - Slot where creative appears
+}
+```
+
+### View Promotion Schema
+**Event Name:** `view_promotion`  
+**Parameters:**
+```typescript
+{
+  promotion_id: string,                  // Required - Unique identifier for the promotion
+  promotion_name: string,                // Required - Name of the promotion
+  promotion_page: string,                // Optional - Page where promotion appears
+  creative_name: string,                 // Required - Name of the creative
+  creative_slot: string                  // Optional - Slot where creative appears
+}
+```
+
+### Read More Click Schema
+**Event Name:** `read_more_click`  
+**Parameters:**
+```typescript
+{
+  eventData: {                           // Required - Event tracking data
+    eventCategory: string,               // Required - Category (e.g., "Read More Button")
+    eventAction: string,                 // Required - Action (e.g., "Clicked")
+    eventPage: string                    // Required - Current page path
+  }
+}
+```
+
+### Filter Added Schema
+**Event Name:** `filter_added`  
+**Parameters:**
+```typescript
+{
+  filter: string,                        // Required - The filter value being added
+  eventData: {                           // Required - Event tracking data
+    eventCategory: string,               // Required - Default "responsiveFacets"
+    eventAction: string,                 // Required - Default "add"
+    eventLabel: string,                  // Required - The filter value
+    eventPage: string                    // Required - Current page path
+  }
+}
+```
+
+### Filter Removed Schema
+**Event Name:** `filter_removed`  
+**Parameters:**
+```typescript
+{
+  page_location: string                  // Required - Valid URL of the page
+}
+```
+
+## Performance Events
+
+### Performance Data Schema
+**Event Name:** `performanceData`  
+**Parameters:**
+```typescript
+{
+  backend_load_time: number,             // Required - Backend loading time in milliseconds
+  frontend_load_time: number,            // Required - Frontend loading time in milliseconds
+  dom_ready_time: number,                // Required - Time until DOM is ready in milliseconds
+  first_paint_time: number,              // Required - First paint time in milliseconds
+  largest_contentful_paint_time: number, // Required - LCP time in milliseconds
+  first_input_delay: number              // Optional - First input delay in milliseconds
+}
+```
+
+## Review Events
+
+### View Review Schema
+**Event Name:** `review_viewed`  
+**Parameters:**
+```typescript
+{
+  component: string,                     // Required - Component name (e.g., "ProductReviews component")
+  eventData: {                           // Optional - Event tracking data
+    eventCategory: string,               // Required - Category (e.g., "Reviews")
+    eventAction: string,                 // Required - Action (e.g., "View Review")
+    eventLabel: string,                  // Required - Component name
+    eventPage: string                    // Required - Current page path
+  }
+}
+```
+
+### Submit Review Schema
+**Event Name:** `review_create`  
+**Parameters:**
+```typescript
+{
+  product_id: string,                    // Required - Product identifier
+  product_name: string,                  // Required - Name of the product
+  rating: string | number,               // Required - Review rating
+  eventData: {                           // Optional - Event tracking data
+    eventCategory: string,               // Required - Category (e.g., "Review | Created")
+    eventAction: string,                 // Required - Action (e.g., "Created")
+    eventLabel: string,                  // Required - Component name
+    eventPage: string                    // Required - Current page path
+  }
+}
+```
+
+### Vote on Review Schema
+**Event Name:** `review_voted`  
+**Parameters:**
+```typescript
+{
+  component: string,                     // Required - Component name
+  voted: string,                         // Required - Vote value
+  id: string,                           // Required - Review identifier
+  eventData: {                           // Optional - Event tracking data
+    eventCategory: string,               // Required - Category (e.g., "Product | Voted")
+    eventAction: string,                 // Required - Action (e.g., "Voted")
+    eventLabel: string,                  // Required - Component name
+    eventPage: string                    // Required - Current page path
+  }
+}
+```
+
+### Report Review Schema
+**Event Name:** `review_reported`  
+**Parameters:**
+```typescript
+{
+  eventData: {                           // Optional - Event tracking data
+    eventCategory: string,               // Required - Category (e.g., "Product | Reported")
+    eventAction: string,                 // Required - Action (e.g., "Reported")
+    eventLabel: string,                  // Required - Component name
+    eventPage: string                    // Required - Current page path
+  }
+}
+```
+
+## Search Events
+
+### Search Schema
+**Event Name:** `search`  
+**Parameters:**
+```typescript
+{
+  search_term: string,                   // Required - Search query entered by user
+  search_results: number,                // Required - Number of results returned
+  eventData: {                           // Optional - Event tracking data
+    eventCategory: string,               // Required - Analytics event category
+    eventAction: string,                 // Required - Analytics event action
+    eventLabel: string,                  // Required - Analytics event label
+    eventPage: string                    // Required - Current page path
+  }
+}
+```
+
+## Wishlist Events
+
+### Add to Wishlist Schema
+**Event Name:** `add_to_wishlist`  
+**Parameters:**
+```typescript
+{
+  currency: string,                      // Required - Currency code (e.g., "GBP", "USD")
+  value: number,                         // Required - Total value of items
+  product_id: string,                    // Optional - Product identifier
+  product_name: string,                  // Optional - Name of the product
+  items: Array<BaseProductItem>,         // Required - Array of products in wishlist
+  eventData: {                           // Optional - Event tracking data
+    eventCategory: string,               // Required - Fixed value "Wishlist Engagement"
+    eventAction: string,                 // Required - Action being performed
+    eventLabel: string,                  // Required - Item identifier
+    eventPage: string                    // Required - Current page path
+  }
+}
+```
+
+### Remove from Wishlist Schema
+**Event Name:** `wishlist_removed`  
+**Parameters:**
+```typescript
+{
+  currency: string,                      // Required - Currency code (e.g., "GBP", "USD")
+  value: number,                         // Required - Total value of items
+  product_id: string,                    // Optional - Product identifier
+  product_name: string,                  // Optional - Name of the product
+  items: Array<BaseProductItem>,         // Required - Array of remaining wishlist items
+  eventData: {                           // Optional - Event tracking data
+    eventCategory: string,               // Required - Fixed value "Wishlist Engagement"
+    eventAction: string,                 // Required - Action being performed
+    eventLabel: string,                  // Required - Item identifier
+    eventPage: string                    // Required - Current page path
+  }
+}
+```

@@ -1,0 +1,59 @@
+---
+title: Next.js
+order: 2
+description: Reference guide for the Analytics package usage in Next.js.
+---
+
+# Next.js
+
+## App Router
+```javascript
+// _app.tsx or layout.tsx
+import { ThgAnalyticsScript } from '@thg-altitude/analytics/next';
+
+// For App Router (in layout.tsx)
+export default function RootLayout({ children }) {
+  return (
+    <html>
+      <head>
+        <ThgAnalyticsScript />
+      </head>
+      <body>{children}</body>
+    </html>
+  );
+}
+```
+## Pages Router
+```javascript
+// For Pages Router (in _app.tsx)
+function MyApp({ Component, pageProps }) {
+  return (
+    <>
+      <ThgAnalyticsScript />
+      <Component {...pageProps} />
+    </>
+  );
+}
+```
+```javascript
+// Using the SDK on the client side
+import { createThgAnalytics } from '@thg-altitude/analytics/next';
+
+// In a component or page
+useEffect(() => {
+  createThgAnalytics({
+    debug: true,
+    server: {
+      // Optional server-side endpoint
+      endpoint: 'https://analytics-api.example.com/collect'
+    }
+  });
+  
+  // Track user details
+  window.thgAnalytics.instance.userDetails({
+    visitorLoginState: getCustomerName() ? 'LOGGED_IN' : 'LOGGED_OUT',
+    visitorId: getCustomerId() || 'unknown',
+    visitorEmailAddress: getCustomerEmail() || 'unknown'
+  });
+}, []);
+```

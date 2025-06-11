@@ -1,0 +1,70 @@
+---
+title: Astro
+order: 1
+description: Reference guide for the Analytics package usage in Astro.
+---
+
+# Astro Implementation
+
+```astro
+<!-- In an Astro component such as the Layout or ClientInit file -->
+<script>
+  import {
+        createClientAnalytics,
+        processStoredEvents
+  } from '@thg-altitude/analytics/astro';
+
+  // Initialize analytics SDK on the window object
+  createClientAnalytics();
+  
+  window.thgAnalytics.instance.userDetails({
+    visitorLoginState: getCustomerName() ? 'LOGGED_IN' : 'LOGGED_OUT',
+    visitorId: getCustomerId() || 'unknown',
+    visitorEmailAddress: getCustomerEmail() || 'unknown'
+  });
+
+  // Proccess stored events that were sent before the SDK was initialized
+  processStoredEvents();
+</script>
+```
+
+### Race Conditions
+
+On Astro pages SDK functions aren't initialized on the `window.thgAnalytics.instance` before the page tries to invoke them. To handle this race condition, add events events to `window.thgAltitude.eventStore`. These stored events are then processed when the SDK is fully initialized using `processStoredEvents()`.
+
+```astro
+window?.thgAnalytics?.instance?.viewItem({
+            currency: window.sessionSettings.currency,
+            value: price * quantity,
+            items: [
+                {
+                    item_id,
+                    item_name,
+                    item_brand,
+                    price,
+                    quantity,
+                    item_category,
+                    discount
+                }
+            ]
+        }) ||
+            window.thgAnalytics.eventStore.push({
+                name: 'viewItem',
+                event: {
+                    currency: window.sessionSettings.currency,
+                    value: price * quantity,
+                    items: [
+                        {
+                            item_id,
+                            item_name,
+                            item_brand,
+                            price,
+                            quantity,
+                            item_category,
+                            discount
+                        }
+                    ]
+                }
+            });
+```
+Those events stored in the event store will then be handled by the `processStoredEvents` function called in the Layout/ClientInit file ensuring no events are lost during page load, even if they're triggered before the SDK is fully initialized.

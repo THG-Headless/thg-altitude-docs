@@ -177,7 +177,25 @@ export const products: Record<string, Product> = {
         href: "/docs/altitude-spark"
       }
     ]
-  }
+  },
+  "analytics":{
+    id: "analytics",
+    name: "Altitude Analytics",
+    description: "A cross-platform analytics package for Astro, Next.js, and React Native applications",
+    icon: "/statics/icons/altitude.svg",
+    href: "/products/analytics",
+    status: "alpha",
+    quickLinks: [
+      {
+        title: "Overview",
+        href: "/products/analytics"
+      },
+      {
+        title: "Documentation",
+        href: "/docs/analytics"
+      }
+    ]
+  },
 };
 
 export function getProduct(id: string): Product {
