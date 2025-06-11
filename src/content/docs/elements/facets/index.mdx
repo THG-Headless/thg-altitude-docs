@@ -9,9 +9,9 @@ import Facets from "@components/docs/facets/Facets.astro";
 
 ## Overview
 
-Facets provide filterable navigation for product listings. The Elements package handles:
+Facets provides an out of the box UI for filterable navigation for product listings. The Elements package handles:
 
-- • Facet loading and state management 
+- • Facet loading and state management
 - • Automatic rehydration
 - • Responsive layouts for desktop and mobile
 - • Accessibility features
@@ -24,40 +24,51 @@ npm install @thg-altitude/elements
 
 ## Components
 
-The facets system consists of two main components:
+The facets system consists of the following components:
 
 - • **FacetWrapper**: Required container component (one per page)
-- • **FacetResults**: Renders facet groups (supports two instances using slot names `facets-1` and `facets-2`)
+- • **FacetResults**: Wrapper for facet groups - multiple can be nested within the wrapper i.e Desktop UI and Mobile UI
+- • **FacetList**: Template UI for a simple option list
+- • **FacetRange**: Template UI for a ranged option list
+- • **FacetSearch**: Template UI for an option list with search functionality for filtering options
+- • **FacetSlider**: Template UI for min/max values such a price filtering
+- • **FacetTabs**: Template UI to display currently selected options
 
 ### Basic Implementation
 
 Follow these steps to implement facets in your application:
 
 1. **Import the components and helpers:**
-    ```javascript
-    import { FacetWrapper, FacetResults } from "@thg-altitude/elements/astro";
-    import { validateFacets, formatQueryString } from "@thg-altitude/elements/facets/helper";
-    ```
+
+   ```javascript
+   import {
+     FacetWrapper,
+     FacetResults,
+     FacetList,
+     FacetSearch,
+     FacetRange,
+     FacetSlider,
+     FacetTabs,
+   } from "@thg-altitude/elements/astro";
+   import {
+     validateFacets,
+     formatQueryString,
+   } from "@thg-altitude/elements/facets/helper";
+   ```
 
 2. **Fetch and format your facet data:**
-    - • Pass the data as a loading state to `FacetWrapper` using the `facetPayload` prop
-    - • Use the `validateFacets` helper to process the data
 
-3. **Configure the `FacetWrapper`:**
-    - • Set required props (see [Configuration](/facets/configuration) for details)
-    - • Configure endpoint and options
-    - • Add accessibility labels
+   - • Use the `validateFacets` helper to process and filter unnecessary facets from your application once fetched.
 
-4. **Add `FacetResults` components:**
-    - • Use slot names `facets-1` or `facets-2`
-    - • Configure hydration patterns for mobile and desktop views
-    - • Add slot content for customization
+3. **Configure the UI components:**
 
-In the example below, two `FacetResults` are used with different hydration patterns, one for mobile and one for desktop, find out more about hydration 
-patterns [here](/facets/hydration).
+   - • Set the required props (see [Configuration](/facets/configuration) for details)
 
-i18n is not included within the elements package, to allow you to provide translations to the copy in facets, the elements package uses slot hydration,
-learn more about this [here](/facets/slots).
+4. **Setup the client script to subscribe to events:**
+
+- • Use the observer to subscribe to channels when events occur (see [Configuration](/facets/configuration) for details)
+
+The below example displays the default UI out of the box for both desktop and mobile views. This UI can be customised either through styling or consuming named [slots](/facets/slots).
 
 <div class="not-content">
 <Tabs>
@@ -69,179 +80,226 @@ learn more about this [here](/facets/slots).
   <TabItem label="Code">
     ```astro
     ---
-    import { FacetWrapper, FacetResults } from "@thg-altitude/elements/astro";
-    import { validateFacets, formatQueryString } from "@thg-altitude/elements/facets/helper";
+    import { FacetWrapper, FacetResults, FacetList, FacetSearch, FacetRange, FacetSlider, FacetTabs } from "@thg-altitude/elements/astro";
+    import { validateFacets } from "@thg-altitude/elements/facets/helper";
 
-    let facetArray = [];
+    const response = await fetch(...)
 
-    const facetParamName = "facetFilters";
-    const url = new URL(Astro.request.url);
-    const searchQuery = url.searchParams.get("q") || "";
-    const appliedFacetsParams = url.searchParams.get(facetParamName)?.split("|") ?? []
-    let appliedFacets = []
-    if(appliedFacetsParams?.length > 0){
-    appliedFacets = formatQueryString(appliedFacetsParams)
+    const { data } = await response.json();
+    const facets = validateFacets(data?.search?.productList?.facets;);
+    const numberOfProducts = data?.search?.productList?.total
+    ---
+    // UI setup
+    <FacetWrapper
+    filterName="facetFilters"
+    options={{
+      endpoint: "/api/graphql",
+      pageType: "search",
+      query: "blue",
+      shippingDestination: "GB",
+      currency: "GBP",
+    }}
+    currencySymbol="£"
+
+>
+
+    <div class="xl:block hidden">
+      <FacetResults
+        id="desktop"
+        facetPayload={validFacets}
+        hydrateOptions="visible"
+        singleActiveFacet="true"
+        facetRenderCount={4}
+        visibleOptions="*"
+        text={{
+          toggle: "+ Filters",
+        }}
+      >
+        <FacetList slot="facet-list" text={{ clear: "Clear" }}>
+          <div slot="elements-facet-options-header">
+            <p>
+              <span facet-inject="facet-selected-count"></span>{" "}
+              Selected
+            </p>
+            <p facet-inject="facet-selections"></p>
+          </div>
+        </FacetList>
+        <FacetRange slot="facet-range" text={{ clear: "Clear" }}>
+          <div slot="elements-facet-options-header">
+            <p>
+              <span facet-inject="facet-selected-count"></span>{" "}
+              Selected
+            </p>
+          </div>
+        </FacetRange>
+        <FacetSlider
+          slot="facet-slider"
+          text={{
+            clear: "Clear",
+            currency: "£",
+            apply: "Apply",
+          }}
+        />
+        <FacetSearch slot="facet-search" text={{ clear: "Clear" }}>
+          <div slot="elements-facet-options-header">
+            <p>
+              <span facet-inject="facet-selected-count"></span>{" "}
+              Selected
+            </p>
+          </div>
+        </FacetSearch>
+        <FacetTabs slot="facet-tabs-end" text={{ clear: "Clear All" }} />
+      </FacetResults>
+    </div>
+
+    <div class="xl:hidden">
+      <button
+        id="mobile-facet-trigger"
+        class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md mt-2"
+        onclick="complexModal.showModal()"
+        aria-haspopup="dialog">Open Filters</button
+      >
+      <dialog
+        id="complexModal"
+        class="modal modal-fullscreen modal-fullscreen-mobile"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Fullscreen Modal"
+      >
+        <div class="modal-box min-h-screen h-screen bg-white">
+          <form method="dialog" class="modal-control-bar">
+            <button class="modal-close-button">
+              <span>Close</span>
+              <span aria-hidden="true">✕</span>
+            </button>
+          </form>
+          <FacetResults
+            id="mobile"
+            facetPayload={validFacets}
+            keepSelectedGroupActive={false}
+            singleActiveFacet={false}
+          >
+            <FacetList slot="facet-list" text={{ clear: "Clear" }}>
+              <div
+                slot="elements-facet-options-header"
+                class="flex w-full flex-col gap-2"
+              >
+                <h3
+                  class="bold flex border-b pb-2 text-lg"
+                  facet-inject="facet-group-name-display"
+                >
+                </h3>
+              </div>
+            </FacetList>
+            <FacetRange slot="facet-range" text={{ clear: "Clear" }}>
+              <div
+                slot="elements-facet-options-header"
+                class="flex w-full flex-col gap-2"
+              >
+                <h3
+                  class="bold flex border-b pb-2 text-lg"
+                  facet-inject="facet-group-name-display"
+                >
+                </h3>
+              </div>
+            </FacetRange>
+            <FacetSlider
+              slot="facet-slider"
+              text={{
+                clear: "Clear",
+                currency: "£",
+                apply: "Apply",
+              }}
+            >
+              <div
+                slot="elements-facet-options-header"
+                class="flex w-full flex-col gap-2"
+              >
+                <h3
+                  class="bold flex border-b pb-2 text-lg"
+                  facet-inject="facet-group-name-display"
+                >
+                </h3>
+              </div>
+            </FacetSlider>
+            <FacetSearch slot="facet-search" text={{ clear: "Clear" }}>
+              <div
+                slot="elements-facet-options-header"
+                class="flex w-full flex-col gap-2"
+              >
+                <h3
+                  class="bold flex border-b pb-2 text-lg"
+                  facet-inject="facet-group-name-display"
+                >
+                </h3>
+              </div>
+            </FacetSearch>
+            <FacetTabs slot="facet-tabs-start" text={{ clear: "Clear All" }} />
+            <span slot="facet-button" facet-inject="facet-selections"></span>
+          </FacetResults>
+          <form
+            method="dialog"
+            class="modal-control-bar pb-0 block mt-auto w-full"
+          >
+            <button
+              id="view-products-button"
+              class="bg-blue-950 rounded text-white w-full p-2"
+            >
+              {
+                numberOfProducts > 1
+                  ? `View ${numberOfProducts} Products`
+                  : `View ${numberOfProducts} Product`
+              }
+            </button>
+          </form>
+        </div>
+      </dialog>
+    </div>
+
+  </FacetWrapper>
+
+// Client side script setup
+
+  <script>
+  class ElementsFacetWrapper extends HTMLElement {
+    constructor() {
+      super();
+      this.extractSSRContext = this.extractSSRContext.bind(this);
     }
 
-    const data = await Astro.locals.altitude.commerce.api({
-    operation: SearchFacets,
-      variables: {
-      currency: "GBP",
-      shippingDestination: "GB",
-      limit: 30,
-      offset: 0,
-      facets: appliedFacets,
-      sort: "RELEVANCE",
-      query: searchQuery,
+    async connectedCallback() {
+      window.addEventListener("elements-facet-wrapper", this.extractSSRContext);
+    }
+
+    toggleFacet(facetOpen: boolean) {
+      const facetToggleSlot = this.querySelector(
+        ".elements-facets-more-filters-toggle"
+      );
+      if (facetToggleSlot) {
+        facetToggleSlot.innerHTML = `${!facetOpen ? "+ Filters" : "- Filters"}`;
       }
-    });
+    }
 
-    const searchData = await data.json();
-    facetArray = searchData?.data?.search?.productList?.facets;
-    const validFacets = validateFacets(facetArray);
-    const numberOfProducts = searchData?.data?.search?.productList?.total
-    ---
-    <FacetWrapper
-      filterName={facetParamName}
-      options={{
-        endpoint: "/api/commerce",
-        pageType: "search",
-        query: searchQuery,
-        shippingDestination: "GB",
-        currency: "GBP",
-      }}
-      ariaLabels={{
-        facetsTitle: "Filters",
-        selectedOptions: "Selected options",
-        brandSearch: "brand search",
-        options: "options",
-        minPriceInput: "minimum price input",
-        maxPriceInput: "maximum price input",
-      }}
-      >
-        <div class="xl:block hidden" slot="facets-1">
-          <FacetResults id="desktop" facetPayload={validFacets}>
-            <span slot="elements-facets-filter-button">+ Filters</span>
-            <span slot="elements-facets-clear">Clear</span>
-            <span slot="elements-facets-clear-all">Clear All</span>
-            <span slot="elements-facets-selected">Selected</span>
-            <span slot="elements-facets-currency-symbol">£</span>
-            <span slot="elements-facets-show-more">Show More</span>
-            <span slot="elements-facets-show-less">Show Less</span>
-            <span slot="elements-facets-apply">Apply</span>
-          </FacetResults>
-        </div>
+    async extractSSRContext() {
+      window.removeEventListener(
+        "elements-facet-wrapper",
+        this.extractSSRContext
+      );
+      const observer = window.elements.facets.observer;
 
-        <div class="xl:hidden" slot="facets-2">
-          <button
-            id="mobile-facet-trigger"
-            class="btn btn-primary btn-high"
-            onclick="complexModal.showModal()"
-            aria-haspopup="dialog">Open Filters</button
-          >
-          <dialog
-            id="complexModal"
-            class="modal modal-fullscreen modal-fullscreen-mobile"
-            role="dialog"
-            aria-modal="true"
-            aria-label="Fullscreen Modal"
-          >
-            <div class="modal-box min-h-screen h-screen bg-white">
-              <form method="dialog" class="modal-control-bar">
-                <button class="modal-close-button">
-                  <span>Close</span>
-                  <span aria-hidden="true">✕</span>
-                </button>
-              </form>
-              <FacetResults
-                id="mobile"
-                deferHydration={true}
-                facetPayload={validFacets}
-              >
-                <span slot="elements-facets-currency-symbol">£</span>
-                <span slot="elements-facets-show-more">Show More</span>
-                <span slot="elements-facets-show-less">Show Less</span>
-                <span slot="elements-facets-apply">Apply</span>
-              </FacetResults>
-              <form method="dialog" class="modal-control-bar pb-0 block mt-auto w-full">
-                <button id="view-products-button" class="btn btn-primary btn-high w-full">
-                  {numberOfProducts > 1 ? `View ${numberOfProducts} Products` : `View ${numberOfProducts} Product`}
-                </button>
-              </form>
-            </div>
-          </dialog>
-        </div>
-      </FacetWrapper>
+      observer.subscribe("facet-toggle", (facetOpen: boolean) => {
+        this.toggleFacet(facetOpen);
+      });
+    }
+  }
 
-      <script>
-      import { clientFetch } from "@utils/clientFetchApi";
-      import { formatQueryString } from "@thg-altitude/elements/facets/helper";
+  customElements.get("elements-facet-wrapper") ||
+    customElements.define("elements-facet-wrapper", ElementsFacetWrapper);
+</script>
 
-      class ElementsFacetWrapper extends HTMLElement {
-        constructor() {
-          super();
-        }
-        async connectedCallback() {
-          window.addEventListener("elements-facet-wrapper", extractSSRContext);
-          const customElement = this;
-
-          async function extractSSRContext() {
-            const observer = window.elements.facets.observer;
-            observer.subscribe("refresh-product-list", async () => {
-              const params = new URLSearchParams(window.location.search);
-              const facetSelectionsArray =
-                params.get("facetFilters")?.split("|") ?? [];
-              const formattedFacetSelections =
-                formatQueryString(facetSelectionsArray);
-              const populatedFacetSelections = formattedFacetSelections.filter(
-                (facet) => facet.selections && facet.selections.length > 0
-              );
-
-              const url = new URL(window.location.href);
-              const searchQuery = url.searchParams.get("q") || "";
-
-              const data = //fetch for product data with facets included
-
-              const productData = data.data.search.productList;
-              updateViewProductsButton(productData.total)
-            });
-            observer.subscribe("facet-toggle", (facetOpen) => {
-              const facetToggleSlot = customElement.querySelector(
-                "[data-slot='elements-facets-filter-button']"
-              );
-              facetToggleSlot.innerHTML = `<span>${facetOpen ? "+ Filters" : "- Filters"}</span>`;
-            });
-            bindMobileFacetTrigger();
-          }
-        }
-      }
-
-      customElements.get("elements-facet-wrapper") ||
-        customElements.define("elements-facet-wrapper", ElementsFacetWrapper);
-
-      function bindMobileFacetTrigger() {
-        const mobileFacetTrigger = document.getElementById("mobile-facet-trigger");
-
-        mobileFacetTrigger.addEventListener("click", () => {
-          window.elements.facets.hydrate("mobile");
-        }); 
-      }
-
-      function updateViewProductsButton(numberOfProducts){
-        const button = document.getElementById("view-products-button")
-        if(button){
-          if(numberOfProducts > 1){
-            button.innerText = `View ${numberOfProducts} Products`;
-          }else{
-            button.innerText = `View ${numberOfProducts} Product`
-          }
-        }
-      }
-    </script>
-
-  ```
-    </TabItem>
-  </Tabs>
+````
+  </TabItem>
+</Tabs>
 </div>
 
 ## Custom Styling
@@ -249,13 +307,13 @@ learn more about this [here](/facets/slots).
 Components that the elements package exports all contain default styling using vanilla CSS. The styles can be overriden per application by using class based css selectors. The default styling uses lowest specificity possible. To override a specific class, the wrapper class for the element i.e `.elements-facets-wrapper` should prefix all selectors in your stylesheet.
 ```css
 .elements-facets-wrapper .elements-facets-dropdown {
-    /* Your custom styles */
+  /* Your custom styles */
 }
 
 /* Responsive breakpoints handle layout changes */
 @media (width >= 80rem) {
-    .elements-facets-wrapper .elements-facets-dropdown {
-        /* Desktop styles */
-    }
+  .elements-facets-wrapper .elements-facets-dropdown {
+      /* Desktop styles */
+  }
 }
-```
+````

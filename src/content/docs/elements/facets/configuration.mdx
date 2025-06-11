@@ -1,12 +1,15 @@
 ---
-title: 'Configuration'
+title: "Configuration"
 ---
+
+# Props
 
 ## FacetWrapper Props
 
-The `FacetWrapper` component requires one instance per page. Its props configure the API endpoint, URL parameters, and accessibility labels.
+The `FacetWrapper` component requires one instance per page. Its props configure the API endpoint, URL parameters, and shared information such as currency symbols.
 
 #### filterName
+
 - • **Type:** `String`
 - • **Required:** Yes
 - The URL parameter name used for facets (e.g. `facetFilters`).
@@ -16,40 +19,40 @@ The `FacetWrapper` component requires one instance per page. Its props configure
 The `options` prop contains settings for API requests:
 
 #### endpoint
+
 - • **Type:** `String`
 - • **Required:** Yes
-- Path to your GraphQL endpoint (e.g. `/api/commerce`).
+- Path to your GraphQL endpoint - this **must** be a relative path (e.g. `/api/commerce`).
 
 #### pageType
+
 - • **Type:** `'search' | 'collection'`
 - • **Required:** Yes
-- Determines the fetch behavior based on page type.
+- Determines the schema to be used.
 
 #### query
+
 - • **Type:** `String`
 - • **Required:** Yes
 - Search query or collection path handle.
 
 #### shippingDestination
+
 - • **Type:** `String`
 - • **Required:** Yes
 - Shipping destination code for Horizon requests.
 
 #### currency
+
 - • **Type:** `String`
 - • **Required:** Yes
 - Currency code for Horizon requests.
 
-### Accessibility Labels
+#### currencySymbol
 
-Since the package doesn't include built-in i18n, provide these labels for screen reader support:
-
-- • `facetsTitle` - Screen reader header for facets
-- • `selectedOptions` - Announces selected options in dropdowns
-- • `brandSearch` - Labels brand search inputs
-- • `options` - Announces number of product options
-- • `minPriceInput` - Labels minimum price input in slider
-- • `maxPriceInput` - Labels maximum price input in slider
+- • **Type:** `String`
+- • **Required:** No
+- The currency symbol to be appended to pricing labels
 
 ### Example Configuration
 
@@ -61,45 +64,246 @@ Since the package doesn't include built-in i18n, provide these labels for screen
     pageType: "search",
     query: searchTerm,
     shippingDestination: "GB",
-    currency: "GBP"
+    currency: "GBP",
   }}
-  ariaLabels={{
-    facetsTitle: "Filter Products",
-    selectedOptions: "Selected Filters",
-    brandSearch: "Search Brands",
-    options: "Product Options",
-    minPriceInput: "Minimum Price",
-    maxPriceInput: "Maximum Price"
-  }}
+  currencySymbol="£"
 >
-  {/* Your FacetResults components */}
+  {/* Slot content */}
 </FacetWrapper>
 ```
 
 ## FacetResults Props
 
-Two `FacetResults` components can be used within one `FacetWrapper`:
+Multiple `FacetResults` components can be used within one `FacetWrapper`. This is useful for different UIs between desktop and mobile viewports.
 
 #### id
+
 - • **Type:** `String`
 - • **Required:** Yes
-- Unique identifier for hydration control when using the window.elements.facets.hydrate("id") function.
+- Unique identifier for each instance of the FacetResults component.
 
-#### deferHydration
+#### facetPayload
+
+- • **Type:** `Array`
+- • **Required:** Yes
+- Pre-hydration data for facet headers to aid in rendering an initial loading states. Must be processed using `validateFacets` helper to remove unnecessary facet headings.
+
+#### singleActiveFacet
+
+- • **Type:** `Boolean`
+- • **Required:** No
+- • **Default:** `true`
+- Controls whether multiple facets can be "active" at a time. If the desired behaviour is to enable multiple facets to be active at a time `false` should be provided. This prop also controls click away behaviour which is enabled when this prop is set to `true`.
+
+#### hydrateOptions
+
+- • **Type:** `visible` | `all`
+- • **Required:** No
+- • **Default:** `visible`
+- Controls the hydration behaviour upon initial render. By default options will only be hydrated when the `options` receiver is toggled i.e top level facet group is clicked. If options are to be hydrated immediately, set this props value to `all`
+
+#### facetRenderCount
+
+- • **Type:** `*` | `Number`
+- • **Required:** No
+- • **Default:** `*`
+- Determines how many options to hydrate. By default all options will be hydrated in else a number can be supplied to cap the number that are hydrated. Helper functions can be used in conjuction with custom UI to implement a "Show More" toggle.
+
+#### visibleOptions
+
+- • **Type:** `*` | `Number`
+- • **Required:** No
+- • **Default:** `*`
+- Determines the number of top level facets that are shown. By default all top level facets are shown. When a number is passed, if the number of facet headings exceeds this number, additional UI will be hydrated on to the page enabling toggle behaviour.
+
+#### keepSelectedGroupActive
+
 - • **Type:** `Boolean`
 - • **Required:** No
 - • **Default:** `false`
-- Controls when component hydration occurs. See [Hydration Guide](/facets/hydration).
-
-#### facetPayload
-- • **Type:** `Array`
-- • **Required:** Yes
-- Pre-hydration data for facet headers. Must be processed using `validateFacets` helper to minimize CLS.
+- Attempts to keep the facet group where a selection was made active. By default this behaviour is turned off due to inconsistency in facet heading ordering. This prop should only be set to true when your UI does not display other facet headings when the facet is active i.e A mobile drilldown menu.
 
 ### Example Configuration
 
 ```javascript
-<FacetResults id="desktop" facetPayload={validFacets}>
-  {/* Your slot content */}
+<FacetResults
+  id="desktop"
+  facetPayload={validFacets}
+  singleActiveFacet={false}
+  hydrateOptions="visible"
+  facetRenderCount={4}
+  visibleOptions="*"
+  keepSelectedGroupActive={false}
+>
+  {/* Slot content */}
 </FacetResults>
+```
+
+## FacetList Props
+
+The FacetList provides an out the box UI for facets with the following typename: `SimpleFacet`. This should be nested within the `FacetResults` component.
+
+This should consume the named slot `facet-list`
+
+#### open
+
+- • **Type:** `Boolean`
+- • **Required:** No
+- • **Default:** `false`
+- Sets the options to be active when first hydrated. If `true` is set, it is advised to set the `hydrateOptions="all"` prop in `FacetResults` to ensure the template is updated. Named [slots](/facets/slots) can be used to configure loading states to minimise CLS.
+
+#### text
+
+A text object can be passed to add copy to parts of the default UI. The only copy required for this default UI is the `clear` key.
+
+### Example Configuration
+
+```javascript
+<FacetList slot="facet-list" open={false} text={{ clear: "Clear" }}>
+  {/* slot content */}
+</FacetList>
+```
+
+## FacetRange Props
+
+The FacetRange provides an out the box UI for facets with the following typename: `RangedFacet`. This should be nested within the `FacetResults` component.
+
+This should consume the named slot `facet-range`
+
+#### open
+
+- • **Type:** `Boolean`
+- • **Required:** No
+- • **Default:** `false`
+- Sets the options to be active when first hydrated. If `true` is set, it is advised to set the `hydrateOptions="all"` prop in `FacetResults` to ensure the template is updated. Named [slots](/facets/slots) can be used to configure loading states to minimise CLS.
+
+#### text
+
+A text object can be passed to add copy to parts of the default UI. The only copy required for this default UI is the `clear` key.
+
+### Example Configuration
+
+```javascript
+<FacetRange slot="facet-range" open={false} text={{ clear: "Clear" }}>
+  {/* slot content */}
+</FacetRange>
+```
+
+## FacetSearch Props
+
+The FacetRange provides an out the box UI for facets where the `facetName` contains `_brand_`. This should be nested within the `FacetResults` component.
+This component enables users to filter options through an input field.
+
+This should consume the named slot `facet-search`
+
+#### open
+
+- • **Type:** `Boolean`
+- • **Required:** No
+- • **Default:** `false`
+- Sets the options to be active when first hydrated. If `true` is set, it is advised to set the `hydrateOptions="all"` prop in `FacetResults` to ensure the template is updated. Named [slots](/facets/slots) can be used to configure loading states to minimise CLS.
+
+#### text
+
+A text object can be passed to add copy to parts of the default UI. The only copy required for this default UI is the `clear` key.
+
+### Example Configuration
+
+```javascript
+<FacetSearch slot="facet-search" open={false} text={{ clear: "Clear" }}>
+  {/* slot content */}
+</FacetSearch>
+```
+
+## FacetSlider Props
+
+The FacetSlider provides an out the box UI for facets with the following typename: `SliderFacet`. This should be nested within the `FacetResults` component.
+
+This should consume the named slot `facet-slider`
+
+#### open
+
+- • **Type:** `Boolean`
+- • **Required:** No
+- • **Default:** `false`
+- Sets the options to be active when first hydrated. If `true` is set, it is advised to set the `hydrateOptions="all"` prop in `FacetResults` to ensure the template is updated. Named [slots](/facets/slots) can be used to configure loading states to minimise CLS.
+
+#### text
+
+A text object can be passed to add copy to parts of the default UI. The following keys can be supplied to the text object:
+
+- • `clear`
+- • `currency`
+- • `submit`
+
+### Example Configuration
+
+```javascript
+<FacetSlider
+  slot="facet-slider"
+  open={false}
+  text={{ clear: "Clear", currency: "£", submit: "Apply" }}
+>
+  {/* slot content */}
+</FacetSlider>
+```
+
+## FacetTabs Props
+
+The FacetTabs component provides an out the box UI for selected facets with built in handlers for removing individual or all selections. This should be nested within the `FacetResults` component.
+
+This component can be consumed by one of two named slots: `facet-tabs-start` or `facet-tabs-end`. This renders the UI in the DOM flow within FacetResults before or after the Facets UI.
+
+#### text
+
+A text object can be passed to add copy to parts of the default UI. The only copy required for this default UI is the `clear` key.
+
+### Example Configuration
+
+```javascript
+<FacetTabs slot="facet-tabs-end" text={{ clear: "Clear" }} />
+```
+
+## Client Script
+
+The elements package will initialise facets on the users behalf hydrating facets in as per the `hydrateOptions` value on each facet instance.
+
+### Initialisation
+
+An application will be responsible for defining the `elements-facet-wrapper` custom HTML Element on the page.
+
+```javascript
+class ElementsFacetWrapper extends HTMLElement {
+  constructor() {
+    super();
+    // Additional setup
+  }
+}
+
+customElements.get("elements-facet-wrapper") ||
+  customElements.define("elements-facet-wrapper", ElementsFacetWrapper);
+```
+
+### Observer
+
+When notable events occur, the elements package will publish these events on different channels. This enables an application to subscribe to these channels and run any neccessary updates i.e refreshing a product list.
+
+The PubSub instance is contained with the facets class on the window object (`window.elements.facets`). The elements package will initialise this class upon setup and emit a custom event which will enable applications to access this class an the observer, as well as [helper functions](/facets/functions).
+
+There are three channels intended for applications to subscribe to:
+
+- `facet-toggle` This is published to when more/less facet groups are shown.
+- `facet-hydrated` This is published to when a facet group has it's options hydrated in.
+- `refresh-product-list` This is published to when facet data has been refetched, signalling an application should also refresh it's product list in line with the new selected facet options.
+
+```javascript
+connectedCallback() {
+  window.addEventListener(
+      'elements-facet-wrapper',
+      () => {
+        const { observer } = window.elements.facets
+        observer.subscribe('facet-toggle', (data) => {...} )
+      }
+  );
+}
 ```
