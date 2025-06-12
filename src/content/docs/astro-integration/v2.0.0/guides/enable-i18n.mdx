@@ -1,50 +1,185 @@
 ---
-title: Enabling i18n 🌎 
+title: Enabling i18n 🌎
 order: 2
 ---
 
 import { Aside } from "@components/docs";
 
+## For an app running in single tenancy mode:
+
+### Step 1: Add an i18n key to your buildConfig
+
+Add www.exampledomain1.com and www.exampledomain1.de to your domains key:
+
+```js
+// config/site.js
+export default {
+  domains: ["www.exampledomain1.com", "www.exampledomain1.de"],
+  commerce: {
+    endpoint: "https://horizon-api.www.example.com/graphql",
+  },
+  kv: [
+    // ...your kv config
+  ],
+};
+```
+
+### Step 2: Add the i18n key to your `altitudeMiddleware` config
+
+The `i18n.locales<Object>.domain` key must correspond to the domain you added in the `domains` array in step 1. `i18n.locales<Object>.kv` must correspond to the KV keys corresponding to language files containing localised copy.
+
+```js
+// config/site.js
+export default {
+  domains: ["www.exampledomain1.com", "www.exampledomain1.de"],
+  commerce: {
+    endpoint: "https://horizon-api.www.example.com/graphql",
+  },
+  kv: [
+    // ...top-level kv
+  ],
+  i18n: {
+    locales: [
+      {
+        prefix: "en-gb",
+        domain: "www.exampledomain1.com",
+        icons: {
+          flag: await fetchIcon("circle-flags", "gb"),
+        },
+      },
+      {
+        prefix: "de-de",
+        domain: "www.exampledomain1.de",
+        kv: [
+          {
+            key: "tenant1",
+            namespace: "config",
+            local: tenant1Config,
+          },
+          {
+            key: "tenant1.de_de.properties",
+            namespace: "lang",
+            local: tenant1Lang,
+          },
+        ],
+        icons: {
+          flag: await fetchIcon("circle-flags", "de"),
+        },
+      },
+    ],
+    fallbackLocale: "en-gb",
+    exclusionList: ["api"],
+    localeCookie: "locale_V6",
+  },
+};
+```
+
+Please see the [i18n config reference](../reference/config/#i18n) for a full list of required and optional keys.
+
+### Step 3: Support rewrites in astro folder structure
+
+When i18n is enabled, astro-integration rewrites every request to `/pathname` to `/localePrefix/pathname`
+
 <Aside type="note">
-    i18n is currently only supported in multi-tenancy mode.
+  For example, if localePrefix is `/en-gb` then a request to `/` will be
+  rewritten to `/en-gb/` and a request to `/basket` will be rewritten to
+  `/en-gb/basket`. A request to `/en-gb/` will be rewritten to `/en-gb/en-gb/`
+  and (presumably) 404 if no route has been set up for that path.
 </Aside>
 
-## Prerequisites:
+This means that your storefront must have the appropriate request handlers. Please nest your normal handlers in the `/pages` directory into `pages/[locale]`,
 
-Before you begin, make sure you have: 
+Example directory structure:
+
+```text
+pages
+├── [...https].astro
+├── [locale]
+│   ├── [...https].astro
+│   ├── basket.astro
+│   ├── c
+│   │   └── [...slug]
+│   │       └── index.astro
+│   ├── create-review
+│   │   └── [...handle]
+│   │       └── index.astro
+│   ├── index.astro
+│   ├── kv
+│   │   └── sessionSettings.js
+│   ├── p
+│   │   └── [...handle]
+│   │       └── index.astro
+│   ├── reviews
+│   │   └── [sku].astro
+│   ├── robots.txt.js
+│   └── search.astro
+└── 404.astro
+```
+
+<Aside type="note">
+  Astro integration relies on the 404.astro page being at the root of the pages
+  directory, not nested inside the [locale] directory.
+</Aside>
+
+At request time, astro-integration will use the [X-Forwarded-Host](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/X-Forwarded-Host) header (in production) to decide which config to read. In local development, it will read the `x-altitude-instance` header to determine which tenantConfig to use.
+
+### Step 4:
+
+Restart the dev server to apply the changes.
+
+```sh
+$ npm run dev
+```
+
+You should not longer be able to view your app without an x-altitude-instance header. Requests to `/` to `/en-gb/` when the x-altitude-instance header is www.exampledomain1.com or to `/de-de/` when the x-altitude-instance header is www.exampldomain1.de. In production, the X-Forwarded-Host header will be used to determine which tenantConfig to use.
+
+### New context variables
+
+When i18n is enabled, the following new variables are available in the context of your pages: `altitude.locale` and `altitude.availableLocales`. See the [global context reference](../reference/global-context) for more information on their types and usage.
+
+## For an app running in multitenancy mode.
+
+<Aside type="note">
+  When turning on i18n in multitenancy mode, it must be turned on far _all_
+  tenants
+</Aside>
+
+### Prerequisites:
+
+Before you begin, make sure you have:
 
 - astro-integration running in multitenancy mode. See [guide](../getting-started/#multitenancy) for more information.
 
-## Step 1: Add i18n keys to each buildConfig in the tenants array
+### Step 1: Add i18n keys to each buildConfig in the tenants array
 
-Make sure *every* tenant in the `tenants` array that you are passing to `altitudeMiddleware` has an i18n key.
+Make sure _every_ tenant in the `tenants` array that you are passing to `altitudeMiddleware` has an i18n key.
 
 ```js
-import tenants from './config/index';
+import tenants from "./config/index";
 // astro.config.js
 export default defineConfig({
-    integrations: [
-        altitudeMiddleware({
-            config : tenants,
-            api: { enabled: true, graphql: gqlIndex }
-        }),
-    ],
-    })
+  integrations: [
+    altitudeMiddleware({
+      config: tenants,
+      api: { enabled: true, graphql: gqlIndex },
+    }),
+  ],
+});
 ```
 
 ```js
-import tenant1 from './tenant1';
-import tenant2 from './tenant2';
-import altitudedemo from './altitudedemo';
+import tenant1 from "./tenant1";
+import tenant2 from "./tenant2";
+import altitudedemo from "./altitudedemo";
 
 export default [tenant1, tenant2, altitudedemo];
 ```
 
 `tenant1.js` and `tenant2.js` should both have an i18n key. To see all the required fields, see the [i18n config reference](docs/astro-integration/v2.0.0/reference/config/#i18n).
 
-## Step 2: Support rewrites in astro folder structure
+### Step 2: Support rewrites in astro folder structure
 
-When i18n is enabled, astro-integration rewrites every request to `/pathname` to `/localePrefix/pathname` 
+When i18n is enabled, astro-integration rewrites every request to `/pathname` to `/localePrefix/pathname`
 
 <Aside type="note">
 
@@ -52,7 +187,7 @@ For example, if localePrefix is `/en-gb` then a request to `/` will be rewritten
 
 </Aside>
 
-This means that your storefront must have the appropriate request handlers. Please nest your normal handlers in the `/pages` directory into `pages/[locale]`, 
+This means that your storefront must have the appropriate request handlers. Please nest your normal handlers in the `/pages` directory into `pages/[locale]`,
 
 Example directory structure:
 
@@ -87,12 +222,8 @@ Astro integration relies on the 404.astro page being at the root of the pages di
 
 </Aside>
 
-
-
 At request time, astro-integration will read the x-altitude-instance header (in dev mode) or the [X-Forwarded-Host](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/X-Forwarded-Host) header (in production) to decide which tenantConfig to read.
-
 
 ## New context variables
 
 When i18n is enabled, the following new variables are available in the context of your pages. `altitude.locale` and `altitude.availableLocales`. See the [global context reference](../reference/global-context) for more information on their types and usage.
-
