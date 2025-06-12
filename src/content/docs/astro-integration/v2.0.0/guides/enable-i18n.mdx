@@ -9,12 +9,12 @@ import { Aside } from "@components/docs";
 
 ### Step 1: Add an i18n key to your buildConfig
 
-Add www.example.co.uk and www.example.fr to your domains key:
+Add www.exampledomain1.com and www.exampledomain1.de to your domains key:
 
 ```js
 // config/site.js
 export default {
-  domains: ["www.example.co.uk", "www.example.fr"],
+  domains: ["www.exampledomain1.com", "www.exampledomain1.de"],
   commerce: {
     endpoint: "https://horizon-api.www.example.com/graphql",
   },
@@ -24,43 +24,55 @@ export default {
 };
 ```
 
-
 ### Step 2: Add the i18n key to your `altitudeMiddleware` config
 
-The `i18n.locales<Object>.domain` key must correspond to the domain you added in the `domains` array in step 1. 
-
+The `i18n.locales<Object>.domain` key must correspond to the domain you added in the `domains` array in step 1. `i18n.locales<Object>.kv` must correspond to the KV keys corresponding to language files containing localised copy. 
 
 ```js
 // config/site.js
 export default {
-  domains: ["www.example.co.uk", "www.example.fr"],
+  domains: ["www.exampledomain1.com", "www.exampledomain1.de"],
   commerce: {
     endpoint: "https://horizon-api.www.example.com/graphql",
   },
   kv: [
-    // ...your kv config
+    // ...top-level kv
   ],
   i18n: {
     locales: [
       {
-        prefix: "fr-fr",
-        domain: "www.example.fr",
+        prefix: "en-gb",
+        domain: "www.exampledomain1.com",
+        icons: {
+          flag: await fetchIcon("circle-flags", "gb"),
+        },
       },
       {
-        prefix: "en-gb",
-        domain: "www.example.co.uk",
+        prefix: "de-de",
+        domain: "www.exampledomain1.de",
+        kv: [
+
+          {
+            key: "tenant1.de_de.properties",
+            namespace: "lang",
+            local: tenant1Lang,
+          },
+        ],
+        icons: {
+          flag: await fetchIcon("circle-flags", "de"),
+        },
       },
     ],
     fallbackLocale: "en-gb",
-    exclusionList: ["api", "images"],
+    exclusionList: ["api"],
+    localeCookie: "locale_V6",
   },
 };
 ```
 
-
 Please see the [i18n config reference](../reference/config/#i18n) for a full list of required and optional keys.
 
-### Step 2: Support rewrites in astro folder structure
+### Step 3: Support rewrites in astro folder structure
 
 When i18n is enabled, astro-integration rewrites every request to `/pathname` to `/localePrefix/pathname`
 
@@ -105,7 +117,17 @@ pages
   directory, not nested inside the [locale] directory.
 </Aside>
 
-At request time, astro-integration will use the [X-Forwarded-Host](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/X-Forwarded-Host) header (in production) to decide which config to read.
+At request time, astro-integration will use the [X-Forwarded-Host](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/X-Forwarded-Host) header (in production) to decide which config to read. In local development, it will read the `x-altitude-instance` header to determine which tenantConfig to use.
+
+### Step 4:
+
+Restart the dev server to apply the changes.
+
+```sh
+$ npm run dev
+```
+
+You should not longer be able to view your app without an x-altitude-instance header. Requests to `/` to `/en-gb/` when the x-altitude-instance header is www.exampledomain1.com or to `/de-de/` when the x-altitude-instance header is www.exampldomain1.de. In production, the X-Forwarded-Host header will be used to determine which tenantConfig to use.
 
 ### New context variables
 
