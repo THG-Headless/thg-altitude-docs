@@ -26,7 +26,7 @@ export default {
 
 ### Step 2: Add the i18n key to your `altitudeMiddleware` config
 
-The `i18n.locales<Object>.domain` key must correspond to the domain you added in the `domains` array in step 1. `i18n.locales<Object>.kv` must correspond to the KV keys corresponding to language files containing localised copy. 
+The `i18n.locales<Object>.domain` key must correspond to the domain you added in the `domains` array in step 1. `i18n.locales<Object>.kv` must correspond to the KV keys corresponding to language files containing localised copy.
 
 ```js
 // config/site.js
@@ -51,7 +51,11 @@ export default {
         prefix: "de-de",
         domain: "www.exampledomain1.de",
         kv: [
-
+          {
+            key: "tenant1",
+            namespace: "config",
+            local: tenant1Config,
+          },
           {
             key: "tenant1.de_de.properties",
             namespace: "lang",
