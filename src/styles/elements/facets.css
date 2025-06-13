@@ -1,91 +1,69 @@
 
-.elements-reactive-demo {
-    display: flex;
-    gap: 1.5rem;
+@media only screen and (width < 64rem) {
+  .elements-facets-wrapper .elements-facets-results-container {
+    height: 80%;
+    overflow-y: auto;
+    padding: 16px;
   }
-  
-  .elements-reactive-data {
-    flex-shrink: 0;
+
+  .elements-facets-wrapper .elements-facets-group-container {
+    flex-basis: 100%;
+  }
+
+  .elements-facets-wrapper .elements-facets-container {
     display: flex;
     flex-direction: column;
-    margin-top: 0px !important;
-  }
-  
-  /* Facets */
-  .elements-facets-dropdown-summary{
-    background-color: white;
-  }
-  
-  .elements-facets-more-filters-toggle{
-    background-color: none;
-  }
-  
-  .elements-facets-clear-facet-button{
-    background-color: white;
-  }
-  
-  .elements-facets-filter-tab-button{
-    background-color: white !important;
-  }
-  
-  .elements-facets-more-filters-toggle{
-    background-color: transparent !important;
-  }
-  
-  .elements-facets-show-toggle{
-    background-color: transparent;
-  }
-  
-  .elements-facets-clear-all-button{
-    background-color: transparent;
+    gap: 2rem;
   }
 
-  .elements-facets-facets-tabs-container .elements-facets-option-label {
-    background: rgba(119, 119, 119, 0.3);
+  .elements-facets-wrapper .elements-facets-controls {
+    display: none;
   }
 
-  .elements-facets-facets-tabs-container .elements-facets-options-wrapper,
-  .elements-facets-facets-tabs-container .elements-facets-dropdown-summary {
-    border: 1px solid rgba(102, 102, 102, 0.7);
+  .elements-facets-wrapper .elements-facets-tabs-clear-wrapper {
+    flex-direction: column;
   }
 
-  .elements-facets-facets-tabs-container .elements-facets-options-wrapper {
-    z-index: 10;
-    color: #FFF;
+  .elements-facets-wrapper .elements-facets-clear-all-button {
+    align-self: flex-end;
   }
 
-  .elements-facets-facets-tabs-container .elements-facets-dropdown-list,
-  .elements-facets-facets-tabs-container .elements-facets-container,
-  .elements-facets-facets-tabs-container .elements-facets-tabs-wrapper {
+  .elements-facets-wrapper .elements-facets-controls {
+    display: none;
+  }
+
+  .elements-facets-wrapper .elements-facets-options-wrapper {
+    position: static;
+    border-radius: 0px;
+    box-shadow: none;
+  }
+
+  .elements-facets-wrapper .elements-facets-dropdown-list {
+    padding: 0rem;
+    gap: 0rem;
     margin: 0;
+    max-height: fit-content;
+    overflow-y: visible;
+    background-color: rgb(250 250 250);
   }
-  
-  .elements-facets-facets-tabs-container .elements-facets-container {
-    grid-template-columns: repeat(3, minmax(0, 1fr)); /* Required due to narrow columns */
+
+  .elements-facets-wrapper .elements-facets-dropdown-summary {
+    font-size: large;
+    border: none;
+    border-radius: 0px;
+    padding: 0;
   }
-  
-  .elements-facets-facets-tabs-container .elements-facets-options-wrapper,
-  .elements-facets-facets-tabs-container .elements-facets-dropdown-summary,
-  .elements-facets-facets-tabs-container .elements-facets-dropdown-list,
-  .elements-facets-facets-tabs-container .elements-facets-clear-facet-button,
-  .elements-facets-facets-tabs-container .elements-facets-filter-tab-button {
-    background: #000 !important;
+
+  .elements-facets-wrapper .elements-facets-option-list-header {
+    display: none;
   }
-  
-  @media only screen and (width < 80rem) {
-    .modal-fullscreen-mobile{
-      height: 100%;
-      width: 100%;
-      margin:auto;
-      padding: 1rem;
-    }
-  
-    .modal-close-button{
-      background-color: transparent;
-      margin-bottom: 1rem;
-    }
-  
-    .elements-facets-filter-tab-button{
-      background-color: rgb(240 240 240) !important;
-    }
+
+  .elements-facets-wrapper .elements-facet-option:has(input:checked) {
+    border: none;
+    border-radius: 0px;
   }
+
+  .elements-facets-wrapper .elements-facets-tabs-wrapper {
+    width: 100%;
+  }
+}

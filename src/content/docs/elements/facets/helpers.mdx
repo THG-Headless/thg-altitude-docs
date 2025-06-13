@@ -1,0 +1,67 @@
+---
+title: "Helper Functions"
+---
+
+Helpers functions are attached to the facet class on the window object: `window.elements.facets`.
+
+When using the default UI, the custom HTML elements leverage these helper functions to hydrate and bind attributes on the templates.
+
+Leveraging these helper functions will streamline custom UI setup, abstracting functionality into simple function calls.
+
+### Core Functions
+
+#### hydrateOptionTemplate
+
+This function hydrates the template into the facet element node, mapping any injectors or attributes before the template it appended.
+
+This function takes 5 arguments:
+
+- Facet Element: The `facet-element` node
+- Template: The template to be injected
+- Facet Data: The data for this particular facet
+- Current Selections: Any current selected options
+- Keep Active: Boolean which will apply the active class to the transmitter to keep this facet grounp active
+
+#### mapOptions
+
+This function should only be used for `ListFacet`, `RangedFacet`, `SearchFacet` types.
+
+This function uses the template that should already of been hydrated in, pulling the options template from this and creating new clones of this template, mapping and injecting data based on the data provided. Event listners are also bound.
+
+This function takes 5 arguments:
+
+- Facet Element: The `facet-element` node
+- Facet Data: The data for this particular facet
+- Current Selections: Any current selected options
+- Facet Type: The type of facet this is i.e `RangedFacet`.
+- Options to render: This value is how many options you want to render out initially. If you wish to show all options, `*` should be passed.
+
+#### mapSlider
+
+Thus function should only be used for the facet type `SliderFacet`.
+
+This function uses the SliderFacet template, mapping inputs to the data of this particular facet. Attributes and injectors are also added as well as event listeners.
+
+This function takes 4 arguments:
+
+- Facet Element: The `facet-element` node
+- Facet Data: The data for this particular facet
+- Current Selections: Any current selected options
+
+### mapTabs
+
+This function uses the template with the attribute `facet-tabs` and maps attributes and injectors with the current selections. If there are no current selections the attribute `facet-template-hidden` will be applied to hide this element.
+
+This function takes 2 arguments:
+
+- Tabs Element: The node with the attribute `facet-tabs`
+- Current Selections: Any current selected options
+
+### toggleOptions
+
+This function is used to toggle the `active` class of the provided facet element.
+
+This function takes 2 arguments:
+
+- Facet Element: The `facet-element` node where the class is to be toggled
+- Event: The event object
