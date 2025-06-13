@@ -1,8 +1,15 @@
 ---
 import { facetVerticalStyles } from "./styles.js";
 
-// Convert CSS to a data URI for direct download
-const cssBase64 = Buffer.from(facetVerticalStyles).toString("base64");
+function encodeBase64(str: string) {
+  const bytes = new TextEncoder().encode(str);
+  const binString = Array.from(bytes)
+    .map((byte) => String.fromCharCode(byte))
+    .join("");
+  return btoa(binString);
+}
+
+const cssBase64 = encodeBase64(facetVerticalStyles);
 const dataUri = `data:text/css;base64,${cssBase64}`;
 ---
 
