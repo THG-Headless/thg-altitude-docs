@@ -6,6 +6,7 @@ order: 1
 import { Tabs, TabItem } from "@components/docs";
 import Preview from "@components/docs/preview.astro";
 import Facets from "@components/docs/facets/Facets.astro";
+import StyleDownloader from "@components/docs/facets/StyleDownloader.astro";
 
 ## Overview
 
@@ -13,7 +14,7 @@ Facets provides an out of the box UI for filterable navigation for product listi
 
 - • Facet loading and state management
 - • Automatic rehydration
-- • Responsive layouts for desktop and mobile
+- • Out-the-box UI styling for medium to large viewports
 - • Accessibility features
 
 ## Installation
@@ -311,9 +312,13 @@ Components that the elements package exports all contain default styling using v
 }
 
 /* Responsive breakpoints handle layout changes */
-@media (width >= 80rem) {
+@media (width < 64rem) {
   .elements-facets-wrapper .elements-facets-dropdown {
-      /* Desktop styles */
+      /* Small viewport styles */
   }
 }
 ````
+
+The default styling aligns with larger viewports due to it's horizontal layout. But the below code can be added to your applications stylesheet for a vertical layout which might be suitable for smaller viewports.
+
+<StyleDownloader />
