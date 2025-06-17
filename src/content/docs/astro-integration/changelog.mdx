@@ -1,0 +1,31 @@
+---
+title: Astro Integration Changelog
+description: Summary of the changelog for the Astro Integration
+---
+
+# Altitude Platform Changelog
+
+This page contains a summary of the changelog for astro integration. A full changelog can be viewed [here](https://github.com/THG-AltitudeSiteBuilds/astro-integration/releases/)
+
+## v2.0.0
+
+### Changed
+- Simplified requirements for single tenancy mode - i18n key no longer required. 
+- Rewrites only occur for i18n-enabled tenants, as opposed to all of them.
+- `domains` required property in buildConfig is now an array
+- `locales<Object>.domain` is now a required property
+- Top-level 'KV' key is now optional
+
+### Fixed
+- Fixed single tenancy mode
+
+### Deprecated
+
+- removed support for cookie routing
+- `locals.altitude.preferredLocale`, `locals.altitude.localeDomains` are now deprecated
+- We are no longer exposing `locals.altitude.localeCookie`
+- Several keys previously available on the global context in v1.x (such as `localeCookie`) are no longer exposed in v2. If you are migrating, review your usage of global context keys and update your code accordingly.
+
+## v1.7.7
+
+see https://github.com/THG-AltitudeSiteBuilds/astro-integration/releases/tag/v1.7.7
