@@ -123,6 +123,20 @@ Multiple `FacetResults` components can be used within one `FacetWrapper`. This i
 - • **Default:** `false`
 - Attempts to keep the facet group where a selection was made active. By default this behaviour is turned off due to inconsistency in facet heading ordering. This prop should only be set to true when your UI does not display other facet headings when the facet is active i.e A mobile drilldown menu. The facet type `SliderFacet` will not stay active to provide visual feedback to users.
 
+#### text
+
+A text object can be passed to add copy to parts of the default UI. The only copy required for this default UI is the `toggle` key.
+
+#### aria
+
+An object can be passed to provide aria labels to elements. The following keys can be used to assign a label to this components default UI.
+
+More details on how to configure accessibility labels can be viewed [here](/facets/accessibility)
+
+- `moreFiltersToggle` - Label applied to the toggle button when not expanded i.e. "Show more filters"
+- `lessFiltersToggle` - Label applied to the toggle button when expanded i.e. "Show less filters"
+- `toggleFacetButton` - Label applied to the top level facet element which triggers visibility of options.
+
 ### Example Configuration
 
 ```javascript
@@ -134,6 +148,13 @@ Multiple `FacetResults` components can be used within one `FacetWrapper`. This i
   facetRenderCount={4}
   visibleOptions="*"
   keepSelectedGroupActive={false}
+  text={{ toggle: "+ More Filters" }}
+  aria={{
+    moreFiltersToggle: "Show more filters",
+    lessFiltersToggle: "Show less filters",
+    toggleFacetButton:
+      "Expand {facet-group-name-display}, {facet-selected-count} option(s) currently selected",
+  }}
 >
   {/* Slot content */}
 </FacetResults>
@@ -156,10 +177,25 @@ This should consume the named slot `facet-list`
 
 A text object can be passed to add copy to parts of the default UI. The only copy required for this default UI is the `clear` key.
 
+#### aria
+
+An object can be passed to provide aria labels to elements. The following keys can be used to assign a label to this components default UI.
+
+More details on how to configure accessibility labels can be viewed [here](/facets/accessibility)
+
+- `clearFacetButton` - Label applied to the clear button within a facet group.
+
 ### Example Configuration
 
 ```javascript
-<FacetList slot="facet-list" open={false} text={{ clear: "Clear" }}>
+<FacetList
+  slot="facet-list"
+  open={false}
+  text={{ clear: "Clear" }}
+  aria={{
+    clearFacetButton: "Clear all options for {facet-group-name-display}",
+  }}
+>
   {/* slot content */}
 </FacetList>
 ```
@@ -181,10 +217,25 @@ This should consume the named slot `facet-range`
 
 A text object can be passed to add copy to parts of the default UI. The only copy required for this default UI is the `clear` key.
 
+#### aria
+
+An object can be passed to provide aria labels to elements. The following keys can be used to assign a label to this components default UI.
+
+More details on how to configure accessibility labels can be viewed [here](/facets/accessibility)
+
+- `clearFacetButton` - Label applied to the clear button within a facet group.
+
 ### Example Configuration
 
 ```javascript
-<FacetRange slot="facet-range" open={false} text={{ clear: "Clear" }}>
+<FacetRange
+  slot="facet-range"
+  open={false}
+  text={{ clear: "Clear" }}
+  aria={{
+    clearFacetButton: "Clear all options for {facet-group-name-display}",
+  }}
+>
   {/* slot content */}
 </FacetRange>
 ```
@@ -207,10 +258,27 @@ This should consume the named slot `facet-search`
 
 A text object can be passed to add copy to parts of the default UI. The only copy required for this default UI is the `clear` key.
 
+#### aria
+
+An object can be passed to provide aria labels to elements. The following keys can be used to assign a label to this components default UI.
+
+More details on how to configure accessibility labels can be viewed [here](/facets/accessibility)
+
+- `clearFacetButton` - Label applied to the clear button within a facet group.
+- `searchInput` - Label applied to the search input.
+
 ### Example Configuration
 
 ```javascript
-<FacetSearch slot="facet-search" open={false} text={{ clear: "Clear" }}>
+<FacetSearch
+  slot="facet-search"
+  open={false}
+  text={{ clear: "Clear" }}
+  aria={{
+    clearFacet: "Clear all for {facet-group-name-display}",
+    searchInput: "Search {facet-group-name-display} options",
+  }}
+>
   {/* slot content */}
 </FacetSearch>
 ```
@@ -236,6 +304,14 @@ A text object can be passed to add copy to parts of the default UI. The followin
 - • `currency`
 - • `submit`
 
+#### aria
+
+An object can be passed to provide aria labels to elements. The following keys can be used to assign a label to this components default UI.
+
+More details on how to configure accessibility labels can be viewed [here](/facets/accessibility)
+
+- `clearFacetButton` - Label applied to the clear button within a facet group.
+
 ### Example Configuration
 
 ```javascript
@@ -243,6 +319,9 @@ A text object can be passed to add copy to parts of the default UI. The followin
   slot="facet-slider"
   open={false}
   text={{ clear: "Clear", currency: "£", submit: "Apply" }}
+  aria={{
+    clearFacet: "Clear all for {facet-group-name-display}",
+  }}
 >
   {/* slot content */}
 </FacetSlider>
@@ -256,12 +335,28 @@ This component can be consumed by one of two named slots: `facet-tabs-start` or 
 
 #### text
 
-A text object can be passed to add copy to parts of the default UI. The only copy required for this default UI is the `clear` key.
+A text object can be passed to add copy to parts of the default UI. The only copy required for this components default UI is the `clear` key.
+
+#### aria
+
+An object can be passed to provide aria labels to elements. The following keys can be used to assign a label to this components default UI.
+
+More details on how to configure accessibility labels can be viewed [here](/facets/accessibility)
+
+- `clearOptions` - Label applied to each individual selected option.
+- `clearAll` - Label applied to the element to clear all selected options.
 
 ### Example Configuration
 
 ```javascript
-<FacetTabs slot="facet-tabs-end" text={{ clear: "Clear" }} />
+<FacetTabs
+  slot="facet-tabs-end"
+  text={{ clear: "Clear" }}
+  aria={{
+    clearOptions: "Clear selected option {facet-option-name-display}",
+    clearAll: "Clear all selected options",
+  }}
+/>
 ```
 
 ## Client Script
