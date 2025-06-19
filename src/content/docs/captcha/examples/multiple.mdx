@@ -1,0 +1,45 @@
+---
+title: "Multiple CAPTCHA Instances"
+order: 3
+description: How to implement multiple CAPTCHA widgets on the same page with independent state management.
+---
+# Multiple CAPTCHA Instances
+The CAPTCHA library supports multiple widget instances on the same page, each with independent state management and configuration. This is ideal for complex interfaces with multiple forms, such as login/signup pages, modal dialogs, or multi-step workflows.
+## How It Works
+
+Each CAPTCHA instance maintains its own:
+- **Widget ID mapping** - Tracks rendered widgets by unique identifiers
+- **Token storage** - Stores solved tokens independently
+- **Provider scripts** - Shared efficiently across instances (loaded once per provider)
+- **Configuration** - Each instance can use different providers or settings
+
+## Basic Multiple Instances
+
+```typescript
+import { Captcha } from '@thg-altitude/captcha';
+
+// Different providers for different forms
+const loginCaptcha = new Captcha({
+    provider: 'recaptcha',
+    siteKey: 'your-recaptcha-key'
+});
+
+const signupCaptcha = new Captcha({
+    provider: 'hcaptcha',
+    siteKey: 'your-hcaptcha-key'
+});
+
+// Render both with unique IDs
+await loginCaptcha.render('login-captcha-container', 'login-form');
+await signupCaptcha.render('signup-captcha-container', 'signup-form');
+
+// Handle each independently
+document.getElementById('login-btn').onclick = async () => {
+    const token = await loginCaptcha.getToken('login-form');
+    submitLoginForm(token);
+};
+
+document.getElementById('signup-btn').onclick = async () => {
+    const token = await signupCaptcha.getToken('signup-form');
+    submitSignupForm(token);
+};

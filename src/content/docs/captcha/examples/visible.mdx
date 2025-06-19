@@ -1,0 +1,116 @@
+---
+title: "Visible CAPTCHA"
+order: 1
+description: Visible CAPTCHA implementation examples.
+---
+
+# Visible CAPTCHA Examples
+
+Visible CAPTCHAs are rendered using the `render` method and execute automatically when a user interacts with them. For reCAPTCHA, set `invisible: false` in the constructor options.
+
+## Basic Implementation
+
+```typescript
+import { Captcha } from '@thg-altitude/captcha';
+
+const captcha = new Captcha({
+    provider: 'hcaptcha', // 'recaptcha' | 'hcaptcha' | 'turnstile'
+    siteKey: 'your-hcaptcha-site-key',
+    // invisible: false, // for reCAPTCHA only
+});
+
+await captcha.render('captcha-container', 'contact-form', {
+    size: 'normal', // 'normal' | 'compact'
+    onToken: (token) => {
+        console.log('CAPTCHA solved:', token);
+        // Submit your form with the token
+        submitForm(token);
+    }
+});
+```
+
+## Framework Integration Examples
+
+### React
+```typescript
+import { useEffect, useRef } from 'react';
+import { Captcha } from '@thg-altitude/captcha';
+
+function ContactForm() {
+    const captchaRef = useRef<HTMLDivElement>(null);
+    const captcha = useRef<Captcha>();
+
+    useEffect(() => {
+        captcha.current = new Captcha({
+            provider: 'hcaptcha',
+            siteKey: 'your-hcaptcha-site-key'
+        });
+
+        if (captchaRef.current) {
+            captcha.current.render(captchaRef.current, 'contact-form', {
+                onToken: handleCaptchaToken
+            });
+        }
+
+        return () => {
+            captcha.current?.reset('contact-form');
+        };
+    }, []);
+
+    const handleCaptchaToken = (token: string) => {
+        // Handle successful CAPTCHA verification
+        submitForm(token);
+    };
+
+    return (
+        <form>
+            {/* Your form fields */}
+            <div ref={captchaRef} id="captcha-container"></div>
+            <button type="submit">Submit</button>
+        </form>
+    );
+}
+```
+
+### Vue 3
+```vue
+<template>
+  <form @submit.prevent="handleSubmit">
+    <!-- Your form fields -->
+    <div ref="captchaContainer" id="captcha-container"></div>
+    <button type="submit">Submit</button>
+  </form>
+</template>
+
+<script setup lang="ts">
+import { ref, onMounted, onUnmounted } from 'vue';
+import { Captcha } from '@thg-altitude/captcha';
+
+const captchaContainer = ref<HTMLDivElement>();
+let captcha: Captcha;
+
+onMounted(async () => {
+    captcha = new Captcha({
+        provider: 'turnstile',
+        siteKey: 'your-turnstile-site-key'
+    });
+
+    if (captchaContainer.value) {
+        await captcha.render(captchaContainer.value, 'vue-form', {
+            onToken: (token) => {
+                console.log('CAPTCHA token:', token);
+                // Handle token submission
+            }
+        });
+    }
+});
+
+onUnmounted(() => {
+    captcha?.reset('vue-form');
+});
+
+const handleSubmit = () => {
+    // Form submission logic
+};
+</script>
+```

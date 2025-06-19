@@ -1,0 +1,120 @@
+---
+title: "Getting Started"
+order: 1
+description: Framework agnostic captcha abstractions for simplified integration.
+---
+
+# CAPTCHA Abstraction
+
+A framework-agnostic TypeScript library that provides a unified abstraction layer for multiple CAPTCHA providers. This package allows you to easily switch between Google reCAPTCHA, hCaptcha, and Cloudflare Turnstile without changing your application code.
+
+## Features
+
+- 🔄 **Framework Agnostic**: Works with any JavaScript framework or vanilla JavaScript
+- 🎯 **Multiple Providers**: Support for reCAPTCHA (v2), hCaptcha, and Turnstile
+- 🔧 **Unified API**: Single interface for all providers
+- 🚀 **TypeScript Support**: Full type safety and IntelliSense
+- 📦 **Lightweight**: Minimal dependencies, loads provider scripts on demand
+- 🎨 **Flexible Configuration**: Support for visible, invisible, and various sizing options
+- 🔒 **Multiple Instances**: Create multiple CAPTCHA instances with different configurations
+
+## Installation
+
+Install using npm:
+
+```bash
+npm install @thg-altitude/captcha
+```
+
+## Quick Start
+### Constructor Options
+
+```typescript
+interface CaptchaConfig {
+    provider: 'recaptcha' | 'hcaptcha' | 'turnstile';
+    siteKey: string;
+    invisible?: boolean; // For reCAPTCHA, automatically sets invisible mode
+}
+```
+### Usage
+```typescript
+import { Captcha } from '@thg-altitude/captcha';
+
+// Create a CAPTCHA instance
+const captcha = new Captcha({
+    provider: 'recaptcha', // 'recaptcha' | 'hcaptcha' | 'turnstile'
+    siteKey: 'your-site-key'
+});
+
+// Render and handle token
+await captcha.render('captcha-container', 'login-form', {
+    onToken: (token) => {
+        // Submit form with token
+        submitForm(token);
+    }
+});
+```
+
+## Provider Support
+
+### Google reCAPTCHA v2
+- ✅ Checkbox (normal/compact)
+- ✅ Invisible
+- ✅ Programmatic execution
+
+### hCaptcha
+- ✅ Checkbox (normal/compact)
+- ✅ Invisible
+- ✅ Programmatic execution
+
+### Cloudflare Turnstile
+- ✅ Managed (normal/compact/flexible)
+- ✅ Non-interactive
+- ✅ Invisible (dashboard configured)
+
+## Provider-Specific Notes
+
+### reCAPTCHA
+- Requires different site keys for visible vs invisible modes
+- Set `invisible: true` in config for invisible widgets
+- Supports `normal` and `compact` sizes for visible widgets
+
+### hCaptcha
+- Same site key works for both visible and invisible modes
+- Set `size: 'invisible'` in render options for invisible widgets
+- Supports `normal` and `compact` sizes
+
+### Turnstile
+- Widget behavior configured in Cloudflare dashboard
+- Supports `normal`, `compact`, and `flexible` sizes
+- No separate invisible mode configuration needed (this is handled in your turnstile dashboard)
+
+## Error Handling
+
+The library includes custom error classes for better error handling:
+
+```typescript
+import { 
+    CaptchaError, 
+    ScriptLoadError, 
+    TokenError, 
+    RenderError, 
+    ConfigurationError 
+} from '@thg-altitude/captcha';
+
+try {
+    await captcha.render('container', 'id');
+} catch (error) {
+    if (error instanceof ScriptLoadError) {
+        // Handle script loading failure
+    } else if (error instanceof RenderError) {
+        // Handle rendering failure
+    }
+}
+```
+
+## Browser Support
+
+- Modern browsers with ES2015+ support
+- Automatic script loading and cleanup
+- Works in both browser and server-side rendering environments (renders client-side only)
