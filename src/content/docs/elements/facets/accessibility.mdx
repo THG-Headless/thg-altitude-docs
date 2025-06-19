@@ -1,0 +1,35 @@
+---
+title: Accessibility
+---
+
+The Elements package includes significant built-in accessibility features, but requires developers to manually provide labels to support proper internationalization and translation requirements.
+
+Labels should be provided as props outlined in the [configuration](/facets/configuration) guide. Labels only need to be provided to one instance of a component. This means that if you have two UIs for different viewports, labels provided to one UI will be inherited by the other.
+
+The attribute `facet-aria` will be added to elements where aria labels are expected to be added, where each attribute will have a key associated to it. The key will be consumed by the value provided by the application.
+
+```javascript
+// Application
+<FacetTabs aria={{ clearAll: "Clear all selected options"}} />
+
+// Elements
+<button facet-aria="clearAll" aria-label="Clear all selected options">Clear all</button>
+```
+
+### Dynamic Injection
+
+There might be occasions where data should be used to aid in the description of the label, such as the display name of the facet group or the number of selected options within a facet group.
+
+The elements package supports placeholder injection leveraging the existing mapping layer the `facet-inject` attribute uses. See more on this [here](/docs/elements/facets/attributes).
+
+With this approach, you can create templated aria labels that dynamically update during client hydration, as demonstrated in the example below.
+
+```javascript
+// Application
+<FacetResults aria={{ toggleFacetButton: "Expand {facet-group-name-display}, {facet-selected-count} option(s) currently selected"}} />
+
+// Elements
+<button facet-aria="toggleFacetButton" aria-label="Expand Size, 2 option(s) currently selected">Size</button>
+```
+
+No additional setup is required when using the default UI, the elements package will automatically map valid placeholders to the respective value from the facet data.

@@ -1,138 +1,52 @@
 ---
 title: Slots
 ---
+
 import { Tabs, TabItem } from "@components/docs";
 import Preview from "@components/docs/preview.astro";
-import SortFacets from "@components/docs/facets/SortFacets.astro";
 
 ## Overview
 
-The Elements package uses slots to allow customization of text and translations within facets, as it does not include built-in i18n functions.
+The Elements package leverages slots to allow customisation on top of, or to replace the default UI.
 
-## Available Slots
+## FacetResults
 
-Each slot has a unique ID and can be customized per `FacetResults` instance:
+The `FacetResults` component is the most outer layer of the Facets UI you can modify. There are two options in order to modify the UI:
 
-- `elements-facets-filter-button` - Toggle filter visibility
-- `elements-facets-sort-start` - Sort button at start of facets
-- `elements-facets-sort-end` - Sort button after filters toggle
-- `elements-facets-clear` - Clear individual filters
-- `elements-facets-clear-all` - Clear all applied filters
-- `elements-facets-selected` - Selected filters label
-- `elements-facets-currency-symbol` - Currency symbol for price filters
-- `elements-facets-show-more` - Expand filters button text
-- `elements-facets-show-less` - Collapse filters button text
-- `elements-facets-apply` - Apply filters button text
-- `elements-facets-filter-title` - Filters section heading
+1. Consume the slot `elements-facets-results-container` to create a completely bespoke UI.
+2. Consumed additional named slots to modify aspects of the UI.
 
-## Basic Usage
+Each slot has a unique name which can be consumed by additional out-the-box components exported by the Elements package, or through custom markup:
 
-Define slots within your `FacetResults` component:
+- `<slot name="facet-tabs-start" />` UI for currently selected Facets, placed **before** facets in the DOM tree - An out-the-box UI component for this slot is exported as `FacetTabs`
+- `<slot name="facet-tabs-end" />` UI for currently selected Facets, placed **after** facets in the DOM - An out-the-box UI component for this slot is exported as `FacetTabs`
+- `<slot name="elements-facets-sort-start" />` UI for sort options **within** parent node of any facets
+- `<slot name="facet-button" />` UI for any additional content on the top level facet button i.e Selected counters
+- `<slot name="facet-list" />` UI for the facet group `SimpleFacet` - An out-the-box UI component for this slot is exported as `FacetList`
+- `<slot name="facet-range" />` UI for the facet group `RangedFacet` - An out-the-box UI component for this slot is exported as `FacetRange`
+- `<slot name="facet-slider" />` UI for the facet group `FacetSlider` - An out-the-box UI component for this slot is exported as `FacetSlider`
+- `<slot name="facet-search" />` UI for the facets where the facetName contains `_brand_` - An out-the-box UI component for this slot is exported as `FacetSearch`
+
+## UI Component slots
+
+When using the out-the-box UI components for the facet groups, additional named slots can be consumed to change or extend the display of these components. Adding additional markup **without** consuming a named slot will result in a completely custom UI.
+
+Below is a list of the named slots and the component these named slots are present in:
+
+- `<slot name="elements-facet-options-header" />` Additional UI can be added above the facet options. <br /> _Components: **All**_
+- `<slot name="elements-facets-option-list" />` The UI for the facet options can be overriden by consuming this slot. <br /> _Components: **FacetList**, **FacetRange**, **FacetSearch**_
+- `<slot name="elements-facets-slider" />` The UI for the slider can be overriden by consuming this slot. <br /> _Components: **FacetSlider**_
+- `<slot name="elements-facet-options-footer" />` Additional UI can be added below the facet options. <br /> _Components: **All**_
+- `<slot name="elements-facet-list-search" />` The UI for the search input can be overriden by consuming this slot. <br /> _Components: **FacetSearch**_
+
 ```astro
-<FacetResults id="desktop" facetPayload={validFacets}>
-    <span slot="elements-facets-filter-button">+ Filters</span>
-    <span slot="elements-facets-clear">Clear</span>
-    <span slot="elements-facets-clear-all">Clear All</span>
-    <span slot="elements-facets-selected">Selected</span>
-    <span slot="elements-facets-currency-symbol">£</span>
-    <span slot="elements-facets-show-more">Show More</span>
-    <span slot="elements-facets-show-less">Show Less</span>
-    <span slot="elements-facets-apply">Apply</span>
-    <span slot="elements-facets-filter-title">Facet Filters</span>
-</FacetResults>
-```
-## More/Less Filters Button
-Some slots may need to be updated on interactions from the user, one example is the More/Less Filters button. Here the when the button is clicked in the elements package
-a "facet-toggle" event is published. The storefront can subscribe to the channel "facet-toggle" and update the text inside of the button when the toggle is clicked:
-```javascript
-observer.subscribe("facet-toggle", (facetOpen) => {
-    const facetToggleSlot = customElement.querySelector(
-    "[data-slot='elements-facets-filter-button']"
-    );
-    facetToggleSlot.innerHTML = `<span>${facetOpen ? "+ Filters" : "- Filters"}</span>`;
-});
+<FacetList>
+    <p slot="elements-facet-options-header">This is custom markup</p>
+</FacetList>
 ```
 
-## Sort Button Options
-Though the sort button functionality is not included in the elements package, the package provides two slots for a sort button to give flexibility over its positioning. `elements-facets-sort-start` appears at the beginning of the facets, 
-whereas `elements-facets-sort-end` appears after the show more/less filters toggle.
-<div class="not-content">
-<Tabs>
-    <TabItem label="Preview">
-        <Preview>
-          <SortFacets/>
-        </Preview>
-    </TabItem>
-  <TabItem label="Code">
-    ```astro
-    <FacetWrapper
-    filterName={"facetFilters"}
-    options={{
-        endpoint: "/api/graphql",
-        pageType: "search",
-        query: "blue",
-        shippingDestination: "GB",
-        currency: "GBP",
-    }}
-    ariaLabels={{
-        facetsTitle: "Filters",
-        selectedOptions: "Selected options",
-        brandSearch: "brand search",
-        options: "options",
-        minPriceInput: "minimum price input",
-        maxPriceInput: "maximum price input",
-    }}
-    >
-    <div slot="facets-1">
-        <h3 class="font-bold">Slot Sort Start Hydrated</h3>
-        <FacetResults id="desktop" facetPayload={validFacets}>
-        <span slot="elements-facets-filter-button" class="whitespace-nowrap">+ Filters</span>
-        <span slot="elements-facets-clear">Clear</span>
-        <span slot="elements-facets-clear-all">Clear All</span>
-        <span slot="elements-facets-selected">Selected</span>
-        <span slot="elements-facets-currency-symbol">£</span>
-        <span slot="elements-facets-show-more">Show More</span>
-        <span slot="elements-facets-show-less">Show Less</span>
-        <span slot="elements-facets-apply">Apply</span>
-        <select class="bg-white border w-full h-full border-black font-semibold rounded-md" slot="elements-facets-sort-start">
-            <option value="" class="px-2">Sort</option>
-            <option value="price-low-high">Popularity</option>
-            <option value="price-low-high">Price: Low to High</option>
-            <option value="price-high-low">Price: High to Low</option>
-            <option value="newest">A - Z</option>
-            <option value="bestselling">Newest Arrivals</option>
-            <option value="rating">Percentage Discount</option>
-        </select>
-        </FacetResults>
-    </div>
+## Custom UI
 
-    <div class="mt-4" slot="facets-2">
-        <h3 class="font-bold">Slot Sort End Hydrated</h3>
-        <FacetResults
-        id="mobile"
-        facetPayload={validFacets}
-        >
-        <span slot="elements-facets-filter-button">+ Filters</span>
-        <span slot="elements-facets-clear">Clear</span>
-        <span slot="elements-facets-clear-all">Clear All</span>
-        <span slot="elements-facets-selected">Selected</span>
-        <span slot="elements-facets-currency-symbol">£</span>
-        <span slot="elements-facets-show-more">Show More</span>
-        <span slot="elements-facets-show-less">Show Less</span>
-        <span slot="elements-facets-apply">Apply</span>
-        <select class="bg-white border w-full border-black font-semibold h-full rounded-md" slot="elements-facets-sort-end">
-            <option value="" class="px-2">Sort</option>
-            <option value="price-low-high">Popularity</option>
-            <option value="price-low-high">Price: Low to High</option>
-            <option value="price-high-low">Price: High to Low</option>
-            <option value="newest">A - Z</option>
-            <option value="bestselling">Newest Arrivals</option>
-            <option value="rating">Percentage Discount</option>
-        </select>
-        </FacetResults>
-    </div>
-    </FacetWrapper>
-  ```
-    </TabItem>
-  </Tabs>
-</div>
+When creating a UI using custom markup, it is worth noting that the markup provided to the elements package is intended to be used as a template. Data [attributes](/docs/elements/facets/attributes) are used to inject and populate dynamic data to these templates.
+
+This means that the UI defined for a facet group will be the same UI for all instances of that same facet group. Before defining a custom UI or consuming named slots, it is recommended to consult the documentation on how attributes are used.

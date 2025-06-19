@@ -1,0 +1,127 @@
+---
+title: Attributes
+---
+
+import { Tabs, TabItem } from "@components/docs";
+import Preview from "@components/docs/preview.astro";
+
+The elements package uses templates that are snapshotted from the original server side DOM structure to maintain the original UI design throughout rehydration.
+
+These templates are the shell of what the UI should look like, but during the server render there is no awareness as to how many options for example, should be loaded within a facet group. Instead, data attributes are used to signal to the elements package where data should be injected.
+
+There are multiple custom facet attributes that signal different behaviour.
+
+### Injection
+
+The `facet-inject` attributes instructs the elements package that data should be injected in the **node** where the attribute is present.
+
+When defining additional UI through [slots](/docs/elements/facets/slots) or defining your own custom UI, data attributes will enable dynamic data to be injected without manual injection.
+
+```javascript
+<p facet-inject="facet-group-name-display" />
+```
+
+In the above snippet, the `facetHeader` of the facet group will be injected in the paragraph tag. Below is a list of all valid values that can be provided to this attribute.
+
+- `facet-option-name-display` The display name of a given option. I.e "Size 11"
+- `facet-option-count` The matched product count of this option
+- `facet-group-name-display` The name of the facet group. I.e "Size"
+- `facet-search-letter` The first letter uppercased of an option. This is useful for a search facet to section options by first letter.
+- `facet-active-selections-count` The number of active selections. If there are no selections, this will not inject.
+- `facet-selected-count` The number of active selections. If there are no selections, this will inject `0`.
+- `facet-selections` Injects the display name of selected options in a single facet group in a comma seperated string. I.e "Size 7, Size 8".
+
+### Triggers
+
+The `facet-trigger` attribute signals the package to bind event handlers to the node. The handlers associated are determined by the value of this attribute.
+
+- `options` Click event handler to add/remove this particular option. The attributes `facet-option-group-raw` and `facet-option-name-raw` should be present on this element to ensure query parameters are updated correctly.
+- `form` Submit event handler to be used with the slider facet. This will extract a min/max value from the form data. The attribute `facet-option-group-raw` should be present on this element.
+- `clear-section` Click event handler to remove all options from a facet group. The attribute `facet-option-group-raw` should be present on this element.
+- `clear-all` Click event handler that removes all selected options.
+
+```javascript
+<button facet-trigger="clear-section" facet-option-group-raw>
+  Clear
+</button>
+```
+
+### Data attributes
+
+The elements package attaches values to data attributes to provide context to utility functions, such as the `facet-trigger` bindings in the section above, when the options are hydrated.
+
+- `facet-option-group-raw` The raw name of the facet group will be added to the value of this attribute.
+- `facet-option-name-raw` The raw name of the option will be added to the value of this attribute.
+- `facet-search-letter` The first character of the options display name uppercased will be added to the value of this attribute.
+
+```javascript
+<input
+  type="checkbox"
+  value=""
+  name=""
+  facet-option-group-raw
+  facet-option-name-raw
+  facet-trigger="option"
+/>
+```
+
+### Transmitters and Receivers
+
+Transmitters and receivers enable toggling of an "active" state between nodes that share the same value. Transmitters will have an event listner attached, which toggles an `active` class on the receivers to enable styling to take effect such as toggling `display: none;` vs `display: block;` for example.
+
+The default facets UI configures two types of transmitters and receivers; `options` and `toggle`
+
+- `options` This value should be used on the node that triggers your options to become active. The receiver should be on the node that your options are contained within.
+- `toggle` This value should be used on the node that shows more/less facets. The receiver should be the most outer node of your individual facet group.
+
+```javascript
+<elements-facet-results>
+  <elements-facet facet-receiver="toggle">
+    <button facet-transmitter="options">Size</button>
+    <div facet-receiver="options">...</div>
+  </elements-facet>
+  <button facet-transmitter="toggle">Show More</button>
+</elements-facet-results>
+```
+
+### Bindings
+
+There might be a UI where there are two input options and the value needs to be bound to one another. Providing the same value to the `facet-binding` attribute will link the values of these two input fields.
+
+A good example of where this is used, is in the `FacetSlider` component where the input types, `range` and `number` are bound.
+
+```javascript
+
+<input
+  type="range"
+  facet-slider-min
+  facet-binding="min"
+  value=""
+  name="min"
+  min=""
+  max=""
+/>
+<input
+  type="number"
+  facet-slider-min
+  facet-binding="min"
+  value=""
+  min=""
+  max=""
+/>
+```
+
+### Utility attributes
+
+There are additional utility attributes that aid the package with injecting DOM nodes and UI visibility behaviour.
+
+- `facet-template-group` Marks this node and all of its children as a template. The value of this attributes should be one of the following: `SimpleFacet`, `RangedFacet`, `SearchFacet` or `SliderFacet`
+- `facet-template-hidden` Will keep the element in the DOM for the purpose of template snapshotting, but enforces `display: none;` so the element is not visible.
+- `facet-tabs` Used to query the DOM for the facet tabs template and injection.
+- `facet-options` The most outer container of where the facet template should be injected.
+- `facet-options-wrapper` The container where individual options should be injected into.
+- `facet-options-section` The template for each option.
+- `facet-slider-min` The input node(s) for miniumum values. If more than one input is used for the mininum value, use the `facet-binding` attribute.
+- `facet-slider-max` The input node(s) for maximum values. If more than one input is used for the maximum value, use the `facet-binding` attribute.
+- `facet-template-search` Used to query the DOM for the template of the search letter that is injected.
+- `facet-search` The input node for searching.

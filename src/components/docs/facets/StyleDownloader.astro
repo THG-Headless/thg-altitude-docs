@@ -1,0 +1,31 @@
+---
+import { facetVerticalStyles } from "./styles.js";
+
+function encodeBase64(str: string) {
+  const bytes = new TextEncoder().encode(str);
+  const binString = Array.from(bytes)
+    .map((byte) => String.fromCharCode(byte))
+    .join("");
+  return btoa(binString);
+}
+
+const cssBase64 = encodeBase64(facetVerticalStyles);
+const dataUri = `data:text/css;base64,${cssBase64}`;
+---
+
+<div
+  class="download-container inline-block rounded-md border border-stone-700 px-6 py-2 text-center text-white transition duration-300 hover:bg-white/5 hover:border-white/40"
+>
+  <a href={dataUri} download="facets-vertical-layout.css" class="flex gap-2">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      fill="#FFFFFF"
+      viewBox="0 0 256 256"
+      ><path
+        d="M224,144v64a8,8,0,0,1-8,8H40a8,8,0,0,1-8-8V144a8,8,0,0,1,16,0v56H208V144a8,8,0,0,1,16,0Zm-101.66,5.66a8,8,0,0,0,11.32,0l40-40a8,8,0,0,0-11.32-11.32L136,124.69V32a8,8,0,0,0-16,0v92.69L93.66,98.34a8,8,0,0,0-11.32,11.32Z"
+      ></path></svg
+    >Download Styles</a
+  >
+</div>

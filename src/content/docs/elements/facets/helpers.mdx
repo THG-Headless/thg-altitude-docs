@@ -1,0 +1,72 @@
+---
+title: "Helper Functions"
+---
+
+# Helper Functions
+
+Helper functions are attached to the facet class on the window object: `window.elements.facets`.
+
+When using the default UI, the custom HTML elements leverage these helper functions to hydrate and bind attributes on the templates.
+
+Leveraging these helper functions will streamline custom UI setup, abstracting functionality into simple function calls.
+
+## Core Functions
+
+### hydrateOptionTemplate
+
+- • **Facet Element** - `HTMLElement`
+  - The `facet-element` node
+- • **Template** - `HTMLElement`
+  - The template to be injected
+- • **Facet Data** - `Object`
+  - The data for this particular facet
+- • **Current Selections** - `Array`
+  - Any current selected options
+- • **Keep Active** - `Boolean`
+  - When true, applies the active class to the transmitter to keep this facet group active
+
+Hydrates the template into the facet element node, mapping any injectors or attributes before the template is appended.
+
+### mapOptions
+
+- • **Facet Element** - `HTMLElement`
+  - The `facet-element` node
+- • **Facet Data** - `Object`
+  - The data for this particular facet
+- • **Current Selections** - `Array`
+  - Any current selected options
+- • **Facet Type** - `String`
+  - The type of facet (e.g., `RangedFacet`)
+- • **Options to render** - `Number | "*"`
+  - How many options to render initially. Use `*` to show all options.
+
+Maps and injects data for list-based facet types. Supports `ListFacet`, `RangedFacet`, and `SearchFacet` types.
+
+### mapSlider
+
+- • **Facet Element** - `HTMLElement`
+  - The `facet-element` node
+- • **Facet Data** - `Object`
+  - The data for this particular facet
+- • **Current Selections** - `Array`
+  - Any current selected options
+
+Maps inputs and binds event listeners for slider-based facets. Supports the `SliderFacet` type.
+
+### mapTabs
+
+- • **Tabs Element** - `HTMLElement`
+  - The node with the attribute `facet-tabs`
+- • **Current Selections** - `Array`
+  - Any current selected options
+
+Maps attributes and injectors for the tabs component based on current selections. If there are no current selections, the attribute `facet-template-hidden` will be applied to hide this element.
+
+### toggleOptions
+
+- • **Facet Element** - `HTMLElement`
+  - The `facet-element` node where the class is to be toggled
+- • **Event** - `Event`
+  - The event object
+
+Toggles the `active` class on the specified facet element.

@@ -1,7 +1,15 @@
 ---
-import '@styles/elements/facets.css';
+import "@styles/elements/facets.css";
 import facetData from "@components/docs/facets/facetData.json";
-import { FacetWrapper, FacetResults } from "@thg-altitude/elements/astro";
+import {
+  FacetWrapper,
+  FacetResults,
+  FacetList,
+  FacetRange,
+  FacetSearch,
+  FacetSlider,
+  FacetTabs,
+} from "@thg-altitude/elements/astro";
 import { validateFacets } from "@thg-altitude/elements/facets/helper";
 
 const validFacets = validateFacets(facetData?.productList?.facets);
@@ -10,7 +18,7 @@ const numberOfProducts = facetData?.productList?.total;
 
 <div class="no-prose">
   <FacetWrapper
-    filterName={"facetFilters"}
+    filterName="facetFilters"
     options={{
       endpoint: "/api/graphql",
       pageType: "search",
@@ -18,29 +26,58 @@ const numberOfProducts = facetData?.productList?.total;
       shippingDestination: "GB",
       currency: "GBP",
     }}
-    ariaLabels={{
-      facetsTitle: "Filters",
-      selectedOptions: "Selected options",
-      brandSearch: "brand search",
-      options: "options",
-      minPriceInput: "minimum price input",
-      maxPriceInput: "maximum price input",
-    }}
+    currencySymbol="£"
   >
-    <div class="xl:block hidden" slot="facets-1">
-      <FacetResults id="desktop" facetPayload={validFacets}>
-        <span slot="elements-facets-filter-button" class="whitespace-nowrap">+ Filters</span>
-        <span slot="elements-facets-clear">Clear</span>
-        <span slot="elements-facets-clear-all">Clear All</span>
-        <span slot="elements-facets-selected">Selected</span>
-        <span slot="elements-facets-currency-symbol">£</span>
-        <span slot="elements-facets-show-more">Show More</span>
-        <span slot="elements-facets-show-less">Show Less</span>
-        <span slot="elements-facets-apply">Apply</span>
+    <div class="xl:block hidden">
+      <FacetResults
+        id="desktop"
+        facetPayload={validFacets}
+        hydrateOptions="visible"
+        singleActiveFacet="true"
+        facetRenderCount={5}
+        visibleOptions="*"
+        text={{
+          toggle: "+ Filters",
+        }}
+      >
+        <FacetList slot="facet-list" text={{ clear: "Clear" }}>
+          <div slot="elements-facet-options-header">
+            <p>
+              <span facet-inject="facet-selected-count"></span>{" "}
+              Selected
+            </p>
+            <p facet-inject="facet-selections"></p>
+          </div>
+        </FacetList>
+        <FacetRange slot="facet-range" text={{ clear: "Clear" }}>
+          <div slot="elements-facet-options-header">
+            <p>
+              <span facet-inject="facet-selected-count"></span>{" "}
+              Selected
+            </p>
+          </div>
+        </FacetRange>
+        <FacetSlider
+          slot="facet-slider"
+          text={{
+            clear: "Clear",
+            currency: "£",
+            apply: "Apply",
+          }}
+        />
+        <FacetSearch slot="facet-search" text={{ clear: "Clear" }}>
+          <div slot="elements-facet-options-header">
+            <p>
+              <span facet-inject="facet-selected-count"></span>{" "}
+              Selected
+            </p>
+          </div>
+        </FacetSearch>
+        <FacetTabs slot="facet-tabs-end" text={{ clear: "Clear All" }} />
       </FacetResults>
     </div>
 
-    <div class="xl:hidden" slot="facets-2">
+    <div class="xl:hidden">
       <button
         id="mobile-facet-trigger"
         class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md mt-2"
@@ -63,13 +100,67 @@ const numberOfProducts = facetData?.productList?.total;
           </form>
           <FacetResults
             id="mobile"
-            deferHydration={true}
             facetPayload={validFacets}
+            keepSelectedGroupActive={false}
+            singleActiveFacet={false}
           >
-            <span slot="elements-facets-currency-symbol">£</span>
-            <span slot="elements-facets-show-more">Show More</span>
-            <span slot="elements-facets-show-less">Show Less</span>
-            <span slot="elements-facets-apply">Apply</span>
+            <FacetList slot="facet-list" text={{ clear: "Clear" }}>
+              <div
+                slot="elements-facet-options-header"
+                class="flex w-full flex-col gap-2"
+              >
+                <h3
+                  class="bold flex border-b pb-2 text-lg"
+                  facet-inject="facet-group-name-display"
+                >
+                </h3>
+              </div>
+            </FacetList>
+            <FacetRange slot="facet-range" text={{ clear: "Clear" }}>
+              <div
+                slot="elements-facet-options-header"
+                class="flex w-full flex-col gap-2"
+              >
+                <h3
+                  class="bold flex border-b pb-2 text-lg"
+                  facet-inject="facet-group-name-display"
+                >
+                </h3>
+              </div>
+            </FacetRange>
+            <FacetSlider
+              slot="facet-slider"
+              text={{
+                clear: "Clear",
+                currency: "£",
+                apply: "Apply",
+              }}
+            >
+              <div
+                slot="elements-facet-options-header"
+                class="flex w-full flex-col gap-2"
+              >
+                <h3
+                  class="bold flex border-b pb-2 text-lg"
+                  facet-inject="facet-group-name-display"
+                >
+                </h3>
+              </div>
+            </FacetSlider>
+            <FacetSearch slot="facet-search" text={{ clear: "Clear" }}>
+              <div
+                slot="elements-facet-options-header"
+                class="flex w-full flex-col gap-2"
+              >
+                <h3
+                  class="bold flex border-b pb-2 text-lg"
+                  facet-inject="facet-group-name-display"
+                >
+                </h3>
+              </div>
+            </FacetSearch>
+            <FacetTabs slot="facet-tabs-start" text={{ clear: "Clear All" }} />
+            <span slot="facet-button" facet-inject="facet-selections"></span>
           </FacetResults>
           <form
             method="dialog"
@@ -93,72 +184,38 @@ const numberOfProducts = facetData?.productList?.total;
 </div>
 
 <script>
-  import { formatQueryString } from "@thg-altitude/elements/facets/helper";
   class ElementsFacetWrapper extends HTMLElement {
     constructor() {
       super();
+      this.extractSSRContext = this.extractSSRContext.bind(this);
     }
+
     async connectedCallback() {
-      window.addEventListener("elements-facet-wrapper", extractSSRContext);
-      const customElement = this;
+      window.addEventListener("elements-facet-wrapper", this.extractSSRContext);
+    }
 
-      async function extractSSRContext() {
-        const observer = window.elements.facets.observer;
-        observer.subscribe("refresh-product-list", async () => {
-          const params = new URLSearchParams(window.location.search);
-          const facetSelectionsArray =
-            params.get("facetFilters")?.split("|") ?? [];
-          const formattedFacetSelections =
-            formatQueryString(facetSelectionsArray);
-          const populatedFacetSelections = formattedFacetSelections.filter(
-            (facet) => facet.selections && facet.selections.length > 0
-          );
-
-          const url = new URL(window.location.href);
-          const searchQuery = url.searchParams.get("q") || "";
-
-          const data = await clientFetch("ProductListSearch", {
-            currency: "GBP",
-            limit: 30,
-            offset: 0,
-            sort: "RELEVANCE",
-            query: searchQuery,
-            shippingDestination: "GB",
-            facets: populatedFacetSelections,
-          });
-          const productData = data.data.search.productList;
-          updateViewProductsButton(productData.total);
-        });
-        observer.subscribe("facet-toggle", (facetOpen) => {
-          const facetToggleSlot = customElement.querySelector(
-            "[data-slot='elements-facets-filter-button']"
-          );
-          facetToggleSlot.innerHTML = `<span>${facetOpen ? "+ Filters" : "- Filters"}</span>`;
-        });
-        bindMobileFacetTrigger();
+    toggleFacet(facetOpen: boolean) {
+      const facetToggleSlot = this.querySelector(
+        ".elements-facets-more-filters-toggle"
+      );
+      if (facetToggleSlot) {
+        facetToggleSlot.innerHTML = `${!facetOpen ? "+ Filters" : "- Filters"}`;
       }
+    }
+
+    async extractSSRContext() {
+      window.removeEventListener(
+        "elements-facet-wrapper",
+        this.extractSSRContext
+      );
+      const observer = window.elements.facets.observer;
+
+      observer.subscribe("facet-toggle", (facetOpen: boolean) => {
+        this.toggleFacet(facetOpen);
+      });
     }
   }
 
   customElements.get("elements-facet-wrapper") ||
     customElements.define("elements-facet-wrapper", ElementsFacetWrapper);
-
-  function bindMobileFacetTrigger() {
-    const mobileFacetTrigger = document.getElementById("mobile-facet-trigger");
-
-    mobileFacetTrigger.addEventListener("click", () => {
-      window.elements.facets.hydrate("mobile");
-    });
-  }
-
-  function updateViewProductsButton(numberOfProducts) {
-    const button = document.getElementById("view-products-button");
-    if (button) {
-      if (numberOfProducts > 1) {
-        button.innerText = `View ${numberOfProducts} Products`;
-      } else {
-        button.innerText = `View ${numberOfProducts} Product`;
-      }
-    }
-  }
 </script>
