@@ -131,7 +131,7 @@ A text object can be passed to add copy to parts of the default UI. The only cop
 
 An object can be passed to provide aria labels to elements. The following keys can be used to assign a label to this components default UI.
 
-More details on how to configure accessibility labels can be viewed [here](/facets/accessibility)
+More details on how to configure accessibility labels can be viewed [here](/docs/elements/facets/accessibility)
 
 - `moreFiltersToggle` - Label applied to the toggle button when not expanded i.e. "Show more filters"
 - `lessFiltersToggle` - Label applied to the toggle button when expanded i.e. "Show less filters"
@@ -171,7 +171,7 @@ This should consume the named slot `facet-list`
 - • **Type:** `Boolean`
 - • **Required:** No
 - • **Default:** `false`
-- Sets the options to be active when first hydrated. If `true` is set, it is advised to set the `hydrateOptions="all"` prop in `FacetResults` to ensure the template is updated. Named [slots](/facets/slots) can be used to configure loading states to minimise CLS.
+- Sets the options to be active when first hydrated. If `true` is set, it is advised to set the `hydrateOptions="all"` prop in `FacetResults` to ensure the template is updated. Named [slots](/docs/elements/facets/slots) can be used to configure loading states to minimise CLS.
 
 #### text
 
@@ -181,7 +181,7 @@ A text object can be passed to add copy to parts of the default UI. The only cop
 
 An object can be passed to provide aria labels to elements. The following keys can be used to assign a label to this components default UI.
 
-More details on how to configure accessibility labels can be viewed [here](/facets/accessibility)
+More details on how to configure accessibility labels can be viewed [here](/docs/elements/facets/accessibility)
 
 - `clearFacetButton` - Label applied to the clear button within a facet group.
 
@@ -211,7 +211,7 @@ This should consume the named slot `facet-range`
 - • **Type:** `Boolean`
 - • **Required:** No
 - • **Default:** `false`
-- Sets the options to be active when first hydrated. If `true` is set, it is advised to set the `hydrateOptions="all"` prop in `FacetResults` to ensure the template is updated. Named [slots](/facets/slots) can be used to configure loading states to minimise CLS.
+- Sets the options to be active when first hydrated. If `true` is set, it is advised to set the `hydrateOptions="all"` prop in `FacetResults` to ensure the template is updated. Named [slots](/docs/elements/facets/slots) can be used to configure loading states to minimise CLS.
 
 #### text
 
@@ -221,7 +221,7 @@ A text object can be passed to add copy to parts of the default UI. The only cop
 
 An object can be passed to provide aria labels to elements. The following keys can be used to assign a label to this components default UI.
 
-More details on how to configure accessibility labels can be viewed [here](/facets/accessibility)
+More details on how to configure accessibility labels can be viewed [here](/docs/elements/facets/accessibility)
 
 - `clearFacetButton` - Label applied to the clear button within a facet group.
 
@@ -252,7 +252,7 @@ This should consume the named slot `facet-search`
 - • **Type:** `Boolean`
 - • **Required:** No
 - • **Default:** `false`
-- Sets the options to be active when first hydrated. If `true` is set, it is advised to set the `hydrateOptions="all"` prop in `FacetResults` to ensure the template is updated. Named [slots](/facets/slots) can be used to configure loading states to minimise CLS.
+- Sets the options to be active when first hydrated. If `true` is set, it is advised to set the `hydrateOptions="all"` prop in `FacetResults` to ensure the template is updated. Named [slots](/docs/elements/facets/slots) can be used to configure loading states to minimise CLS.
 
 #### text
 
@@ -262,7 +262,7 @@ A text object can be passed to add copy to parts of the default UI. The only cop
 
 An object can be passed to provide aria labels to elements. The following keys can be used to assign a label to this components default UI.
 
-More details on how to configure accessibility labels can be viewed [here](/facets/accessibility)
+More details on how to configure accessibility labels can be viewed [here](/docs/elements/facets/accessibility)
 
 - `clearFacetButton` - Label applied to the clear button within a facet group.
 - `searchInput` - Label applied to the search input.
@@ -294,7 +294,7 @@ This should consume the named slot `facet-slider`
 - • **Type:** `Boolean`
 - • **Required:** No
 - • **Default:** `false`
-- Sets the options to be active when first hydrated. If `true` is set, it is advised to set the `hydrateOptions="all"` prop in `FacetResults` to ensure the template is updated. Named [slots](/facets/slots) can be used to configure loading states to minimise CLS.
+- Sets the options to be active when first hydrated. If `true` is set, it is advised to set the `hydrateOptions="all"` prop in `FacetResults` to ensure the template is updated. Named [slots](/docs/elements/facets/slots) can be used to configure loading states to minimise CLS.
 
 #### text
 
@@ -308,7 +308,7 @@ A text object can be passed to add copy to parts of the default UI. The followin
 
 An object can be passed to provide aria labels to elements. The following keys can be used to assign a label to this components default UI.
 
-More details on how to configure accessibility labels can be viewed [here](/facets/accessibility)
+More details on how to configure accessibility labels can be viewed [here](/docs/elements/facets/accessibility)
 
 - `clearFacetButton` - Label applied to the clear button within a facet group.
 
@@ -341,7 +341,7 @@ A text object can be passed to add copy to parts of the default UI. The only cop
 
 An object can be passed to provide aria labels to elements. The following keys can be used to assign a label to this components default UI.
 
-More details on how to configure accessibility labels can be viewed [here](/facets/accessibility)
+More details on how to configure accessibility labels can be viewed [here](/docs/elements/facets/accessibility)
 
 - `clearOptions` - Label applied to each individual selected option.
 - `clearAll` - Label applied to the element to clear all selected options.
@@ -383,7 +383,7 @@ customElements.get("elements-facet-wrapper") ||
 
 When notable events occur, the elements package will publish these events on different channels. This enables an application to subscribe to these channels and run any neccessary updates i.e refreshing a product list.
 
-The PubSub instance is contained with the facets class on the window object (`window.elements.facets`). The elements package will initialise this class upon setup and emit a custom event which will enable applications to access this class an the observer, as well as [helper functions](/facets/functions).
+The PubSub instance is contained with the facets class on the window object (`window.elements.facets`). The elements package will initialise this class upon setup and emit a custom event which will enable applications to access this class an the observer, as well as [helper functions](/docs/elements/facets/functions).
 
 There are three channels intended for applications to subscribe to:
 
