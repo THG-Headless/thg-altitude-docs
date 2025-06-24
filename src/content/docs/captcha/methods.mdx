@@ -8,6 +8,10 @@ description: Methods provided by CAPTCHA package.
 
 #### `render(container, id, options?)`
 Renders a CAPTCHA widget in the specified container.
+This includes three callback functions:
+1. **onToken**: Called when the CAPTCHA is successfully solved and a token is generated
+2. **onError**: Called when the CAPTCHA encounters an error during loading or execution
+3. **onExpired**: Called when a previously generated token has expired and needs to be refreshed
 
 ```typescript
 await captcha.render(
@@ -16,6 +20,8 @@ await captcha.render(
     {
         size?: 'normal' | 'compact' | 'invisible' | 'flexible'; // flexible only for Turnstile
         onToken?: (token: string) => void;
+        onError?: () => void;
+        onExpired?: () => void;
     }
 );
 ```

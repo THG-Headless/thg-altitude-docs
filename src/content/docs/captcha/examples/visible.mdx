@@ -25,6 +25,16 @@ await captcha.render('captcha-container', 'contact-form', {
         console.log('CAPTCHA solved:', token);
         // Submit your form with the token
         submitForm(token);
+    },
+    onError: () => {
+        console.log('CAPTCHA error occurred');
+        // Handle CAPTCHA error - maybe show error message to user
+        showErrorMessage('Security verification failed. Please try again.');
+    },
+    onExpired: () => {
+        console.log('CAPTCHA token expired');
+        // Handle token expiration - user needs to solve CAPTCHA again
+        showMessage('Security verification expired. Please complete it again.');
     }
 });
 ```
@@ -33,12 +43,14 @@ await captcha.render('captcha-container', 'contact-form', {
 
 ### React
 ```typescript
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Captcha } from '@thg-altitude/captcha';
 
 function ContactForm() {
     const captchaRef = useRef<HTMLDivElement>(null);
     const captcha = useRef<Captcha>();
+    const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+    const [error, setError] = useState<string>('');
 
     useEffect(() => {
         captcha.current = new Captcha({
@@ -48,7 +60,9 @@ function ContactForm() {
 
         if (captchaRef.current) {
             captcha.current.render(captchaRef.current, 'contact-form', {
-                onToken: handleCaptchaToken
+                onToken: handleCaptchaToken,
+                onError: handleCaptchaError,
+                onExpired: handleCaptchaExpired
             });
         }
 
@@ -58,17 +72,71 @@ function ContactForm() {
     }, []);
 
     const handleCaptchaToken = (token: string) => {
-        // Handle successful CAPTCHA verification
-        submitForm(token);
+        setCaptchaToken(token);
+        setError(''); // Clear any previous errors
+    };
+
+    const handleCaptchaError = () => {
+        setCaptchaToken(null);
+        setError('Security verification failed. Please try again.');
+    };
+
+    const handleCaptchaExpired = () => {
+        setCaptchaToken(null);
+        setError('Security verification expired. Please complete it again.');
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        
+        if (!captchaToken) {
+            setError('Please complete the security verification.');
+            return;
+        }
+
+        try {
+            await submitForm();
+            // Reset form and CAPTCHA on success
+            captcha.current?.reset('contact-form');
+            setCaptchaToken(null);
+        } catch (error) {
+            setError('Form submission failed. Please try again.');
+        }
     };
 
     return (
-        <form>
-            {/* Your form fields */}
+        <form onSubmit={handleSubmit}>
+            <input type="email" placeholder="Email" required />
+            <textarea placeholder="Message" required />
+            
+            {error && <div className="error-message">{error}</div>}
+            
             <div ref={captchaRef} id="captcha-container"></div>
-            <button type="submit">Submit</button>
+            
+            <button type="submit" disabled={!captchaToken}>
+                Submit
+            </button>
         </form>
     );
+}
+
+async function submitForm(token: string) {
+    const headers = {
+                'X-Captcha-Type': headerType,
+                'X-Captcha-Response': captchaToken
+            };
+
+    const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers,
+        body: data
+    });
+    
+    if (!response.ok) {
+        throw new Error('Failed to submit form');
+    }
+    
+    return response.json();
 }
 ```
 
@@ -76,9 +144,14 @@ function ContactForm() {
 ```vue
 <template>
   <form @submit.prevent="handleSubmit">
-    <!-- Your form fields -->
+    <input v-model="email" type="email" placeholder="Email" required />
+    <textarea v-model="message" placeholder="Message" required />
+    
+    <div v-if="error" class="error-message">{{ error }}</div>
+    
     <div ref="captchaContainer" id="captcha-container"></div>
-    <button type="submit">Submit</button>
+    
+    <button type="submit" :disabled="!captchaToken">Submit</button>
   </form>
 </template>
 
@@ -87,6 +160,10 @@ import { ref, onMounted, onUnmounted } from 'vue';
 import { Captcha } from '@thg-altitude/captcha';
 
 const captchaContainer = ref<HTMLDivElement>();
+const captchaToken = ref<string | null>(null);
+const error = ref<string>('');
+const email = ref('');
+const message = ref('');
 let captcha: Captcha;
 
 onMounted(async () => {
@@ -97,10 +174,9 @@ onMounted(async () => {
 
     if (captchaContainer.value) {
         await captcha.render(captchaContainer.value, 'vue-form', {
-            onToken: (token) => {
-                console.log('CAPTCHA token:', token);
-                // Handle token submission
-            }
+            onToken: handleCaptchaToken,
+            onError: handleCaptchaError,
+            onExpired: handleCaptchaExpired
         });
     }
 });
@@ -109,8 +185,83 @@ onUnmounted(() => {
     captcha?.reset('vue-form');
 });
 
-const handleSubmit = () => {
-    // Form submission logic
+const handleCaptchaToken = (token: string) => {
+    captchaToken.value = token;
+    error.value = ''; // Clear any previous errors
 };
+
+const handleCaptchaError = () => {
+    captchaToken.value = null;
+    error.value = 'Security verification failed. Please try again.';
+};
+
+const handleCaptchaExpired = () => {
+    captchaToken.value = null;
+    error.value = 'Security verification expired. Please complete it again.';
+};
+
+const handleSubmit = async () => {
+    if (!captchaToken.value) {
+        error.value = 'Please complete the security verification.';
+        return;
+    }
+
+    try {
+        await submitForm(captchaToken.value);
+        
+        // Reset form and CAPTCHA on success
+        email.value = '';
+        message.value = '';
+        captcha.reset('vue-form');
+        captchaToken.value = null;
+                
+    } catch (err) {
+        error.value = 'Form submission failed. Please try again.';
+        console.error('Form submission error:', err);
+    }
+};
+
+async function submitForm(token: string) {
+    const headers = {
+                'X-Captcha-Type': headerType,
+                'X-Captcha-Response': captchaToken
+            };
+
+    const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers,
+        body: data
+    });
+    
+    if (!response.ok) {
+        throw new Error('Failed to submit form');
+    }
+    
+    return response.json();
+}
 </script>
+```
+
+## Best Practices for Visible CAPTCHAs
+
+### Error Handling
+Always provide user feedback when CAPTCHA operations fail:
+
+```typescript
+const captchaOptions = {
+    onToken: (token: string) => {
+        // Enable form submission
+        enableSubmitButton();
+    },
+    onError: () => {
+        // Show user-friendly error message
+        showMessage('Security verification failed. Please refresh the page and try again.');
+        disableSubmitButton();
+    },
+    onExpired: () => {
+        // Prompt user to solve CAPTCHA again
+        showMessage('Security verification expired. Please solve the CAPTCHA again.');
+        disableSubmitButton();
+    }
+};
 ```
