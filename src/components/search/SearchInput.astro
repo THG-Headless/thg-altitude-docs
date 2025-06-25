@@ -1,0 +1,509 @@
+---
+interface Props {
+  productId: string;
+  versionId: string;
+  className?: string;
+}
+
+const { productId, versionId, className = '' } = Astro.props;
+---
+
+<div class={`search-input-container relative ${className}`}>
+  <div class="relative">
+    <input
+      id="docs-search"
+      type="text"
+      placeholder="Search documentation..."
+      class="search-input w-full pl-10 pr-16 py-2 bg-neutral-900 border border-neutral-700 rounded-md text-neutral-100 text-sm placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+      data-product={productId}
+      data-version={versionId}
+      autocomplete="off"
+      spellcheck="false"
+    />
+    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+      <svg class="h-5 w-5 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+      </svg>
+    </div>
+    <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+      <kbd class="hidden md:inline-flex items-center px-2 py-1 text-xs text-neutral-400 bg-neutral-800 rounded border border-neutral-600">
+        ⌘K
+      </kbd>
+    </div>
+  </div>
+  
+  <!-- Search Results Modal -->
+  <div 
+    id="search-modal" 
+    class="search-modal fixed inset-0 z-50 hidden"
+    data-product={productId}
+    data-version={versionId}
+  >
+    <div class="search-backdrop fixed inset-0 bg-black/50 backdrop-blur-sm"></div>
+    <div class="search-dialog relative flex min-h-full items-start justify-center pt-16 px-4">
+      <div class="search-panel relative w-full max-w-2xl bg-neutral-900 rounded-lg shadow-xl border border-neutral-700 max-h-96 overflow-hidden">
+        <!-- Search Input in Modal -->
+        <div class="relative border-b border-neutral-700">
+          <input
+            id="modal-search-input"
+            type="text"
+            placeholder="Search documentation..."
+            class="w-full pl-12 pr-4 py-4 bg-transparent text-neutral-100 text-lg placeholder-neutral-400 focus:outline-none"
+            autocomplete="off"
+            spellcheck="false"
+          />
+          <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+            <svg class="h-6 w-6 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+          </div>
+        </div>
+        
+        <!-- Search Scope Controls -->
+        <div class="px-4 py-3 border-b border-neutral-700 bg-neutral-800/50">
+          <div class="flex items-center justify-between text-xs">
+            <span id="search-scope-label" class="text-neutral-400">Searching in current version</span>
+            <div class="flex items-center space-x-3">
+              <label class="flex items-center cursor-pointer">
+                <input 
+                  type="checkbox" 
+                  id="search-all-products"
+                  class="sr-only"
+                />
+                <div class="toggle-switch relative w-8 h-4 bg-neutral-600 rounded-full transition-colors">
+                  <div class="toggle-dot absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform"></div>
+                </div>
+                <span class="ml-2 text-neutral-300">All docs</span>
+              </label>
+              <label class="flex items-center cursor-pointer">
+                <input 
+                  type="checkbox" 
+                  id="search-all-versions"
+                  class="sr-only"
+                />
+                <div class="toggle-switch relative w-8 h-4 bg-neutral-600 rounded-full transition-colors">
+                  <div class="toggle-dot absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform"></div>
+                </div>
+                <span class="ml-2 text-neutral-300">All versions</span>
+              </label>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Search Results -->
+        <div id="search-results" class="search-results max-h-80 overflow-y-auto p-2">
+          <div class="search-empty-state text-center py-8 text-neutral-400">
+            <svg class="mx-auto h-12 w-12 mb-4 text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+            <p>Start typing to search documentation</p>
+          </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="border-t border-neutral-700 px-4 py-3 text-xs text-neutral-400 flex items-center justify-between">
+          <div class="flex items-center space-x-4">
+            <span class="flex items-center">
+              <kbd class="px-2 py-1 bg-neutral-800 rounded border border-neutral-600 mr-1">↵</kbd>
+              to select
+            </span>
+            <span class="flex items-center">
+              <kbd class="px-2 py-1 bg-neutral-800 rounded border border-neutral-600 mr-1">↑↓</kbd>
+              to navigate
+            </span>
+          </div>
+          <span class="flex items-center">
+            <kbd class="px-2 py-1 bg-neutral-800 rounded border border-neutral-600 mr-1">esc</kbd>
+            to close
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+class SearchManager {
+  private input: HTMLInputElement;
+  private modalInput: HTMLInputElement;
+  private modal: HTMLElement;
+  private results: HTMLElement;
+  private scopeLabel: HTMLElement;
+  private allProductsToggle: HTMLInputElement;
+  private allVersionsToggle: HTMLInputElement;
+  private productId: string;
+  private versionId: string;
+  private debounceTimer: number = 0;
+  private currentResults: any[] = [];
+  private selectedIndex: number = -1;
+
+  constructor() {
+    this.input = document.getElementById('docs-search') as HTMLInputElement;
+    this.modalInput = document.getElementById('modal-search-input') as HTMLInputElement;
+    this.modal = document.getElementById('search-modal') as HTMLElement;
+    this.results = document.getElementById('search-results') as HTMLElement;
+    this.scopeLabel = document.getElementById('search-scope-label') as HTMLElement;
+    this.allProductsToggle = document.getElementById('search-all-products') as HTMLInputElement;
+    this.allVersionsToggle = document.getElementById('search-all-versions') as HTMLInputElement;
+    
+    if (!this.input || !this.modalInput || !this.modal || !this.results || !this.scopeLabel || !this.allProductsToggle || !this.allVersionsToggle) {
+      console.warn('Search elements not found:', {
+        input: !!this.input,
+        modalInput: !!this.modalInput,
+        modal: !!this.modal,
+        results: !!this.results,
+        scopeLabel: !!this.scopeLabel,
+        allProductsToggle: !!this.allProductsToggle,
+        allVersionsToggle: !!this.allVersionsToggle
+      });
+      throw new Error('Required search elements not found');
+    }
+
+    this.productId = this.input.dataset.product || '';
+    this.versionId = this.input.dataset.version || '';
+
+    this.init();
+  }
+
+  private init() {
+    // Open modal on input focus
+    this.input.addEventListener('focus', () => this.openModal());
+    this.input.addEventListener('click', () => this.openModal());
+    
+    // Handle modal input
+    this.modalInput.addEventListener('input', () => this.handleSearch());
+    this.modalInput.addEventListener('keydown', (e) => this.handleKeyDown(e));
+    
+    // Handle scope toggles
+    this.allProductsToggle.addEventListener('change', () => this.handleScopeChange());
+    this.allVersionsToggle.addEventListener('change', () => this.handleScopeChange());
+    
+    // Close modal on backdrop click
+    this.modal.addEventListener('click', (e) => {
+      if (e.target === this.modal || (e.target as HTMLElement).classList.contains('search-backdrop')) {
+        this.closeModal();
+      }
+    });
+    
+    // Global keyboard shortcut (Cmd/Ctrl + K)
+    document.addEventListener('keydown', (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        this.openModal();
+      }
+      if (e.key === 'Escape' && !this.modal.classList.contains('hidden')) {
+        this.closeModal();
+      }
+    });
+  }
+
+  private openModal() {
+    this.modal.classList.remove('hidden');
+    this.modalInput.focus();
+    this.modalInput.value = '';
+    this.updateScopeLabel();
+    this.showEmptyState();
+    document.body.style.overflow = 'hidden';
+  }
+
+  private closeModal() {
+    this.modal.classList.add('hidden');
+    this.input.blur();
+    this.modalInput.blur();
+    document.body.style.overflow = '';
+    this.selectedIndex = -1;
+    this.currentResults = [];
+  }
+
+  private handleSearch() {
+    clearTimeout(this.debounceTimer);
+    
+    const query = this.modalInput.value.trim();
+    
+    if (!query) {
+      this.showEmptyState();
+      return;
+    }
+
+    // Show loading state
+    this.showLoadingState();
+
+    this.debounceTimer = window.setTimeout(async () => {
+      try {
+        const allProducts = this.allProductsToggle.checked;
+        const allVersions = this.allVersionsToggle.checked;
+        
+        const response = await fetch(
+          `/api/search?q=${encodeURIComponent(query)}&product=${this.productId}&version=${this.versionId}&limit=8&allProducts=${allProducts}&allVersions=${allVersions}`
+        );
+        
+        if (!response.ok) {
+          throw new Error(`Search failed: ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        this.currentResults = data.results || [];
+        this.selectedIndex = -1;
+        this.renderResults(data.results || [], query);
+      } catch (error) {
+        console.error('Search error:', error);
+        this.showErrorState();
+      }
+    }, 300);
+  }
+
+  private handleKeyDown(e: KeyboardEvent) {
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        this.selectedIndex = Math.min(this.selectedIndex + 1, this.currentResults.length - 1);
+        this.updateSelection();
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        this.selectedIndex = Math.max(this.selectedIndex - 1, -1);
+        this.updateSelection();
+        break;
+      case 'Enter':
+        e.preventDefault();
+        if (this.selectedIndex >= 0 && this.currentResults[this.selectedIndex]) {
+          window.location.href = this.currentResults[this.selectedIndex].url;
+        }
+        break;
+      case 'Escape':
+        this.closeModal();
+        break;
+    }
+  }
+
+  private updateSelection() {
+    const resultElements = this.results.querySelectorAll('.search-result-item');
+    resultElements.forEach((el, index) => {
+      if (index === this.selectedIndex) {
+        el.classList.add('selected');
+      } else {
+        el.classList.remove('selected');
+      }
+    });
+  }
+
+  private handleScopeChange() {
+    this.updateScopeLabel();
+    this.updateToggleStyles();
+    
+    // Re-run search if there's a query
+    if (this.modalInput.value.trim()) {
+      this.handleSearch();
+    }
+  }
+
+  private updateScopeLabel() {
+    if (this.allProductsToggle.checked && this.allVersionsToggle.checked) {
+      this.scopeLabel.textContent = 'Searching all versions of all products';
+    } else if (this.allProductsToggle.checked) {
+      this.scopeLabel.textContent = 'Searching all products (latest versions)';
+    } else if (this.allVersionsToggle.checked) {
+      this.scopeLabel.textContent = `Searching all ${this.productId} versions`;
+    } else {
+      this.scopeLabel.textContent = `Searching ${this.productId} ${this.versionId}`;
+    }
+  }
+
+  private updateToggleStyles() {
+    this.updateToggleStyle(this.allProductsToggle);
+    this.updateToggleStyle(this.allVersionsToggle);
+  }
+
+  private updateToggleStyle(toggle: HTMLInputElement) {
+    const toggleSwitch = toggle.nextElementSibling as HTMLElement;
+    const toggleDot = toggleSwitch?.querySelector('.toggle-dot') as HTMLElement;
+    
+    if (toggle.checked) {
+      toggleSwitch.classList.remove('bg-neutral-600');
+      toggleSwitch.classList.add('bg-blue-500');
+      toggleDot.style.transform = 'translateX(16px)';
+    } else {
+      toggleSwitch.classList.remove('bg-blue-500');
+      toggleSwitch.classList.add('bg-neutral-600');
+      toggleDot.style.transform = 'translateX(0)';
+    }
+  }
+
+  private renderResults(results: any[], query: string) {
+    if (!results.length) {
+      this.showNoResults(query);
+      return;
+    }
+
+    const html = results.map((result, index) => {
+      const showScope = this.allProductsToggle.checked || this.allVersionsToggle.checked;
+      const scopeInfo = showScope ? `${result.productId} ${result.versionId}` : '';
+      
+      return `
+        <div class="search-result-item p-3 rounded-md cursor-pointer hover:bg-neutral-800 ${index === this.selectedIndex ? 'selected' : ''}" 
+             data-url="${result.url}">
+          <div class="flex items-start justify-between">
+            <div class="flex-1 min-w-0">
+              <h4 class="text-neutral-100 font-medium text-sm mb-1 truncate">${this.highlightText(result.title, query)}</h4>
+              <p class="text-neutral-400 text-xs mb-2 line-clamp-2">${this.highlightText(this.truncateText(result.content, 120), query)}</p>
+              <div class="flex items-center justify-between text-xs text-neutral-500">
+                <span class="truncate">${result.slug || result.id}</span>
+                ${scopeInfo ? `<span class="text-neutral-600 ml-2 flex-shrink-0">${scopeInfo}</span>` : ''}
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    this.results.innerHTML = html;
+
+    // Add click handlers
+    this.results.querySelectorAll('.search-result-item').forEach((el, index) => {
+      el.addEventListener('click', () => {
+        window.location.href = results[index].url;
+      });
+      el.addEventListener('mouseenter', () => {
+        this.selectedIndex = index;
+        this.updateSelection();
+      });
+    });
+  }
+
+  private highlightText(text: string, query: string): string {
+    if (!query) return text;
+    const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+    return text.replace(regex, '<mark class="bg-blue-400/20 text-blue-300">$1</mark>');
+  }
+
+  private truncateText(text: string, maxLength: number): string {
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength).trim() + '...';
+  }
+
+  private showEmptyState() {
+    this.results.innerHTML = `
+      <div class="search-empty-state text-center py-8 text-neutral-400">
+        <svg class="mx-auto h-12 w-12 mb-4 text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+        <p>Start typing to search documentation</p>
+      </div>
+    `;
+  }
+
+  private showLoadingState() {
+    this.results.innerHTML = `
+      <div class="text-center py-8 text-neutral-400">
+        <div class="animate-spin mx-auto h-8 w-8 mb-4">
+          <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+        </div>
+        <p>Searching...</p>
+      </div>
+    `;
+  }
+
+  private showNoResults(query: string) {
+    this.results.innerHTML = `
+      <div class="text-center py-8 text-neutral-400">
+        <svg class="mx-auto h-12 w-12 mb-4 text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+        <p>No results found for "<span class="text-neutral-300">${query}</span>"</p>
+        <p class="text-xs mt-2">Try different keywords or check spelling</p>
+      </div>
+    `;
+  }
+
+  private showErrorState() {
+    this.results.innerHTML = `
+      <div class="text-center py-8 text-red-400">
+        <svg class="mx-auto h-12 w-12 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <p>Something went wrong</p>
+        <p class="text-xs mt-2 text-neutral-400">Please try again</p>
+      </div>
+    `;
+  }
+}
+
+// Initialize when DOM is loaded - with retry mechanism
+function initializeSearch() {
+  try {
+    const searchInput = document.getElementById('docs-search');
+    if (searchInput && !searchInput.dataset.initialized) {
+      new SearchManager();
+      searchInput.dataset.initialized = 'true';
+    } else if (!searchInput) {
+      // If elements aren't ready yet, retry after a short delay
+      setTimeout(initializeSearch, 100);
+    }
+  } catch (error) {
+    console.warn('Search initialization failed, retrying...', error);
+    setTimeout(initializeSearch, 100);
+  }
+}
+
+// Initialize immediately if DOM is ready, otherwise wait
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initializeSearch);
+} else {
+  initializeSearch();
+}
+
+// Also initialize on page transitions (for Astro view transitions)
+document.addEventListener('astro:page-load', initializeSearch);
+document.addEventListener('astro:after-swap', initializeSearch);
+</script>
+
+<style>
+.search-result-item.selected {
+  background-color: #262626;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Ensure highlight colors are defined */
+.text-blue-300 {
+  color: rgb(147 197 253);
+}
+
+.bg-blue-400\/20 {
+  background-color: rgb(96 165 250 / 0.2);
+}
+
+.focus\:ring-blue-400:focus {
+  --tw-ring-color: rgb(96 165 250);
+}
+
+/* Toggle switch styles */
+.toggle-switch {
+  transition: background-color 0.2s ease;
+}
+
+.toggle-dot {
+  transition: transform 0.2s ease;
+}
+
+.bg-blue-500 {
+  background-color: rgb(59 130 246);
+}
+</style>
