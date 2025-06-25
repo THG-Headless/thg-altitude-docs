@@ -5,11 +5,15 @@ order: 2
 
 import { Aside } from "@components/docs";
 
-## For an app running in single tenancy mode:
+# Enabling internalisation for your sites
+
+## Single tenancy mode:
+
+This guide will take you through adding internationalisation for your single-tenanted site. We will assume that you want to serve an english version of your site at www.exampledomain1.com and a german version at www.exampledomain1.de.
 
 ### Step 1: Add an i18n key to your buildConfig
 
-Add www.exampledomain1.com and www.exampledomain1.de to your domains key:
+Add `www.exampledomain1.com` and `www.exampledomain1.de` to your `domains` key at the top level of your build config:
 
 ```js
 // config/site.js
@@ -24,9 +28,9 @@ export default {
 };
 ```
 
-### Step 2: Add the i18n key to your `altitudeMiddleware` config
+### Step 2: Add the i18n key to your config
 
-The `i18n.locales<Object>.domain` key must correspond to the domain you added in the `domains` array in step 1. `i18n.locales<Object>.kv` must correspond to the KV keys corresponding to language files containing localised copy.
+We will add an i18n key with two locales, english and german. The `i18n.locales<Object>.domain` key must correspond to the domain you added in the `domains` array in step 1. `i18n.locales<Object>.kv` will contain locale-specific keys such as language files and locale-specific settings.
 
 ```js
 // config/site.js
@@ -131,13 +135,15 @@ Restart the dev server to apply the changes.
 $ npm run dev
 ```
 
-You should not longer be able to view your app without an x-altitude-instance header. Requests to `/` to `/en-gb/` when the x-altitude-instance header is www.exampledomain1.com or to `/de-de/` when the x-altitude-instance header is www.exampldomain1.de. In production, the X-Forwarded-Host header will be used to determine which tenantConfig to use.
+You should no longer be able to view your app without an x-altitude-instance header. Requests to `/` are rewritten to `/en-gb/` when the x-altitude-instance header is www.exampledomain1.com and to to `/de-de/` when the x-altitude-instance header is www.exampldomain1.de. In production, the X-Forwarded-Host header will be used to determine which tenantConfig to use.
 
 ### New context variables
 
 When i18n is enabled, the following new variables are available in the context of your pages: `altitude.locale` and `altitude.availableLocales`. See the [global context reference](../reference/global-context) for more information on their types and usage.
 
 ## For an app running in multitenancy mode.
+
+This guide will take you through the process of turning on internationalisation for your sites if astro-integration is running in multitenancy mode.
 
 <Aside type="note">
   When turning on i18n in multitenancy mode, it must be turned on far _all_
@@ -148,11 +154,11 @@ When i18n is enabled, the following new variables are available in the context o
 
 Before you begin, make sure you have:
 
-- astro-integration running in multitenancy mode. See [guide](../getting-started/#multitenancy) for more information.
+- astro-integration running in multitenancy mode. See [guide](../getting-started#multitenancy-mode) for more information.
 
 ### Step 1: Add i18n keys to each buildConfig in the tenants array
 
-Make sure _every_ tenant in the `tenants` array that you are passing to `altitudeMiddleware` has an i18n key.
+Make sure _every_ tenant in the `tenants` array has an i18n key.
 
 ```js
 import tenants from "./config/index";
