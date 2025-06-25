@@ -9,7 +9,7 @@ order: 0
 npm i @thg-altitude/astro-integration
 ```
 
-## Invoking the integration 
+## Invoking the integration
 
 ### Single-tenancy mode
 
@@ -17,64 +17,64 @@ The build config and `altitudeMiddleware` function should be imported and passed
 
 ```js
 // astro.config.mjs
-import { defineConfig } from 'astro/config';
-import config from './config/site.js'
+import { defineConfig } from "astro/config";
+import config from "./config/site.js";
 
 export default defineConfig({
-  output: 'server',
+  output: "server",
   integrations: [
-      altitudeMiddleware({
-            config,
-            api: { enabled: true, graphql: gqlIndex }
-        }),
-] 
-})
+    altitudeMiddleware({
+      config,
+      api: { enabled: true, graphql: gqlIndex },
+    }),
+  ],
+});
 ```
 
-The config might look something like: 
+The config might look something like:
 
 ```js
 // config/site.js
-import { fetchIcon } from '@thg-altitude/utils';
-import siteConfigFile from '../local/tenants/siteone.json';
-import siteLangFile from '../local/lang/siteone.en_gb.properties.json';
+import { fetchIcon } from "@thg-altitude/utils";
+import siteConfigFile from "../local/tenants/siteone.json";
+import siteLangFile from "../local/lang/siteone.en_gb.properties.json";
 
 export default {
-  domains: ['www.siteone.com'],
-  tenantInstance: 'siteone',
+  domains: ["www.siteone.com"],
+  tenantInstance: "siteone",
   commerce: {
-    endpoint: 'https://horizon-api.www.siteone.com/graphql'
+    endpoint: "https://horizon-api.www.siteone.com/graphql",
   },
   kv: [
     {
-      key: 'siteone',
-      namespace: 'config',
-      local: siteConfigFile
+      key: "siteone",
+      namespace: "config",
+      local: siteConfigFile,
     },
     {
-      key: 'siteone.en_gb.properties',
-      namespace: 'lang',
-      local: siteLangFile
-    }
+      key: "siteone.en_gb.properties",
+      namespace: "lang",
+      local: siteLangFile,
+    },
   ],
   icons: {
-    search: await fetchIcon('lucide', 'search'),
-    left: await fetchIcon('lucide', 'chevron-left'),
-    right: await fetchIcon('lucide', 'chevron-right')
+    search: await fetchIcon("lucide", "search"),
+    left: await fetchIcon("lucide", "chevron-left"),
+    right: await fetchIcon("lucide", "chevron-right"),
   },
   i18n: {
     locales: [
       {
-        prefix: 'en-gb',
-        domain: 'www.siteone.com',
+        prefix: "en-gb",
+        domain: "www.siteone.com",
         icons: {
-          flag: await fetchIcon('circle-flags', 'gb')
-        }
-      }
+          flag: await fetchIcon("circle-flags", "gb"),
+        },
+      },
     ],
-    fallbackLocale: 'en-gb',
-    exclusionList: ['api', 'images']
-  }
+    fallbackLocale: "en-gb",
+    exclusionList: ["api", "images"],
+  },
 };
 ```
 
@@ -122,11 +122,10 @@ export default defineConfig({
 });
 ```
 
-That's it! You can now switch between tenants 'siteone' and 'sitetwo' by switching the x-altitude-instance header between www.siteone.com and www.sitetwo.com. When running your app locally, we recommend using the [ModHeader extension](https://chromewebstore.google.com/detail/modheader-modify-http-hea/idgpnmonknjnojddfkpgkljpfnnfcklj?hl=en) to change headers.  
+That's it! You can now switch between tenants 'siteone' and 'sitetwo' by switching the x-altitude-instance header between www.siteone.com and www.sitetwo.com. When running your app locally, we recommend using the [ModHeader extension](https://chromewebstore.google.com/detail/modheader-modify-http-hea/idgpnmonknjnojddfkpgkljpfnnfcklj?hl=en) to change headers.
 
 See the [multitenancy reference](../reference/multi-tenancy) for more information.
 
-
 ## Config validation
 
-In development mode, the first thing that astro-integration will do is validate the config or configs you have passed to it to make sure they match the schema (see the [config reference](../reference/config)) for the required keys.
+In development mode, the first thing that astro-integration will do is validate the config or configs you have passed to it to make sure they match the schema for the required keys. See the [config reference](../reference/config) for more information.

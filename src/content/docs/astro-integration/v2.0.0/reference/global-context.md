@@ -10,6 +10,10 @@ The integration will provide additional information about the config resolvement
 
 The build config object the integration has resolved to. For applications using the integration's [localisation](/docs/astro-integration/guides/i18n) solution this will be the locale specific config.
 
+### altitude.runtime.config.domain
+
+The domain that the integration has resolved to.
+
 ### altitude.runtime.kv.\<namespace>
 
 The value of [KV](#kv) retrieved using the key provided. This will be attached using the namespace value provided in the KV for the key retrieved.
