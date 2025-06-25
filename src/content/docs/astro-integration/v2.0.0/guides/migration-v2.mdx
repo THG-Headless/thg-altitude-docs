@@ -1,0 +1,94 @@
+---
+title: "Migration from v1 to v2"
+description: "A guide to migrating from v1 to v2 of the Altitude Astro integration"
+---
+
+
+
+import { Aside } from "@components/docs";
+
+<Aside type="note">
+  This migration guide assumes you are running the integration in **multitenancy** mode.
+</Aside>
+
+# Migration Guide: v1 → v2
+
+This guide outlines the key changes and steps required to migrate your Altitude Astro integration from version 1.x to 2.x.
+
+## 1. Update the Integration Package
+
+Update your `package.json` to use the new v2 version:
+
+```sh
+$ npm install @thg-altitude/astro-integration@^2.0.0
+```
+
+## 2. Update Integration Usage in `astro.config.mjs`
+
+**Before (v1):**
+```js
+altitudeMiddleware(tenants)
+```
+
+**After (v2):**
+```js
+altitudeMiddleware({
+  config: tenants
+})
+```
+
+ - In v1, you passed the tenants array directly to `altitudeMiddleware` as the first argument. In v2, you must pass a configuration object, with your tenants array assigned to the `config` property.
+ - The `api` option is **optional**. Only include it if you want to disable or configure the Commerce API. If omitted, the default behavior will be used.
+
+if you are using the `api` option, you can also pass the `graphql` option to configure the GraphQL API.
+
+**After (v2):**
+```js
+altitudeMiddleware({
+  config: tenants,
+  api: { enabled: true, graphql: gqlIndex }
+})
+```
+
+
+## 3. Update Tenant Config Structure
+
+**Before (v1):**
+```js
+domains: {
+  default: 'www.example.com',
+  variants: ['www.example.com']
+},
+```
+
+**After (v2):**
+```js
+domains: ['www.example.com'],
+```
+
+- The `domains` property is now a flat array of domains, not an object with `default` and `variants`.
+- Update all tenant config files accordingly.
+
+## 4. Update Middleware Domain Checks
+
+If you reference `domains.variants` in your code, update it to `domains`:
+
+**Before:**
+```js
+locals?.altitude?.runtime?.config?.domains?.variants.includes(...)
+```
+**After:**
+```js
+locals?.altitude?.runtime?.config?.domains?.includes(...)
+```
+
+## 5. Test Your Migration
+
+- Run your site locally and verify that all tenants resolve correctly.
+- Check that domain-based routing and tenant switching still work as expected.
+
+---
+
+For more details, see the [release notes](https://github.com/THG-AltitudeSiteBuilds/astro-integration/releases) on github, consult the [changelog](../../changelog.mdx) or contact the Altitude Commerce team via the usual channels. 
+
+
