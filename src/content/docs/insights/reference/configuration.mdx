@@ -1,0 +1,391 @@
+---
+title: "Configuration"
+order: 2
+description: "Client-configurable options available in the production script"
+---
+
+# Configuration
+
+Client-configurable options available when using the Insights production script. Most configuration is set at build time for optimal performance.
+
+## Component Configuration
+
+### Required Configuration
+
+#### Tenant Attribute
+
+The only required configuration is the `tenant` attribute on the `insights-tracker` component:
+
+```html
+<insights-tracker tenant="your-company-name"></insights-tracker>
+```
+
+#### Script Selection
+
+Choose the appropriate script version for your environment:
+
+```html
+<!-- Production: Optimized, no debug output -->
+<script src="https://insights.thgaltitude.com/public/insights-tracker.js"></script>
+<insights-tracker tenant="your-company-name"></insights-tracker>
+
+<!-- Development: Debug logging, unminified -->
+<script src="https://insights.thgaltitude.com/public/insights-tracker.debug.js"></script>
+<insights-tracker tenant="your-company-name"></insights-tracker>
+```
+
+**Note:** The web component has no `debug` attribute. Debug functionality is determined by which script version you load.
+
+**Purpose:**
+- Identifies the data owner for all analytics events
+- Groups data across multiple sites/applications  
+- Determines data access permissions in analytics dashboards
+
+**Requirements:**
+- Must be a valid string identifier
+- Should be consistent across all sites for the same organisation
+- Cannot be changed after component initialisation
+
+### Component Lifecycle Management
+
+#### Initialization Timing
+The component initializes automatically when it appears in the DOM:
+
+```html
+<!-- Component initializes immediately when parsed -->
+<insights-tracker tenant="your-company"></insights-tracker>
+```
+
+**Key Lifecycle Events:**
+- **DOM Connection**: Component connects to DOM and begins initialisation
+- **Authentication**: Automatically acquires tracking tokens
+- **Event Collection**: Starts collecting and queuing tracking events
+- **Background Processing**: Handles batching, transmission, and retries automatically
+
+#### Dynamic Component Management
+
+**Adding Components Dynamically:**
+```javascript
+// Component can be added programmatically
+const tracker = document.createElement('insights-tracker');
+tracker.tenant = 'your-company';
+document.body.appendChild(tracker);
+// Component initializes automatically when added to DOM
+```
+
+**Multiple Components:**
+- Only one `insights-tracker` component should exist per page
+- Multiple components with the same tenant will conflict
+- Use the same tenant across different pages of your site
+
+#### Automatic Management
+- **No Manual Cleanup**: Component handles all cleanup automatically
+- **Memory Management**: Automatically manages event queues and clears processed events
+- **State Persistence**: Maintains tracking state across page interactions
+- **Graceful Shutdown**: Transmits pending events before page unload
+
+---
+
+---
+
+## Runtime Configuration Overrides
+
+Limited configuration overrides are available for development and testing purposes.
+
+### Configuration Timing
+
+**Before Component Initialization:**
+```html
+<!-- Set attributes before component appears in DOM -->
+<script>
+  // Pre-configure before component loads
+  window.insightsConfig = { tenant: 'my-company', debug: true };
+</script>
+<insights-tracker></insights-tracker>
+```
+
+**After Component Initialization:**
+```javascript
+// Modify existing component (limited options)
+const tracker = document.querySelector('insights-tracker');
+if (tracker) {
+  // Only debug mode can be toggled after initialisation
+  tracker.setAttribute('debug', 'true');
+  // Tenant cannot be changed after initialisation
+}
+```
+
+### Debug vs Production Scripts
+
+**Production Script Characteristics:**
+- Minified and optimised (~25KB)
+- No console output (silent operation)
+- Custom debug logs and warnings removed for performance
+- Only JavaScript errors thrown by runtime issues are visible
+
+**Debug Script Characteristics:**
+- Unminified with full variable names
+- Comprehensive console logging for all operations
+- Network request/response monitoring
+- Element validation warnings
+- Performance timing information
+
+**Script Selection Guidelines:**
+```javascript
+// Conditional script loading based on environment
+const isDevelopment = 
+  window.location.hostname === 'localhost' ||
+  window.location.hostname.includes('dev.') ||
+  window.location.search.includes('debug=true');
+
+const scriptSrc = isDevelopment 
+  ? 'https://insights.thgaltitude.com/public/insights-tracker.debug.js'
+  : 'https://insights.thgaltitude.com/public/insights-tracker.js';
+
+const script = document.createElement('script');
+script.src = scriptSrc;
+document.head.appendChild(script);
+```
+
+---
+
+## HTML Data Attribute Configuration
+
+### Global Attribute Prefix
+
+All tracking uses the `data-insights-` prefix:
+
+```html
+<!-- Standard tracking attributes -->
+<button 
+  data-insights-category="navigation"
+  data-insights-id="main-menu-toggle"
+>
+  Menu
+</button>
+```
+
+This prefix is fixed and cannot be changed in the production script.
+
+### Required Tracking Attributes
+
+For declarative tracking, these attributes are required:
+
+- `data-insights-category`: Event grouping category
+- `data-insights-id`: Unique element identifier
+
+**Note:** Event type (click/impression) is automatically determined based on element type.
+
+**Example:**
+```html
+<div
+  data-insights-category="widget"
+  data-insights-id="product-recommendations"
+>
+  <!-- Widget content -->
+</div>
+```
+
+---
+
+## Environment-Specific Behavior
+
+### Build-Time Configuration Defaults
+
+The following values are set during the build process and cannot be modified by consumers:
+
+- **Intersection Threshold**: 10% visibility required for impressions (`intersectionThreshold: 0.1`)
+  - *Rationale*: Balances accurate impression tracking with performance
+  - *Impact*: Elements must be 10% visible to trigger impression events
+
+- **Batch Size Limit**: 32KB maximum payload size (`maxStreamSize: 32`)
+  - *Rationale*: Optimal balance between network efficiency and memory usage
+  - *Impact*: Events are batched and sent when reaching size or time limits
+
+- **Batch Timeout**: 10 seconds maximum wait time (`streamTimeout: 10000`)
+  - *Rationale*: Ensures timely data transmission without overwhelming the server
+  - *Impact*: Events are sent regularly even during low-activity periods
+
+- **Retry Logic**: Up to 2 retry attempts (`maxRetries: 2`)
+  - *Rationale*: Handles temporary network issues without excessive server load
+  - *Impact*: Failed requests are retried with exponential backoff
+
+- **Debug Logging**: Controlled by script version, not runtime configuration
+  - *Production*: All debug logging stripped out for optimal performance
+  - *Debug*: Comprehensive logging for development and troubleshooting
+
+**Important:** These are build-time constants and cannot be changed by consumers. You are subscribing to a managed tracking service with pre-optimised settings.
+
+### Development Script Features
+
+The debug script provides additional capabilities:
+
+- **Verbose Logging**: Detailed console output for all events
+- **Network Monitoring**: Request/response logging
+- **Validation Warnings**: Alerts for missing or invalid attributes
+- **Performance Metrics**: Timing information for tracking operations
+
+**Enable debug script:**
+```html
+<!-- Replace production script with debug version -->
+<script src="https://insights.thgaltitude.com/public/insights-tracker.debug.js"></script>
+```
+
+---
+
+## Configuration Validation
+
+### Component Validation
+
+The component validates configuration on initialisation:
+
+```javascript
+// Check if tenant is configured
+const tracker = document.querySelector('insights-tracker');
+if (!tracker.tenant) {
+  console.error('Insights: tenant attribute is required');
+}
+
+// Validate tenant format
+if (tracker.tenant && !/^[a-z0-9][a-z0-9\-_]*$/i.test(tracker.tenant)) {
+  console.warn('Insights: tenant should be a valid identifier');
+}
+```
+
+### Attribute Validation
+
+HTML tracking attributes are validated automatically:
+
+```html
+<!-- Valid tracking setup -->
+<button 
+  data-insights-category="cta" 
+  data-insights-id="signup-button"
+>
+  Sign Up
+</button>
+
+<!-- Invalid - missing required attributes -->
+<button data-insights-category="cta">
+  <!-- Missing data-insights-id - will generate validation warning -->
+</button>
+```
+
+---
+
+## Best Practices
+
+### Tenant Configuration
+
+```html
+<!-- ✅ Good: Consistent tenant across pages -->
+<insights-tracker tenant="acme-corp"></insights-tracker>
+
+<!-- ❌ Bad: Different tenants on same site -->
+<insights-tracker tenant="acme"></insights-tracker>
+<insights-tracker tenant="acme-corp"></insights-tracker>
+```
+
+### Development vs Production
+
+```html
+<!-- Development: Use debug script -->
+<script src="https://insights.thgaltitude.com/public/insights-tracker.debug.js"></script>
+<insights-tracker tenant="acme-corp"></insights-tracker>
+
+<!-- Production: Use optimised script -->
+<script src="https://insights.thgaltitude.com/public/insights-tracker.js"></script>
+<insights-tracker tenant="acme-corp"></insights-tracker>
+```
+
+### Environment-Based Script Selection
+
+**Security and performance considerations:**
+Choose the appropriate script based on your deployment environment. Never use debug scripts in production.
+
+```javascript
+// Load appropriate script based on environment
+function loadInsightsScript() {
+  const isProduction = 
+    window.location.hostname.includes('yourdomain.com') &&
+    !window.location.hostname.includes('dev.') &&
+    !window.location.hostname.includes('staging.');
+  
+  const scriptSrc = isProduction
+    ? 'https://insights.thgaltitude.com/public/insights-tracker.js'      // Production
+    : 'https://insights.thgaltitude.com/public/insights-tracker.debug.js'; // Debug
+  
+  const script = document.createElement('script');
+  script.src = scriptSrc;
+  document.head.appendChild(script);
+}
+
+loadInsightsScript();
+```
+
+**When to use each script:**
+- **Production script**: Live websites, staging environments, performance testing
+- **Debug script**: Local development, debugging issues, integration testing
+
+**Security implications:**
+- Debug script exposes internal tracking operations in console logs
+- Debug script has larger bundle size which negatively impacts Core Web Vitals
+- Production script provides silent operation with optimal performance
+
+---
+
+## Troubleshooting Configuration
+
+### Common Issues
+
+**Tenant not set:**
+```javascript
+// Check if component is properly configured
+const tracker = document.querySelector('insights-tracker');
+console.log('Tenant configured:', tracker?.tenant || 'NOT SET');
+```
+
+**Script loading issues:**
+```javascript
+// Verify script loaded successfully
+console.log('Insights available:', !!window.insights);
+console.log('Component defined:', !!customElements.get('insights-tracker'));
+```
+
+**Debug logging not visible:**
+```javascript
+// Check which script version is loaded
+const scripts = Array.from(document.scripts);
+const insightsScript = scripts.find(s => s.src.includes('insights-tracker'));
+console.log('Script version:', 
+  insightsScript?.src.includes('debug') ? 'Debug' : 'Production'
+);
+```
+
+### Configuration Verification
+
+```javascript
+// Complete configuration check
+function verifyInsightsConfiguration() {
+  const tracker = document.querySelector('insights-tracker');
+  
+  const scripts = Array.from(document.scripts);
+  const insightsScript = scripts.find(s => s.src.includes('insights-tracker'));
+  
+  const config = {
+    scriptLoaded: !!window.insights,
+    scriptVersion: insightsScript?.src.includes('debug') ? 'Debug' : 'Production',
+    componentFound: !!tracker,
+    tenantConfigured: tracker?.tenant || null,
+    trackableElements: document.querySelectorAll('[data-insights-category]').length
+  };
+  
+  console.table(config);
+  return config;
+}
+
+// Run verification
+verifyInsightsConfiguration();
+```
+
+This focused configuration approach ensures clients can easily set up Insights while maintaining optimal performance through build-time optimisation.

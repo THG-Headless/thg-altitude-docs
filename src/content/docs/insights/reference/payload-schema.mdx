@@ -1,0 +1,451 @@
+---
+title: "Payload Schema"
+order: 3
+description: "Complete schema and structure of data sent from the Insights client"
+---
+
+# Payload Schema
+
+This document describes the complete structure of data sent from the Insights client to the ingress endpoint. Understanding this payload structure helps with server-side processing, debugging, and analytics implementation.
+
+## Overview
+
+Insights sends data in batched payloads containing multiple events along with enriched context information. Each payload includes attribution data, device information, performance metrics, and the actual event stream.
+
+## Complete Payload Structure
+
+```typescript
+interface InsightsPayload {
+  // Required fields
+  event_type: string;              // Event batch identifier
+  session_cookie: string;          // Session identifier
+  user_cookie: string;             // User identifier  
+  path: string;                    // Current page path
+  
+  // Device and attribution
+  device: DeviceData;              // Browser and device info
+  origin: OriginData;              // UTM and referrer tracking
+  domain: string;                  // Full domain URL
+  server?: string;                 // Server identifier
+  
+  // Event data
+  stream: StreamEvent[];           // Array of user events
+  
+  // Optional enrichment data
+  experiments?: ExperimentData[];  // A/B test information
+  errors?: ErrorData[];            // Error tracking data
+  performance?: PerformanceData;   // Performance metrics
+}
+```
+
+## Required Fields
+
+### `event_type`
+**Type:** `string`
+**Description:** Identifies the type of event batch being sent
+
+**Example:**
+```json
+"event_type": "interaction_batch"
+```
+
+### `session_cookie`
+**Type:** `string`
+**Description:** Session identifier for tracking user sessions across page views
+
+**Example:**
+```json
+"session_cookie": "sess_abc123def456"
+```
+
+### `user_cookie`
+**Type:** `string`  
+**Description:** Persistent user identifier for cross-session tracking
+
+**Example:**
+```json
+"user_cookie": "user_xyz789abc123"
+```
+
+### `path`
+**Type:** `string`
+**Description:** Current page path where events occurred
+
+**Example:**
+```json
+"path": "/products/gaming-laptops?sort=price"
+```
+
+## Device Information
+
+### `device`
+**Type:** `DeviceData`
+**Description:** Browser and device information collected from the client
+
+```typescript
+interface DeviceData {
+  user_agent: string;              // Browser user agent string
+  ip?: string;                     // IP address (added server-side)
+}
+```
+
+**Example:**
+```json
+{
+  "device": {
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36"
+  }
+}
+```
+
+## Attribution Data
+
+### `origin`
+**Type:** `OriginData`
+**Description:** Marketing attribution and referrer tracking information
+
+```typescript
+interface OriginData {
+  source?: string;                 // UTM source parameter
+  medium?: string;                 // UTM medium parameter  
+  campaign?: string;               // UTM campaign parameter
+  channel?: string;                // UTM content parameter
+  referrer?: string | null;        // Document referrer URL
+  gsi?: {                          // Google/Social tracking
+    offer_ids?: string;            // UTM term parameter
+    gclid?: string;                // Google Click ID
+    fbclid?: string;               // Facebook Click ID
+  };
+}
+```
+
+**Example:**
+```json
+{
+  "origin": {
+    "source": "google",
+    "medium": "cpc", 
+    "campaign": "summer_sale_2024",
+    "channel": "shopping_ads",
+    "referrer": "https://google.com",
+    "gsi": {
+      "gclid": "EAIaIQobChMI7-DW_7-8..."
+    }
+  }
+}
+```
+
+### `domain`
+**Type:** `string`
+**Description:** Full domain URL where tracking occurred
+
+**Example:**
+```json
+"domain": "https://shop.example.com"
+```
+
+## Event Stream
+
+### `stream`
+**Type:** `StreamEvent[]`
+**Description:** Array of user interaction events collected since last transmission
+
+```typescript
+interface StreamEvent {
+  type: string;                    // Event type (click, impression, custom)
+  category?: string;               // Event category from data attributes
+  id?: string;                     // Element identifier
+  position: number;                // Event sequence number
+  timestamp: number;               // Event timestamp (milliseconds)
+  
+  // Additional custom properties from data-insights-* attributes
+  [key: string]: any;
+}
+```
+
+**Example:**
+```json
+{
+  "stream": [
+    {
+      "type": "click",
+      "category": "cta",
+      "id": "hero-signup",
+      "position": 1,
+      "timestamp": 1719403800000,
+      "variant": "primary",
+      "placement": "hero"
+    },
+    {
+      "type": "impression", 
+      "category": "widget",
+      "id": "product-recommendations",
+      "position": 2,
+      "timestamp": 1719403805000,
+      "algorithm": "collaborative_filtering"
+    },
+    {
+      "type": "user_signup",
+      "category": "conversion", 
+      "id": "signup-complete",
+      "position": 3,
+      "timestamp": 1719403820000,
+      "plan": "premium",
+      "source": "landing_page"
+    }
+  ]
+}
+```
+
+## Optional Enrichment Data
+
+### `experiments`
+**Type:** `ExperimentData[]`
+**Description:** Active A/B testing experiments and their variants
+
+```typescript
+interface ExperimentData {
+  name: string;                    // Experiment name
+  value: string | string[];        // Experiment variant(s)
+}
+```
+
+**Example:**
+```json
+{
+  "experiments": [
+    {
+      "name": "hero_variant",
+      "value": "variant_b"
+    },
+    {
+      "name": "checkout_flow", 
+      "value": ["variant_a", "variant_c"]
+    }
+  ]
+}
+```
+
+### `errors`
+**Type:** `ErrorData[]`
+**Description:** Error events and exceptions that occurred during the session
+
+```typescript
+interface ErrorData {
+  type: string;                    // Error type (page_not_found, custom_error)
+  label: string;                   // Human-readable description
+  context?: object;                // Additional error context
+  timestamp: number;               // Error occurrence timestamp
+  url: string;                     // URL where error occurred
+  path: string;                    // Path where error occurred
+}
+```
+
+**Example:**
+```json
+{
+  "errors": [
+    {
+      "type": "validation_error",
+      "label": "Invalid email format",
+      "context": {
+        "field": "email",
+        "form": "newsletter_signup"
+      },
+      "timestamp": 1719403815000,
+      "url": "https://example.com/signup",
+      "path": "/signup"
+    }
+  ]
+}
+```
+
+### `performance`
+**Type:** `PerformanceData`
+**Description:** Page performance metrics and Core Web Vitals
+
+```typescript
+interface PerformanceData {
+  timing: {
+    navigation_time: number;       // Total navigation time
+    redirect_time: number;         // Redirect duration
+    cache_time: number;           // Cache lookup time
+    dns_time: number;             // DNS resolution time
+    connection_time: number;       // Connection establishment time
+    first_byte_time: number;      // Time to first byte
+    backend_load_time: number;    // Server processing time
+    frontend_load_time: number;   // Client rendering time
+    dom_parsing_time: number;     // DOM parsing duration
+    dom_ready_time: number;       // DOM ready state time
+    dom_interactive_time: number; // DOM interactive time
+    load_event_time: number;      // Load event duration
+    navigation_type: string;      // Navigation type
+    transfer_size: number;        // Transfer size in bytes
+    encoded_body_size: number;    // Encoded response size
+    decoded_body_size: number;    // Decoded response size
+    first_paint_time: number;     // First paint timing
+    first_contentful_paint_time: number; // First contentful paint
+  };
+  score: {
+    largest_contentful_paint_time?: number; // LCP metric (ms)
+    first_input_delay?: number;             // FID metric (ms)  
+    cumulative_layout_shift?: number;      // CLS metric (score)
+  };
+}
+```
+
+**Example:**
+```json
+{
+  "performance": {
+    "timing": {
+      "navigation_time": 1247,
+      "redirect_time": 0,
+      "dns_time": 23,
+      "connection_time": 156,
+      "first_byte_time": 892,
+      "load_event_time": 45
+    },
+    "score": {
+      "largest_contentful_paint_time": 1200,
+      "first_input_delay": 15,
+      "cumulative_layout_shift": 0.05
+    }
+  }
+}
+```
+
+## Complete Example Payload
+
+Here's a complete example of an Insights payload with all sections:
+
+```json
+{
+  "event_type": "interaction_batch",
+  "session_cookie": "sess_abc123def456", 
+  "user_cookie": "user_xyz789abc123",
+  "path": "/products/gaming-laptops",
+  "device": {
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36"
+  },
+  "origin": {
+    "source": "google",
+    "medium": "cpc",
+    "campaign": "summer_sale_2024", 
+    "referrer": "https://google.com/search",
+    "gsi": {
+      "gclid": "EAIaIQobChMI..."
+    }
+  },
+  "domain": "https://shop.example.com",
+  "stream": [
+    {
+      "type": "impression",
+      "category": "product-listing", 
+      "id": "product-SKU-12345",
+      "position": 1,
+      "timestamp": 1719403800000,
+      "product_id": "SKU-12345",
+      "price": "1299.99",
+      "list_position": "3"
+    },
+    {
+      "type": "click",
+      "category": "product-action",
+      "id": "add-to-cart-SKU-12345", 
+      "position": 2,
+      "timestamp": 1719403825000,
+      "product_id": "SKU-12345",
+      "action": "add_to_cart"
+    }
+  ],
+  "experiments": [
+    {
+      "name": "product_grid_layout", 
+      "value": "variant_b"
+    }
+  ],
+  "performance": {
+    "timing": {
+      "navigation_time": 1247,
+      "first_byte_time": 892,
+      "dom_ready_time": 1100
+    },
+    "score": {
+      "largest_contentful_paint_time": 1200,
+      "cumulative_layout_shift": 0.05
+    }
+  }
+}
+```
+
+## Implementation Notes
+
+### Data Privacy
+- **User identifiers are anonymized session/user cookies**
+  - *Business value*: Enables user journey tracking while maintaining privacy
+  - *Compliance*: Supports GDPR/CCPA requirements for anonymized analytics
+  - *Technical note*: These are not tied to user accounts or personal information
+
+- **No personally identifiable information (PII) is collected**
+  - *Implementation*: Form data, email addresses, names are never transmitted
+  - *Debugging*: If you see PII in payloads, this indicates a tracking implementation error
+  
+- **IP addresses are added server-side for geolocation**
+  - *Purpose*: Enables geographic analytics without client-side location requests
+  - *Privacy*: IP addresses are processed server-side and not stored in raw form
+
+### Performance Considerations  
+- **Events are batched to minimise network requests**
+  - *Impact*: Reduces bandwidth usage and improves page performance
+  - *Debugging*: Single user actions may appear in batches with other events
+  
+- **Payloads are sent using `navigator.sendBeacon()` for reliability**
+  - *Benefit*: Events are transmitted even when users navigate away quickly
+  - *Browser support*: Gracefully falls back to standard requests in older browsers
+  
+- **Maximum batch size is configurable (default: 32KB)**
+  - *Rationale*: Balances network efficiency with payload size limits
+  - *Monitoring*: Large payloads may indicate excessive custom data or tracking frequency
+
+### Server Processing
+- **All timestamps are in milliseconds since Unix epoch**
+  - *Usage*: Convert to your preferred date format for analysis
+  - *Timezone*: Timestamps are in user's local time
+  
+- **`additionalProperties: true` allows custom data on most objects**
+  - *Flexibility*: Custom `data-insights-*` attributes appear as additional properties
+  - *Validation*: Server-side processing should handle unexpected properties gracefully
+  
+- **Required fields must be validated server-side**
+  - *Reliability*: Client-side validation can be bypassed or fail
+  - *Data quality*: Server validation ensures consistent data structure
+
+## Practical Applications
+
+### Using This Schema for Business Intelligence
+
+**Revenue Analysis:**
+- Use `stream` events to track conversion funnels
+- Correlate `performance` data with purchase completion rates
+- Analyse `origin` attribution data to optimise marketing spend
+
+**User Experience Optimization:**
+- Monitor `errors` to identify friction points in user journeys
+- Use `device` data to optimise for different screen sizes and browsers
+- Analyse `stream` event sequences to understand user behaviour patterns
+
+**Content Performance:**
+- Track impression events for content visibility and engagement
+- Use custom properties in `stream` events to measure content effectiveness
+- Correlate `experiments` data with content performance metrics
+
+### Debugging with Payload Data
+
+**Common Issues and Solutions:**
+- **Missing events**: Check if required fields (`session_cookie`, `user_cookie`) are present
+- **Duplicate tracking**: Look for multiple events with identical `timestamp` and `id` values
+- **Performance problems**: Monitor `performance.timing` data for slow page loads affecting tracking
+- **Attribution errors**: Verify `origin` data contains expected UTM parameters
+
+This schema provides the complete structure for processing Insights data on the server side and understanding what information is captured from each user session.

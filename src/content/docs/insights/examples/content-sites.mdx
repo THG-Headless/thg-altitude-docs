@@ -1,0 +1,1029 @@
+---
+title: "Content Sites & Blogs"
+order: 3
+description: "Tracking implementation for content-focused websites, blogs, and media sites"
+---
+
+# Content Sites & Blogs
+
+This guide covers tracking implementation for content-focused websites, including blogs, news sites, documentation sites, and other content-driven platforms.
+
+## Why Content Site Tracking Matters
+
+**Content Performance Insights:**
+- **Engagement Quality**: Measure how deeply users engage with your content beyond simple page views
+- **Content Optimization**: Identify which topics, formats, and styles resonate with your audience
+- **User Journey**: Understand how content discovery and consumption affects conversion goals
+- **Content ROI**: Measure the business impact of content marketing investments
+
+**Key Metrics for Content Sites:**
+- **Reading Depth**: How far users scroll through articles (scroll depth tracking)
+- **Time Engagement**: Actual reading time vs. quick scanning patterns
+- **Content Interaction**: Shares, copies, link clicks within articles
+- **Conversion Paths**: How content consumption leads to newsletter signups, product interest, etc.
+- **Content Discovery**: Search patterns, related content engagement, topic interests
+
+## Blog and Article Tracking
+
+### Article Impression and Engagement
+
+**Comprehensive article tracking captures:**
+- Content metadata for categorization and analysis
+- Reader engagement patterns and depth
+- Social sharing and content amplification
+- Conversion opportunities within content
+
+```html
+<!-- Blog post article -->
+<article
+  class="blog-post"
+  data-insights-category="blog-post"
+  data-insights-id="how-to-implement-analytics"
+  data-insights-post-id="post-12345"
+  data-insights-title="How to Implement Analytics"
+  data-insights-author="jane-smith"
+  data-insights-published="2024-06-26"
+  data-insights-category-name="tutorials"
+  data-insights-tags="analytics,javascript,tracking"
+  data-insights-reading-time="8"
+  data-insights-word-count="1200"
+>
+  <!-- Article header -->
+  <header class="post-header">
+    <h1>How to Implement Analytics in Your Web Application</h1>
+    <div class="post-meta">
+      <span class="author">By Jane Smith</span>
+      <span class="date">June 26, 2024</span>
+      <span class="reading-time">8 min read</span>
+    </div>
+    
+    <!-- Social sharing buttons -->
+    <div class="social-sharing">
+      <button
+        data-insights-category="social-share"
+        data-insights-id="share-twitter-post-12345"
+        data-insights-platform="twitter"
+        data-insights-content-type="blog-post"
+        onclick="shareToTwitter('post-12345')"
+      >
+        Share on Twitter
+      </button>
+      
+      <button
+        data-insights-category="social-share"
+        data-insights-id="share-linkedin-post-12345"
+        data-insights-platform="linkedin"
+        data-insights-content-type="blog-post"
+        onclick="shareToLinkedIn('post-12345')"
+      >
+        Share on LinkedIn
+      </button>
+    </div>
+  </header>
+  
+  <!-- Article content -->
+  <div class="post-content" id="article-content">
+    <!-- Article body content -->
+    <p>In this comprehensive guide, we'll explore...</p>
+    
+    <!-- Code examples with tracking -->
+    <pre
+      data-insights-category="code-example"
+      data-insights-id="code-example-1-post-12345"
+      data-insights-language="javascript"
+      data-insights-example-number="1"
+    >
+      <code>
+        // Example code here
+        console.log('Hello, Analytics!');
+      </code>
+    </pre>
+    
+    <!-- Interactive elements -->
+    <div
+      class="interactive-demo"
+      data-insights-category="interactive-content"
+      data-insights-id="demo-analytics-setup"
+      data-insights-demo-type="code-sandbox"
+    >
+      <!-- Interactive demo content -->
+    </div>
+  </div>
+  
+  <!-- Article footer -->
+  <footer class="post-footer">
+    <!-- Newsletter signup -->
+    <div
+      class="newsletter-signup"
+      data-insights-category="newsletter-widget"
+      data-insights-id="newsletter-signup-post-footer"
+      data-insights-placement="post-footer"
+      data-insights-post-id="post-12345"
+    >
+      <h3>Get more tutorials like this</h3>
+      <form onsubmit="handleNewsletterSignup(event)">
+        <input
+          type="email"
+          placeholder="Enter your email"
+          data-insights-category="form-field"
+          data-insights-id="newsletter-email-input"
+          data-insights-field-type="email"
+        >
+        <button
+          type="submit"
+          data-insights-category="newsletter-signup"
+          data-insights-id="newsletter-subscribe-post-footer"
+          data-insights-source="blog-post"
+        >
+          Subscribe
+        </button>
+      </form>
+    </div>
+    
+    <!-- Related posts -->
+    <div
+      class="related-posts"
+      data-insights-category="related-content"
+      data-insights-id="related-posts-post-12345"
+      data-insights-recommendation-algorithm="content-similarity"
+      data-insights-post-count="3"
+    >
+      <h3>Related Articles</h3>
+      <!-- Related post links -->
+    </div>
+  </footer>
+</article>
+
+<script>
+let articleStartTime = Date.now();
+let scrollDepth = 0;
+let maxScrollDepth = 0;
+let readingMilestones = [25, 50, 75, 100];
+let trackedMilestones = new Set();
+
+// Track article engagement
+function initializeArticleTracking() {
+  // Track scroll depth
+  window.addEventListener('scroll', throttle(trackScrollDepth, 1000));
+  
+  // Track time on page
+  window.addEventListener('beforeunload', trackTimeOnPage);
+  
+  // Track copy events
+  document.addEventListener('copy', trackContentCopy);
+  
+  // Track link clicks within content
+  document.querySelectorAll('.post-content a').forEach(link => {
+    link.addEventListener('click', (e) => trackContentLinkClick(e.target));
+  });
+}
+
+function trackScrollDepth() {
+  const article = document.querySelector('.blog-post');
+  const articleHeight = article.offsetHeight;
+  const windowHeight = window.innerHeight;
+  const scrollTop = window.pageYOffset;
+  
+  scrollDepth = Math.min(100, Math.round(((scrollTop + windowHeight) / articleHeight) * 100));
+  maxScrollDepth = Math.max(maxScrollDepth, scrollDepth);
+  
+  // Track reading milestones
+  readingMilestones.forEach(milestone => {
+    if (scrollDepth >= milestone && !trackedMilestones.has(milestone)) {
+      trackedMilestones.add(milestone);
+      
+      insights.event('reading_progress', {
+        post_id: 'post-12345',
+        title: 'How to Implement Analytics',
+        milestone: milestone,
+        time_to_milestone: Date.now() - articleStartTime,
+        reading_speed: calculateReadingSpeed(milestone)
+      });
+    }
+  });
+}
+
+// Why scroll depth tracking is valuable:
+// - Identifies content quality: high-quality content keeps readers scrolling
+// - Reveals content structure issues: if readers consistently stop at certain points
+// - Helps optimise content length: understand ideal article length for your audience
+// - Enables content scoring: correlate scroll depth with business outcomes
+
+function calculateReadingSpeed(percentage) {
+  const timeElapsed = (Date.now() - articleStartTime) / 1000; // seconds
+  const wordsRead = Math.round((1200 * percentage) / 100); // estimated words read
+  return Math.round(wordsRead / (timeElapsed / 60)); // words per minute
+}
+
+function trackTimeOnPage() {
+  const timeOnPage = Date.now() - articleStartTime;
+  
+  insights.event('article_engagement', {
+    post_id: 'post-12345',
+    title: 'How to Implement Analytics',
+    time_on_page: timeOnPage,
+    max_scroll_depth: maxScrollDepth,
+    engagement_level: categorizeEngagement(timeOnPage, maxScrollDepth),
+    reading_completion: maxScrollDepth >= 90
+  });
+}
+
+function categorizeEngagement(timeOnPage, scrollDepth) {
+  if (timeOnPage > 60000 && scrollDepth > 75) return 'high';
+  if (timeOnPage > 30000 && scrollDepth > 50) return 'medium';
+  return 'low';
+}
+
+// Engagement categorization helps:
+// - Segment users by content interest level
+// - Identify high-value readers for targeted campaigns
+// - Optimize content for different engagement patterns
+// - Correlate engagement with subscription/conversion rates
+
+function trackContentCopy() {
+  const selection = window.getSelection().toString();
+  if (selection.length > 10) {
+    insights.event('content_copied', {
+      post_id: 'post-12345',
+      copied_text_length: selection.length,
+      copied_text_preview: selection.substring(0, 50),
+      scroll_position: maxScrollDepth
+    });
+  }
+}
+
+// Why track content copying:
+// - Indicates high-value content that users want to reference
+// - Reveals which sections are most useful or quotable
+// - Helps identify content that drives word-of-mouth sharing
+// - Can indicate content being used in other contexts (citations, social posts)
+
+function trackContentLinkClick(link) {
+  const isInternal = link.hostname === window.location.hostname;
+  
+  insights.event('content_link_click', {
+    post_id: 'post-12345',
+    link_url: link.href,
+    link_text: link.textContent.trim(),
+    link_type: isInternal ? 'internal' : 'external',
+    scroll_position: maxScrollDepth
+  });
+}
+
+function shareToTwitter(postId) {
+  insights.event('social_share_initiated', {
+    post_id: postId,
+    platform: 'twitter',
+    share_source: 'article_header',
+    engagement_level: categorizeEngagement(Date.now() - articleStartTime, maxScrollDepth)
+  });
+  
+  // Twitter sharing logic
+  const url = encodeURIComponent(window.location.href);
+  const text = encodeURIComponent(document.title);
+  window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, '_blank');
+}
+
+// Social sharing insights:
+// - Correlate sharing behaviour with engagement level
+// - Identify content types that drive organic amplification
+// - Understand optimal placement for sharing buttons
+// - Track which platforms work best for different content topics
+
+function handleNewsletterSignup(event) {
+  event.preventDefault();
+  const email = event.target.querySelector('input[type="email"]').value;
+  
+  insights.event('newsletter_signup', {
+    source: 'blog_post_footer',
+    post_id: 'post-12345',
+    engagement_level: categorizeEngagement(Date.now() - articleStartTime, maxScrollDepth),
+    signup_trigger: 'manual'
+  });
+  
+  // Newsletter signup logic
+  submitNewsletterSignup(email);
+}
+
+// Utility function for throttling
+function throttle(func, limit) {
+  let inThrottle;
+  return function() {
+    const args = arguments;
+    const context = this;
+    if (!inThrottle) {
+      func.apply(context, args);
+      inThrottle = true;
+      setTimeout(() => inThrottle = false, limit);
+    }
+  }
+}
+
+// Initialize tracking when page loads
+document.addEventListener('DOMContentLoaded', initializeArticleTracking);
+</script>
+```
+
+## Blog Navigation and Discovery
+
+### Category and Archive Pages
+
+```html
+<!-- Blog category page -->
+<div class="blog-category-page">
+  <!-- Category header -->
+  <header
+    class="category-header"
+    data-insights-category="blog-category"
+    data-insights-id="category-tutorials"
+    data-insights-category-name="tutorials"
+    data-insights-post-count="24"
+  >
+    <h1>Tutorials</h1>
+    <p>Learn with our step-by-step guides</p>
+  </header>
+  
+  <!-- Filter and sort options -->
+  <div class="blog-filters">
+    <select
+      data-insights-category="blog-filter"
+      data-insights-id="sort-selector"
+      data-insights-filter-type="sort"
+      onchange="handleSortChange(this.value)"
+    >
+      <option value="date">Sort by Date</option>
+      <option value="popularity">Sort by Popularity</option>
+      <option value="reading-time">Sort by Reading Time</option>
+    </select>
+    
+    <div class="tag-filters">
+      <button
+        class="tag-filter"
+        data-insights-category="blog-filter"
+        data-insights-id="filter-tag-javascript"
+        data-insights-filter-type="tag"
+        data-insights-tag="javascript"
+        onclick="toggleTagFilter('javascript')"
+      >
+        JavaScript
+      </button>
+      
+      <button
+        class="tag-filter"
+        data-insights-category="blog-filter"
+        data-insights-id="filter-tag-analytics"
+        data-insights-filter-type="tag"
+        data-insights-tag="analytics"
+        onclick="toggleTagFilter('analytics')"
+      >
+        Analytics
+      </button>
+    </div>
+  </div>
+  
+  <!-- Blog post grid -->
+  <div class="blog-grid">
+    <!-- Individual blog post cards -->
+    <article
+      class="blog-card"
+      data-insights-category="blog-card"
+      data-insights-id="blog-card-post-12345"
+      data-insights-post-id="post-12345"
+      data-insights-position="1"
+      data-insights-list-name="category-tutorials"
+      data-insights-reading-time="8"
+      data-insights-publish-date="2024-06-26"
+    >
+      <img
+        src="article-thumbnail.jpg"
+        alt="Article thumbnail"
+        data-insights-category="blog-thumbnail"
+        data-insights-id="thumbnail-post-12345"
+        onclick="navigateToPost('post-12345')"
+      >
+      
+      <div class="card-content">
+        <h3>
+          <a
+            href="/blog/how-to-implement-analytics"
+            data-insights-category="blog-title-link"
+            data-insights-id="title-link-post-12345"
+            data-insights-post-id="post-12345"
+            data-insights-source="category-listing"
+          >
+            How to Implement Analytics
+          </a>
+        </h3>
+        
+        <p class="excerpt">Learn how to add comprehensive analytics to your web application...</p>
+        
+        <div class="card-meta">
+          <span class="author">Jane Smith</span>
+          <span class="date">June 26, 2024</span>
+          <span class="reading-time">8 min read</span>
+        </div>
+        
+        <div class="card-tags">
+          <span
+            class="tag"
+            data-insights-category="blog-tag"
+            data-insights-id="tag-analytics-from-card"
+            data-insights-tag="analytics"
+            onclick="filterByTag('analytics')"
+          >
+            Analytics
+          </span>
+          
+          <span
+            class="tag"
+            data-insights-category="blog-tag"
+            data-insights-id="tag-javascript-from-card"
+            data-insights-tag="javascript"
+            onclick="filterByTag('javascript')"
+          >
+            JavaScript
+          </span>
+        </div>
+      </div>
+    </article>
+    
+    <!-- More blog cards... -->
+  </div>
+  
+  <!-- Pagination -->
+  <nav
+    class="pagination"
+    data-insights-category="blog-pagination"
+    data-insights-id="pagination-category-tutorials"
+    data-insights-current-page="1"
+    data-insights-total-pages="5"
+  >
+    <button
+      data-insights-category="pagination"
+      data-insights-id="prev-page"
+      data-insights-direction="previous"
+      onclick="changePage(-1)"
+      disabled
+    >
+      Previous
+    </button>
+    
+    <span class="page-numbers">
+      <button
+        class="page-number active"
+        data-insights-category="pagination"
+        data-insights-id="page-1"
+        data-insights-page-number="1"
+      >1</button>
+      
+      <button
+        class="page-number"
+        data-insights-category="pagination"
+        data-insights-id="page-2"
+        data-insights-page-number="2"
+        onclick="goToPage(2)"
+      >2</button>
+    </span>
+    
+    <button
+      data-insights-category="pagination"
+      data-insights-id="next-page"
+      data-insights-direction="next"
+      onclick="changePage(1)"
+    >
+      Next
+    </button>
+  </nav>
+</div>
+
+<script>
+let categoryPageStartTime = Date.now();
+let appliedFilters = {
+  tags: [],
+  sort: 'date'
+};
+
+function handleSortChange(sortValue) {
+  appliedFilters.sort = sortValue;
+  
+  insights.event('blog_sort_changed', {
+    category: 'tutorials',
+    sort_method: sortValue,
+    previous_sort: appliedFilters.sort,
+    time_on_page: Date.now() - categoryPageStartTime
+  });
+  
+  // Apply sort and reload content
+  applySortAndReload(sortValue);
+}
+
+function toggleTagFilter(tag) {
+  const isActive = appliedFilters.tags.includes(tag);
+  
+  if (isActive) {
+    appliedFilters.tags = appliedFilters.tags.filter(t => t !== tag);
+  } else {
+    appliedFilters.tags.push(tag);
+  }
+  
+  insights.event('blog_tag_filter_toggled', {
+    tag: tag,
+    action: isActive ? 'removed' : 'added',
+    active_filters: appliedFilters.tags,
+    category: 'tutorials'
+  });
+  
+  // Apply filters and reload content
+  applyFiltersAndReload();
+}
+
+function navigateToPost(postId) {
+  insights.event('blog_post_clicked', {
+    post_id: postId,
+    source: 'category_listing',
+    category: 'tutorials',
+    time_on_category_page: Date.now() - categoryPageStartTime,
+    applied_filters: appliedFilters
+  });
+  
+  // Navigate to post
+  window.location.href = `/blog/post/${postId}`;
+}
+
+function changePage(direction) {
+  const currentPage = getCurrentPage();
+  const newPage = currentPage + direction;
+  
+  insights.event('blog_pagination_clicked', {
+    category: 'tutorials',
+    from_page: currentPage,
+    to_page: newPage,
+    direction: direction > 0 ? 'next' : 'previous',
+    applied_filters: appliedFilters
+  });
+  
+  goToPage(newPage);
+}
+</script>
+```
+
+## Search and Discovery
+
+### Site Search Implementation
+
+```html
+<!-- Site search -->
+<div class="site-search">
+  <form
+    class="search-form"
+    onsubmit="handleSearchSubmit(event)"
+    data-insights-category="site-search"
+    data-insights-id="main-search-form"
+    data-insights-placement="header"
+  >
+    <input
+      type="search"
+      id="search-input"
+      placeholder="Search articles, tutorials, guides..."
+      data-insights-category="search-input"
+      data-insights-id="main-search-input"
+      data-insights-search-type="content"
+      oninput="handleSearchInput(this.value)"
+    >
+    
+    <button
+      type="submit"
+      data-insights-category="search-submit"
+      data-insights-id="main-search-submit"
+    >
+      Search
+    </button>
+  </form>
+  
+  <!-- Search suggestions -->
+  <div
+    id="search-suggestions"
+    class="search-suggestions hidden"
+    data-insights-category="search-suggestions"
+    data-insights-id="search-suggestions-dropdown"
+  >
+    <!-- Dynamic suggestions populated by JavaScript -->
+  </div>
+</div>
+
+<!-- Search results page -->
+<div class="search-results-page" id="search-results" style="display: none;">
+  <header class="search-results-header">
+    <h1>Search Results</h1>
+    <p id="search-results-summary"></p>
+  </header>
+  
+  <!-- Search filters -->
+  <div class="search-filters">
+    <div class="filter-group">
+      <label>Content Type:</label>
+      <label>
+        <input
+          type="checkbox"
+          value="blog-post"
+          data-insights-category="search-filter"
+          data-insights-id="filter-blog-posts"
+          data-insights-filter-type="content-type"
+          onchange="handleFilterChange('content-type', 'blog-post', this.checked)"
+        >
+        Blog Posts
+      </label>
+      
+      <label>
+        <input
+          type="checkbox"
+          value="tutorial"
+          data-insights-category="search-filter"
+          data-insights-id="filter-tutorials"
+          data-insights-filter-type="content-type"
+          onchange="handleFilterChange('content-type', 'tutorial', this.checked)"
+        >
+        Tutorials
+      </label>
+    </div>
+    
+    <div class="filter-group">
+      <label>Publication Date:</label>
+      <select
+        data-insights-category="search-filter"
+        data-insights-id="filter-date-range"
+        data-insights-filter-type="date-range"
+        onchange="handleFilterChange('date-range', this.value, true)"
+      >
+        <option value="all">All Time</option>
+        <option value="week">Past Week</option>
+        <option value="month">Past Month</option>
+        <option value="year">Past Year</option>
+      </select>
+    </div>
+  </div>
+  
+  <!-- Search results -->
+  <div id="search-results-list" class="search-results-list">
+    <!-- Dynamic results populated by JavaScript -->
+  </div>
+</div>
+
+<script>
+let searchStartTime = null;
+let searchQuery = '';
+let searchFilters = {
+  contentType: [],
+  dateRange: 'all'
+};
+
+function handleSearchInput(value) {
+  searchQuery = value;
+  
+  // Show suggestions after 2 characters
+  if (value.length >= 2) {
+    showSearchSuggestions(value);
+  } else {
+    hideSearchSuggestions();
+  }
+  
+  // Track search input (debounced)
+  clearTimeout(searchInputTimeout);
+  searchInputTimeout = setTimeout(() => {
+    insights.event('search_input_changed', {
+      query: value,
+      query_length: value.length,
+      has_suggestions: value.length >= 2
+    });
+  }, 500);
+}
+
+function handleSearchSubmit(event) {
+  event.preventDefault();
+  searchStartTime = Date.now();
+  
+  if (searchQuery.length === 0) {
+    insights.error('empty_search_query', 'User submitted empty search', {
+      search_form: 'main_header'
+    });
+    return;
+  }
+  
+  performSearch(searchQuery);
+}
+
+function performSearch(query) {
+  insights.event('search_performed', {
+    query: query,
+    query_length: query.length,
+    search_type: 'content',
+    filters: searchFilters,
+    search_source: 'main_form'
+  });
+  
+  // Perform search API call
+  fetch(`/api/search?q=${encodeURIComponent(query)}`)
+    .then(response => response.json())
+    .then(results => {
+      displaySearchResults(query, results);
+      trackSearchResults(query, results);
+    })
+    .catch(error => {
+      insights.error('search_api_error', 'Search API request failed', {
+        query: query,
+        error: error.message
+      });
+    });
+}
+
+function trackSearchResults(query, results) {
+  const searchDuration = Date.now() - searchStartTime;
+  
+  insights.event('search_results_displayed', {
+    query: query,
+    result_count: results.length,
+    search_duration: searchDuration,
+    has_results: results.length > 0,
+    filters: searchFilters
+  });
+  
+  // Track if no results
+  if (results.length === 0) {
+    insights.error('empty_search_results', 'No search results found', {
+      query: query,
+      search_duration: searchDuration,
+      suggested_queries: generateSearchSuggestions(query)
+    });
+  }
+}
+
+function handleSearchResultClick(resultIndex, result) {
+  insights.event('search_result_clicked', {
+    query: searchQuery,
+    result_position: resultIndex + 1,
+    result_id: result.id,
+    result_type: result.type,
+    result_title: result.title,
+    time_to_click: Date.now() - searchStartTime
+  });
+}
+
+function handleFilterChange(filterType, filterValue, isChecked) {
+  if (filterType === 'content-type') {
+    if (isChecked) {
+      searchFilters.contentType.push(filterValue);
+    } else {
+      searchFilters.contentType = searchFilters.contentType.filter(v => v !== filterValue);
+    }
+  } else if (filterType === 'date-range') {
+    searchFilters.dateRange = filterValue;
+  }
+  
+  insights.event('search_filter_applied', {
+    filter_type: filterType,
+    filter_value: filterValue,
+    filter_action: isChecked ? 'added' : 'removed',
+    active_filters: searchFilters,
+    current_query: searchQuery
+  });
+  
+  // Re-perform search with new filters
+  if (searchQuery) {
+    performSearch(searchQuery);
+  }
+}
+
+function showSearchSuggestions(query) {
+  // Fetch and display suggestions
+  fetch(`/api/search/suggestions?q=${encodeURIComponent(query)}`)
+    .then(response => response.json())
+    .then(suggestions => {
+      displaySuggestions(suggestions);
+      
+      insights.event('search_suggestions_shown', {
+        query: query,
+        suggestion_count: suggestions.length
+      });
+    });
+}
+
+function handleSuggestionClick(suggestion, index) {
+  insights.event('search_suggestion_clicked', {
+    original_query: searchQuery,
+    selected_suggestion: suggestion,
+    suggestion_position: index + 1
+  });
+  
+  // Use suggestion as search query
+  document.getElementById('search-input').value = suggestion;
+  performSearch(suggestion);
+}
+</script>
+```
+
+## Comment System Integration
+
+### Comment Engagement Tracking
+
+```html
+<!-- Comments section -->
+<section
+  class="comments-section"
+  data-insights-category="comments"
+  data-insights-id="comments-post-12345"
+  data-insights-post-id="post-12345"
+  data-insights-comment-count="15"
+>
+  <h3>Comments (15)</h3>
+  
+  <!-- Comment form -->
+  <form
+    class="comment-form"
+    onsubmit="handleCommentSubmit(event)"
+    data-insights-category="comment-form"
+    data-insights-id="new-comment-form"
+    data-insights-post-id="post-12345"
+  >
+    <textarea
+      placeholder="Share your thoughts..."
+      data-insights-category="comment-textarea"
+      data-insights-id="comment-input"
+      data-insights-field-type="comment"
+      oninput="handleCommentInput(this.value)"
+    ></textarea>
+    
+    <button
+      type="submit"
+      data-insights-category="comment-submit"
+      data-insights-id="submit-comment"
+      data-insights-post-id="post-12345"
+    >
+      Post Comment
+    </button>
+  </form>
+  
+  <!-- Existing comments -->
+  <div class="comments-list">
+    <div
+      class="comment"
+      data-insights-category="comment"
+      data-insights-id="comment-67890"
+      data-insights-comment-id="67890"
+      data-insights-author="john-doe"
+      data-insights-posted="2024-06-26"
+    >
+      <div class="comment-header">
+        <span class="author">John Doe</span>
+        <span class="date">2 hours ago</span>
+      </div>
+      
+      <div class="comment-content">
+        <p>Great article! This really helped me understand analytics implementation.</p>
+      </div>
+      
+      <div class="comment-actions">
+        <button
+          data-insights-category="comment-action"
+          data-insights-id="like-comment-67890"
+          data-insights-action="like"
+          data-insights-comment-id="67890"
+          onclick="likeComment('67890')"
+        >
+          👍 Like (5)
+        </button>
+        
+        <button
+          data-insights-category="comment-action"
+          data-insights-id="reply-comment-67890"
+          data-insights-action="reply"
+          data-insights-comment-id="67890"
+          onclick="replyToComment('67890')"
+        >
+          Reply
+        </button>
+        
+        <button
+          data-insights-category="comment-action"
+          data-insights-id="report-comment-67890"
+          data-insights-action="report"
+          data-insights-comment-id="67890"
+          onclick="reportComment('67890')"
+        >
+          Report
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+let commentFormStartTime = null;
+let commentDraft = '';
+
+function handleCommentInput(value) {
+  commentDraft = value;
+  
+  // Track when user starts writing
+  if (!commentFormStartTime && value.length > 0) {
+    commentFormStartTime = Date.now();
+    
+    insights.event('comment_writing_started', {
+      post_id: 'post-12345',
+      user_authenticated: isUserAuthenticated()
+    });
+  }
+  
+  // Track substantial progress
+  if (value.length >= 50 && value.length % 50 === 0) {
+    insights.event('comment_writing_progress', {
+      post_id: 'post-12345',
+      character_count: value.length,
+      writing_time: Date.now() - commentFormStartTime
+    });
+  }
+}
+
+function handleCommentSubmit(event) {
+  event.preventDefault();
+  const commentText = event.target.querySelector('textarea').value;
+  
+  if (!commentText.trim()) {
+    insights.error('empty_comment_submission', 'User tried to submit empty comment', {
+      post_id: 'post-12345'
+    });
+    return;
+  }
+  
+  const writingTime = commentFormStartTime ? Date.now() - commentFormStartTime : 0;
+  
+  insights.event('comment_submitted', {
+    post_id: 'post-12345',
+    comment_length: commentText.length,
+    writing_time: writingTime,
+    user_authenticated: isUserAuthenticated(),
+    writing_speed: commentText.length / (writingTime / 1000 / 60) // characters per minute
+  });
+  
+  // Submit comment
+  submitComment(commentText);
+}
+
+function likeComment(commentId) {
+  insights.event('comment_liked', {
+    comment_id: commentId,
+    post_id: 'post-12345',
+    interaction_type: 'like'
+  });
+  
+  // Like comment logic
+  toggleCommentLike(commentId);
+}
+
+function replyToComment(commentId) {
+  insights.event('comment_reply_initiated', {
+    comment_id: commentId,
+    post_id: 'post-12345',
+    interaction_type: 'reply'
+  });
+  
+  // Show reply form
+  showReplyForm(commentId);
+}
+
+function reportComment(commentId) {
+  insights.event('comment_reported', {
+    comment_id: commentId,
+    post_id: 'post-12345',
+    interaction_type: 'report'
+  });
+  
+  // Show report form
+  showReportForm(commentId);
+}
+
+// Track comment section engagement
+function trackCommentSectionEngagement() {
+  const commentsSection = document.querySelector('.comments-section');
+  
+  const observer = new IntersectionObserver(
+    ([entry]) => {
+      if (entry.isIntersecting) {
+        insights.event('comments_section_viewed', {
+          post_id: 'post-12345',
+          comment_count: getCommentCount(),
+          user_authenticated: isUserAuthenticated()
+        });
+      }
+    },
+    { threshold: 0.3 }
+  );
+  
+  observer.observe(commentsSection);
+}
+
+// Initialize comment tracking
+document.addEventListener('DOMContentLoaded', trackCommentSectionEngagement);
+</script>
+```
+
+This comprehensive content site tracking implementation provides deep insights into user engagement, content performance, and community interaction patterns.

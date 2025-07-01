@@ -1,0 +1,767 @@
+---
+title: "E-commerce Integration"
+order: 1
+description: "Complete e-commerce tracking implementation examples"
+---
+
+# E-commerce Integration
+
+This guide demonstrates comprehensive tracking implementation for e-commerce websites, covering product catalogs, shopping carts, checkout flows, and purchase analytics.
+
+## Why E-commerce Tracking Matters
+
+**Business Impact:**
+- **Revenue Optimization**: Understand which products and features drive conversions
+- **Customer Journey Analysis**: Identify where users drop off in the purchase funnel
+- **Product Performance**: Track which products are viewed, engaged with, and purchased
+- **Inventory Insights**: Correlate user interest with inventory management decisions
+- **Marketing ROI**: Measure effectiveness of product promotions and recommendations
+
+**Key Metrics to Track:**
+- Product discovery patterns (search, category browsing, recommendations)
+- Product engagement depth (time on page, image views, variant selections)
+- Cart behaviour (additions, removals, abandonment timing)
+- Checkout progression and friction points
+- Purchase completion and order values
+
+## Product Catalog Page
+
+Track product listings, search results, and category browsing:
+
+### Product Grid Tracking
+
+**Why track product listings:**
+Product grid interactions reveal user preferences, help optimise product placement, and identify high-performing products that should be featured prominently.
+
+```html
+<!-- Category page with product grid -->
+<div class="product-grid">
+  <!-- Individual product cards -->
+  <div 
+    class="product-card"
+    data-insights-category="product-listing"
+    data-insights-id="product-SKU-12345"
+    data-insights-product-id="SKU-12345"
+    data-insights-product-name="Gaming Laptop Pro"
+    data-insights-product-category="electronics"
+    data-insights-price="1299.99"
+    data-insights-currency="USD"
+    data-insights-position="1"
+    data-insights-list-name="featured-products"
+  >
+    <img src="laptop.jpg" alt="Gaming Laptop Pro">
+    <h3>Gaming Laptop Pro</h3>
+    <p class="price">$1,299.99</p>
+    
+    <!-- Quick view button -->
+    <button
+      data-insights-category="product-action"
+      data-insights-id="quick-view-SKU-12345"
+      data-insights-action="quick_view"
+      data-insights-product-id="SKU-12345"
+      onclick="openQuickView('SKU-12345')"
+    >
+      Quick View
+    </button>
+    
+    <!-- Add to cart button -->
+    <button
+      data-insights-category="add-to-cart"
+      data-insights-id="add-cart-SKU-12345"
+      data-insights-product-id="SKU-12345"
+      data-insights-source="product-listing"
+      onclick="addToCart('SKU-12345', 1)"
+    >
+      Add to Cart
+    </button>
+  </div>
+  
+  <!-- More product cards... -->
+</div>
+
+<script>
+function openQuickView(productId) {
+  // Open quick view modal
+  showQuickViewModal(productId);
+  
+  // Track quick view action
+  insights.event('quick_view_opened', {
+    product_id: productId,
+    source: 'product_listing',
+    timestamp: Date.now()
+  });
+}
+
+function addToCart(productId, quantity) {
+  // Add to cart logic
+  const product = getProductDetails(productId);
+  addProductToCart(product, quantity);
+  
+  // Track add to cart event
+  insights.event('add_to_cart', {
+    product_id: productId,
+    product_name: product.name,
+    product_category: product.category,
+    price: product.price,
+    currency: 'USD',
+    quantity: quantity,
+    cart_value: calculateCartTotal(),
+    source: 'product_listing'
+  });
+}
+</script>
+```
+
+### Search Results Tracking
+
+**Critical for search optimisation:**
+Search behaviour tracking reveals what customers are looking for, which searches succeed or fail, and how to improve product discoverability and search relevance.
+
+```html
+<!-- Search results page -->
+<div class="search-results">
+  <div class="search-metadata">
+    <h2>Search Results for "gaming laptop"</h2>
+    <p>Showing 24 of 156 results</p>
+  </div>
+  
+  <!-- Track search results impression -->
+  <div
+    data-insights-category="search-results"
+    data-insights-id="search-results-gaming-laptop"
+    data-insights-query="gaming laptop"
+    data-insights-result-count="156"
+    data-insights-page="1"
+    data-insights-filters-applied="price,brand"
+  >
+    <!-- Search result products -->
+    <div 
+      class="product-card"
+      data-insights-category="search-result"
+      data-insights-id="search-result-SKU-12345"
+      data-insights-product-id="SKU-12345"
+      data-insights-search-query="gaming laptop"
+      data-insights-result-position="1"
+      data-insights-relevance-score="0.95"
+    >
+      <!-- Product content -->
+    </div>
+  </div>
+</div>
+
+<script>
+// Track search performed
+function trackSearch(query, filters, resultCount) {
+  insights.event('search_performed', {
+    query: query,
+    filters: filters,
+    result_count: resultCount,
+    search_type: 'product_search',
+    timestamp: Date.now()
+  });
+  
+  // Track if no results
+  if (resultCount === 0) {
+    insights.error('empty_search_results', 'No products found for search', {
+      query: query,
+      filters: filters,
+      suggestions_shown: getSuggestionsCount()
+    });
+  }
+}
+
+// Track search refinement
+function trackFilterApplication(filterType, filterValue, newResultCount) {
+  insights.event('search_filter_applied', {
+    filter_type: filterType,
+    filter_value: filterValue,
+    previous_result_count: getCurrentResultCount(),
+    new_result_count: newResultCount,
+    total_active_filters: getActiveFilters().length
+  });
+}
+</script>
+```
+
+## Product Detail Page
+
+Track detailed product interactions and engagement:
+
+```html
+<!-- Product detail page -->
+<div class="product-detail">
+  <!-- Main product impression -->
+  <div
+    data-insights-category="product-detail"
+    data-insights-id="product-detail-SKU-12345"
+    data-insights-product-id="SKU-12345"
+    data-insights-product-name="Gaming Laptop Pro"
+    data-insights-product-category="electronics"
+    data-insights-price="1299.99"
+    data-insights-currency="USD"
+    data-insights-stock-status="in_stock"
+    data-insights-variant-count="3"
+  >
+    <!-- Product images -->
+    <div class="product-images">
+      <img 
+        src="laptop-main.jpg" 
+        alt="Gaming Laptop Pro"
+        data-insights-category="product-image"
+        data-insights-id="main-image-SKU-12345"
+        data-insights-image-position="1"
+        onclick="openImageGallery(0)"
+      >
+    </div>
+    
+    <!-- Product information -->
+    <div class="product-info">
+      <h1>Gaming Laptop Pro</h1>
+      <p class="price">$1,299.99</p>
+      
+      <!-- Variant selection -->
+      <div class="variant-selection">
+        <label>Storage:</label>
+        <select 
+          data-insights-category="variant-selection"
+          data-insights-id="storage-select-SKU-12345"
+          data-insights-variant-type="storage"
+          onchange="handleVariantChange('storage', this.value)"
+        >
+          <option value="512gb">512GB SSD (+$0)</option>
+          <option value="1tb">1TB SSD (+$200)</option>
+        </select>
+      </div>
+      
+      <!-- Add to cart -->
+      <button
+        class="add-to-cart-btn"
+        data-insights-category="add-to-cart"
+        data-insights-id="add-cart-detail-SKU-12345"
+        data-insights-product-id="SKU-12345"
+        data-insights-source="product-detail"
+        onclick="addToCartFromDetail()"
+      >
+        Add to Cart - $1,299.99
+      </button>
+      
+      <!-- Wishlist button -->
+      <button
+        data-insights-category="wishlist"
+        data-insights-id="wishlist-SKU-12345"
+        data-insights-product-id="SKU-12345"
+        onclick="addToWishlist('SKU-12345')"
+      >
+        Add to Wishlist
+      </button>
+    </div>
+  </div>
+  
+  <!-- Product recommendations -->
+  <div
+    class="recommendations"
+    data-insights-category="recommendations"
+    data-insights-id="related-products-SKU-12345"
+    data-insights-algorithm="frequently-bought-together"
+    data-insights-source-product="SKU-12345"
+  >
+    <h3>Frequently Bought Together</h3>
+    <!-- Recommended products -->
+  </div>
+</div>
+
+<script>
+let productDetailStartTime = Date.now();
+let imageGalleryOpened = false;
+
+function handleVariantChange(variantType, variantValue) {
+  insights.event('product_variant_selected', {
+    product_id: 'SKU-12345',
+    variant_type: variantType,
+    variant_value: variantValue,
+    price_change: calculatePriceChange(variantType, variantValue)
+  });
+}
+
+// Why track variant changes:
+// - Understand which product options are most popular
+// - Identify price sensitivity to different configurations
+// - Optimize default selections to improve conversion rates
+// - Analyze how variant choice affects purchase decisions
+
+function addToCartFromDetail() {
+  const selectedVariants = getSelectedVariants();
+  const finalPrice = calculateFinalPrice(selectedVariants);
+  const timeOnPage = Date.now() - productDetailStartTime;
+  
+  insights.event('add_to_cart', {
+    product_id: 'SKU-12345',
+    product_name: 'Gaming Laptop Pro',
+    product_category: 'electronics',
+    price: finalPrice,
+    currency: 'USD',
+    quantity: 1,
+    variants: selectedVariants,
+    source: 'product_detail',
+    time_on_page: timeOnPage,
+    gallery_viewed: imageGalleryOpened
+  });
+  
+  // Why track time_on_page and gallery_viewed:
+  // - Correlate product engagement depth with conversion likelihood
+  // - Understand which products need more convincing vs. quick purchases
+  // - Optimize product page layouts based on engagement patterns
+  // - Identify products that may benefit from better photography
+}
+
+function addToWishlist(productId) {
+  insights.event('add_to_wishlist', {
+    product_id: productId,
+    source: 'product_detail',
+    user_logged_in: isUserLoggedIn()
+  });
+}
+
+function openImageGallery(imageIndex) {
+  imageGalleryOpened = true;
+  
+  insights.event('product_image_gallery_opened', {
+    product_id: 'SKU-12345',
+    initial_image_index: imageIndex,
+    total_images: getTotalImageCount()
+  });
+  
+  // Why track image gallery usage:
+  // - Image viewing often correlates with higher purchase intent
+  // - Identify which images are most important to customers
+  // - Optimize image order and quality based on engagement
+  // - Understand visual content needs for different product categories
+}
+</script>
+```
+
+## Shopping Cart
+
+Track cart interactions and abandonment patterns:
+
+```html
+<!-- Shopping cart page -->
+<div class="shopping-cart">
+  <!-- Cart items -->
+  <div class="cart-items">
+    <div 
+      class="cart-item"
+      data-insights-category="cart-item"
+      data-insights-id="cart-item-SKU-12345"
+      data-insights-product-id="SKU-12345"
+      data-insights-quantity="1"
+      data-insights-line-total="1299.99"
+    >
+      <img src="laptop.jpg" alt="Gaming Laptop Pro">
+      <div class="item-details">
+        <h3>Gaming Laptop Pro</h3>
+        <p>Storage: 1TB SSD</p>
+        <p class="price">$1,299.99</p>
+        
+        <!-- Quantity controls -->
+        <div class="quantity-controls">
+          <button
+            data-insights-category="cart-quantity"
+            data-insights-id="decrease-qty-SKU-12345"
+            data-insights-action="decrease"
+            data-insights-product-id="SKU-12345"
+            onclick="updateQuantity('SKU-12345', -1)"
+          >-</button>
+          
+          <span class="quantity">1</span>
+          
+          <button
+            data-insights-category="cart-quantity"
+            data-insights-id="increase-qty-SKU-12345"
+            data-insights-action="increase"
+            data-insights-product-id="SKU-12345"
+            onclick="updateQuantity('SKU-12345', 1)"
+          >+</button>
+        </div>
+        
+        <!-- Remove button -->
+        <button
+          data-insights-category="cart-remove"
+          data-insights-id="remove-SKU-12345"
+          data-insights-product-id="SKU-12345"
+          onclick="removeFromCart('SKU-12345')"
+        >
+          Remove
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Cart summary -->
+  <div class="cart-summary">
+    <div class="totals">
+      <p>Subtotal: <span class="subtotal">$1,299.99</span></p>
+      <p>Tax: <span class="tax">$104.00</span></p>
+      <p class="total">Total: <span>$1,403.99</span></p>
+    </div>
+    
+    <!-- Checkout button -->
+    <button
+      class="checkout-btn"
+      data-insights-category="checkout"
+      data-insights-id="begin-checkout"
+      data-insights-cart-value="1403.99"
+      data-insights-item-count="1"
+      data-insights-currency="USD"
+      onclick="beginCheckout()"
+    >
+      Proceed to Checkout
+    </button>
+  </div>
+</div>
+
+<script>
+let cartPageStartTime = Date.now();
+
+function updateQuantity(productId, change) {
+  const currentQty = getCurrentQuantity(productId);
+  const newQty = Math.max(0, currentQty + change);
+  const lineTotal = calculateLineTotal(productId, newQty);
+  
+  if (newQty === 0) {
+    removeFromCart(productId);
+    return;
+  }
+  
+  // Update cart
+  updateCartQuantity(productId, newQty);
+  
+  insights.event('cart_quantity_changed', {
+    product_id: productId,
+    previous_quantity: currentQty,
+    new_quantity: newQty,
+    line_total: lineTotal,
+    cart_total: calculateCartTotal()
+  });
+}
+
+function removeFromCart(productId) {
+  const product = getCartProduct(productId);
+  
+  // Remove from cart
+  removeCartProduct(productId);
+  
+  insights.event('remove_from_cart', {
+    product_id: productId,
+    product_name: product.name,
+    quantity_removed: product.quantity,
+    line_total_removed: product.lineTotal,
+    new_cart_total: calculateCartTotal(),
+    remaining_items: getRemainingItemCount()
+  });
+}
+
+function beginCheckout() {
+  const cartData = getCartData();
+  const timeOnCart = Date.now() - cartPageStartTime;
+  
+  insights.event('checkout_started', {
+    cart_value: cartData.total,
+    item_count: cartData.itemCount,
+    currency: 'USD',
+    items: cartData.items.map(item => ({
+      product_id: item.id,
+      quantity: item.quantity,
+      price: item.price
+    })),
+    time_on_cart_page: timeOnCart,
+    cart_abandonment_risk: calculateAbandonmentRisk(timeOnCart)
+  });
+  
+  // Navigate to checkout
+  window.location.href = '/checkout';
+}
+
+// Track cart abandonment
+window.addEventListener('beforeunload', function() {
+  if (hasItemsInCart()) {
+    insights.event('cart_abandonment', {
+      cart_value: calculateCartTotal(),
+      item_count: getCartItemCount(),
+      time_on_page: Date.now() - cartPageStartTime,
+      exit_intent: true
+    });
+  }
+});
+</script>
+```
+
+## Checkout Flow
+
+Track the complete checkout process with funnel analysis:
+
+```html
+<!-- Checkout page -->
+<div class="checkout-process">
+  <!-- Checkout steps -->
+  <div class="checkout-steps">
+    <div class="step active">1. Shipping</div>
+    <div class="step">2. Payment</div>
+    <div class="step">3. Review</div>
+  </div>
+  
+  <!-- Shipping form -->
+  <form 
+    id="shipping-form"
+    data-insights-category="checkout-form"
+    data-insights-id="shipping-form"
+    data-insights-step="shipping"
+    data-insights-step-number="1"
+  >
+    <h2>Shipping Information</h2>
+    
+    <!-- Form fields with error tracking -->
+    <input
+      type="email"
+      name="email"
+      placeholder="Email"
+      data-insights-category="form-field"
+      data-insights-id="checkout-email"
+      data-insights-field-type="email"
+      onblur="validateField('email', this.value)"
+    >
+    
+    <input
+      type="text"
+      name="address"
+      placeholder="Address"
+      data-insights-category="form-field"
+      data-insights-id="checkout-address"
+      data-insights-field-type="address"
+      onblur="validateField('address', this.value)"
+    >
+    
+    <!-- Continue button -->
+    <button
+      type="submit"
+      data-insights-category="checkout-step"
+      data-insights-id="continue-to-payment"
+      data-insights-step="shipping"
+      data-insights-next-step="payment"
+    >
+      Continue to Payment
+    </button>
+  </form>
+</div>
+
+<script>
+let checkoutStepStartTime = Date.now();
+const checkoutData = {
+  started: Date.now(),
+  steps: {},
+  errors: []
+};
+
+function validateField(fieldName, value) {
+  if (!isValidField(fieldName, value)) {
+    insights.error('checkout_validation_error', `Invalid ${fieldName} format`, {
+      field: fieldName,
+      step: 'shipping',
+      checkout_session: checkoutData.started,
+      attempt_count: getFieldAttemptCount(fieldName)
+    });
+    
+    checkoutData.errors.push({
+      field: fieldName,
+      timestamp: Date.now()
+    });
+  }
+}
+
+// Track checkout step completion
+function completeCheckoutStep(stepName, stepData) {
+  const stepDuration = Date.now() - checkoutStepStartTime;
+  
+  checkoutData.steps[stepName] = {
+    completed: Date.now(),
+    duration: stepDuration,
+    errors: checkoutData.errors.filter(e => e.timestamp >= checkoutStepStartTime)
+  };
+  
+  insights.event('checkout_step_completed', {
+    step: stepName,
+    step_number: getStepNumber(stepName),
+    duration: stepDuration,
+    error_count: checkoutData.steps[stepName].errors.length,
+    checkout_session: checkoutData.started,
+    ...stepData
+  });
+  
+  // Reset for next step
+  checkoutStepStartTime = Date.now();
+  checkoutData.errors = [];
+}
+
+// Track successful purchase
+function trackPurchaseCompletion(orderData) {
+  const checkoutDuration = Date.now() - checkoutData.started;
+  
+  insights.event('purchase_completed', {
+    order_id: orderData.id,
+    total: orderData.total,
+    currency: orderData.currency,
+    items: orderData.items.map(item => ({
+      product_id: item.id,
+      product_name: item.name,
+      category: item.category,
+      quantity: item.quantity,
+      price: item.price
+    })),
+    payment_method: orderData.paymentMethod,
+    shipping_method: orderData.shippingMethod,
+    checkout_duration: checkoutDuration,
+    step_count: Object.keys(checkoutData.steps).length,
+    total_errors: getTotalErrorCount(),
+    customer_type: getCustomerType(orderData.customerId)
+  });
+}
+
+// Track checkout abandonment
+function trackCheckoutAbandonment(currentStep) {
+  const checkoutDuration = Date.now() - checkoutData.started;
+  const completedSteps = Object.keys(checkoutData.steps);
+  
+  insights.event('checkout_abandonment', {
+    abandoned_at_step: currentStep,
+    completed_steps: completedSteps,
+    checkout_duration: checkoutDuration,
+    cart_value: getCartTotal(),
+    item_count: getCartItemCount(),
+    error_count: getTotalErrorCount(),
+    furthest_step: getFurthestStep()
+  });
+}
+
+// Set up abandonment tracking
+window.addEventListener('beforeunload', function() {
+  if (isInCheckoutProcess()) {
+    trackCheckoutAbandonment(getCurrentStep());
+  }
+});
+</script>
+```
+
+## Customer Journey Analytics
+
+Track complete customer journey from acquisition to purchase:
+
+```javascript
+// Customer journey tracking
+class CustomerJourney {
+  constructor() {
+    this.session = {
+      id: this.generateSessionId(),
+      started: Date.now(),
+      pages: [],
+      events: [],
+      referrer: document.referrer,
+      utm: this.extractUTMParameters(),
+      source: this.determineTrafficSource()
+    };
+  }
+  
+  trackPageView(pageName, pageData = {}) {
+    const pageView = {
+      page: pageName,
+      timestamp: Date.now(),
+      url: window.location.href,
+      ...pageData
+    };
+    
+    this.session.pages.push(pageView);
+    
+    insights.event('page_view', {
+      page: pageName,
+      session_id: this.session.id,
+      page_sequence: this.session.pages.length,
+      time_since_session_start: Date.now() - this.session.started,
+      referrer: this.session.referrer,
+      traffic_source: this.session.source,
+      utm_campaign: this.session.utm.campaign,
+      utm_medium: this.session.utm.medium,
+      utm_source: this.session.utm.source,
+      ...pageData
+    });
+  }
+  
+  trackConversion(conversionType, conversionData) {
+    const journey = {
+      session_id: this.session.id,
+      conversion_type: conversionType,
+      session_duration: Date.now() - this.session.started,
+      page_count: this.session.pages.length,
+      event_count: this.session.events.length,
+      pages_visited: this.session.pages.map(p => p.page),
+      traffic_source: this.session.source,
+      ...conversionData
+    };
+    
+    insights.event('conversion_completed', journey);
+  }
+  
+  extractUTMParameters() {
+    const params = new URLSearchParams(window.location.search);
+    return {
+      source: params.get('utm_source'),
+      medium: params.get('utm_medium'),
+      campaign: params.get('utm_campaign'),
+      term: params.get('utm_term'),
+      content: params.get('utm_content')
+    };
+  }
+  
+  determineTrafficSource() {
+    if (this.session.utm.source) {
+      return `utm:${this.session.utm.source}`;
+    }
+    
+    if (!document.referrer) {
+      return 'direct';
+    }
+    
+    const referrerDomain = new URL(document.referrer).hostname;
+    
+    if (referrerDomain.includes('google')) return 'google';
+    if (referrerDomain.includes('facebook')) return 'facebook';
+    if (referrerDomain.includes('twitter')) return 'twitter';
+    
+    return 'referral';
+  }
+  
+  generateSessionId() {
+    return 'sess_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
+  }
+}
+
+// Initialize journey tracking
+const journey = new CustomerJourney();
+
+// Track page views throughout the site
+journey.trackPageView('homepage');
+// journey.trackPageView('product_listing', { category: 'electronics' });
+// journey.trackPageView('product_detail', { product_id: 'SKU-12345' });
+// journey.trackPageView('cart');
+// journey.trackPageView('checkout');
+
+// Track conversion
+function trackPurchaseConversion(orderData) {
+  journey.trackConversion('purchase', {
+    order_id: orderData.id,
+    order_value: orderData.total,
+    item_count: orderData.items.length,
+    customer_type: orderData.customerType
+  });
+}
+```
+
+This comprehensive e-commerce tracking setup provides deep insights into customer behaviour, conversion funnels, and business performance metrics.

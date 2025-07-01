@@ -1,0 +1,409 @@
+---
+title: "Single Page Application Behavior"
+order: 4
+description: "How Insights tracking works in SPAs and differs from traditional multi-page sites"
+---
+
+# Single Page Application Behavior
+
+Insights provides sophisticated support for Single Page Applications (SPAs) with automatic detection and handling of client-side navigation, ensuring comprehensive tracking without manual configuration.
+
+## How SPAs Differ from Traditional Sites
+
+### Traditional Multi-Page Sites
+- **Page Reloads**: Each navigation triggers a full page reload
+- **New Tracker Instance**: Insights component reinitializes on every page
+- **Event Transmission**: Events are sent before page unload
+- **Browser APIs**: Standard page load events fire consistently
+- **UTM Persistence**: URL parameters automatically persist via cookies
+
+### Single Page Applications
+- **No Page Reloads**: Navigation happens via JavaScript history manipulation
+- **Persistent Tracker**: Single Insights component remains active throughout session
+- **Continuous Tracking**: Events accumulate across route changes
+- **Custom Navigation Events**: Standard page events don't fire on route changes
+- **Dynamic Parameter Handling**: UTM/GSI parameters need active monitoring
+
+## Automatic SPA Detection and Handling
+
+Insights automatically detects and handles SPA navigation without requiring configuration:
+
+### History API Interception
+
+**Automatic Detection:**
+```javascript
+// Insights automatically intercepts these SPA navigation methods:
+// history.pushState() - programmatic navigation
+// history.replaceState() - URL replacement
+// window.addEventListener('popstate') - browser back/forward
+
+// No configuration needed - this happens automatically
+```
+
+**What Gets Tracked:**
+- Route changes via `pushState` and `replaceState`
+- Browser back/forward navigation
+- Hash changes (for hash-based routing)
+- Direct URL modifications
+
+### Page Visit ID Management
+
+**Automatic Behavior:**
+- **New Visit ID**: Generated for each route change
+- **Session Continuity**: User session remains consistent across routes
+- **UTM Refresh**: Parameters automatically re-extracted on navigation
+- **Event Queue Flush**: Pending events transmitted before route change
+
+```javascript
+// Automatic page visit ID generation (no code needed)
+// Route: /products → /product/123
+// Old visit ID: uuid-1234-5678
+// New visit ID: uuid-9876-5432
+// Session ID: remains the same
+```
+
+## SPA-Specific Features
+
+### UTM Parameter Monitoring
+
+**Challenge in SPAs:**
+In traditional sites, UTM parameters are captured once per page load. In SPAs, parameters might be added during navigation and need continuous monitoring.
+
+**Insights Solution:**
+```javascript
+// Automatic UTM parameter refresh on SPA navigation
+// /products?utm_source=google → captured automatically
+// User navigates to /product/123 → UTM data persists
+// User navigates to /cart?utm_campaign=sale → new UTM data captured and merged
+```
+
+**Behavior:**
+- **Route Change Detection**: Monitors all SPA navigation
+- **Parameter Extraction**: Automatically extracts UTM and GSI parameters
+- **Cookie Updates**: Refreshes stored parameters with new values
+- **Priority System**: New parameters override stored ones
+
+### Event Queue Management
+
+**SPA Challenge:**
+With no page reloads, events can accumulate indefinitely. Traditional page unload events don't fire.
+
+**Insights Solution:**
+```javascript
+// Automatic event transmission triggers:
+// 1. Size limit reached (32KB batch)
+// 2. Time limit reached (10 seconds)
+// 3. Route change detected
+// 4. Component disconnect
+// 5. Browser tab closing
+```
+
+**Benefits:**
+- **Route-Based Batching**: Events sent when user navigates
+- **Memory Management**: Prevents unlimited event accumulation
+- **Data Integrity**: Ensures events aren't lost during navigation
+- **Performance**: Batching reduces network overhead
+
+### Session and Context Preservation
+
+**Cross-Route Consistency:**
+```javascript
+// Automatic context preservation across routes:
+// - Device information remains constant
+// - Session ID maintained throughout visit
+// - Experiment assignments persist
+// - Authentication tokens preserved
+// - Performance baseline continues tracking
+```
+
+## Common SPA Scenarios
+
+### Framework-Agnostic Navigation
+
+**React Router Example:**
+```javascript
+// React Router navigation - automatically tracked
+import { useNavigate } from 'react-router-dom';
+
+function ProductButton({ productId }) {
+  const navigate = useNavigate();
+  
+  const handleClick = () => {
+    // This navigation is automatically detected and tracked
+    navigate(`/product/${productId}`);
+    // Insights automatically:
+    // 1. Generates new page visit ID
+    // 2. Flushes pending events
+    // 3. Updates UTM parameters if present
+    // 4. Continues tracking in new route
+  };
+  
+  return (
+    <button onClick={handleClick}>
+      View Product
+    </button>
+  );
+}
+```
+
+**Vue Router Example:**
+```javascript
+// Vue Router navigation - automatically tracked
+import { useRouter } from 'vue-router';
+
+export default {
+  setup() {
+    const router = useRouter();
+    
+    const goToProduct = (productId) => {
+      // This navigation is automatically detected and tracked
+      router.push(`/product/${productId}`);
+      // Same automatic behaviour as React example
+    };
+    
+    return { goToProduct };
+  }
+}
+```
+
+**Angular Router Example:**
+```typescript
+// Angular Router navigation - automatically tracked
+import { Router } from '@angular/router';
+
+@Component({...})
+export class ProductComponent {
+  constructor(private router: Router) {}
+  
+  viewProduct(productId: string) {
+    // This navigation is automatically detected and tracked
+    this.router.navigate(['/product', productId]);
+    // Same automatic behaviour as other frameworks
+  }
+}
+```
+
+### Next.js and Advanced Frameworks
+
+**Next.js App Router:**
+```javascript
+// Next.js navigation - automatically tracked
+import { useRouter } from 'next/navigation';
+
+function ProductCard({ product }) {
+  const router = useRouter();
+  
+  const handleViewProduct = () => {
+    // Both client-side and server-side navigation tracked
+    router.push(`/products/${product.id}`);
+    
+    // Additional tracking for Next.js specific features
+    insights.event('nextjs_navigation', {
+      product_id: product.id,
+      navigation_type: 'client_side',
+      route_type: 'app_router'
+    });
+  };
+  
+  return (
+    <div data-insights-category="product" data-insights-id={`product-${product.id}`}>
+      <h3>{product.name}</h3>
+      <button onClick={handleViewProduct}>
+        View Product
+      </button>
+    </div>
+  );
+}
+```
+
+**Next.js Page Router:**
+```javascript
+// Next.js Pages Router - automatically tracked
+import { useRouter } from 'next/router';
+
+function ProductPage() {
+  const router = useRouter();
+  
+  useEffect(() => {
+    // Track page-specific data for Next.js
+    insights.event('nextjs_page_load', {
+      page: router.pathname,
+      query: router.query,
+      router_type: 'pages'
+    });
+  }, [router.pathname, router.query]);
+  
+  return (
+    <div>
+      {/* Page content with automatic tracking */}
+    </div>
+  );
+}
+```
+
+### Dynamic Content Loading
+
+**Infinite Scroll Example:**
+```javascript
+// Automatic tracking of dynamically loaded content
+function ProductList() {
+  const [products, setProducts] = useState([]);
+  
+  const loadMoreProducts = async () => {
+    const newProducts = await fetchProducts(products.length, 20);
+    setProducts(prev => [...prev, ...newProducts]);
+    
+    // Track dynamic content loading
+    insights.event('dynamic_content_loaded', {
+      content_type: 'products',
+      items_loaded: newProducts.length,
+      total_items: products.length + newProducts.length,
+      load_trigger: 'infinite_scroll'
+    });
+  };
+  
+  return (
+    <div>
+      {products.map((product, index) => (
+        <div 
+          key={product.id}
+          data-insights-category="product"
+          data-insights-id={`product-${product.id}`}
+          // Automatic impression tracking when scrolled into view
+        >
+          {product.name}
+        </div>
+      ))}
+      <button onClick={loadMoreProducts}>Load More</button>
+    </div>
+  );
+}
+```
+
+## Performance in SPAs
+
+### Optimized Event Processing
+
+**SPA Performance Benefits:**
+- **Single Component Instance**: No reinitializati
+- **Persistent Event Queue**: Efficient batching across routes
+- **Reduced Network Overhead**: Intelligent transmission timing
+- **Memory Efficiency**: Automatic cleanup after transmission
+
+**Measurement and Optimization:**
+```javascript
+// Automatic performance tracking in SPAs
+// Insights automatically measures:
+// - Route transition times
+// - Component rendering performance
+// - Network request timing
+// - Memory usage patterns
+
+// Access performance data
+const performance = insights.performance();
+console.log('SPA Performance Metrics:', {
+  routeTransitionTime: performance.routeTransition,
+  memoryUsage: performance.memory,
+  networkEfficiency: performance.transmission
+});
+```
+
+### Memory Management
+
+**Automatic Cleanup:**
+- **Event Queue**: Cleared after successful transmission
+- **DOM References**: Cleaned up when elements are removed
+- **Event Listeners**: Automatically managed during route changes
+- **Performance Observers**: Reused across routes for efficiency
+
+## Best Practices for SPA Tracking
+
+### Leverage Automatic Features
+
+```javascript
+// ✅ Good: Let Insights handle SPA navigation automatically
+// Just use your framework's navigation methods normally
+router.push('/new-route');
+// Insights automatically detects and handles this
+
+// ❌ Avoid: Manual page view tracking (unnecessary)
+// insights.event('page_view', { page: '/new-route' });
+// This is redundant - Insights does this automatically
+```
+
+### Complement with Custom Events
+
+```javascript
+// ✅ Good: Add business-specific tracking
+function handlePurchase(orderData) {
+  // Let Insights handle the navigation
+  router.push('/confirmation');
+  
+  // Add your custom business event
+  insights.event('purchase_completed', {
+    order_id: orderData.id,
+    total: orderData.total,
+    items: orderData.items.length
+  });
+}
+```
+
+### Error Handling in SPAs
+
+```javascript
+// ✅ Good: Track SPA-specific errors
+function handleRouteError(error, route) {
+  insights.error('spa_navigation_error', error.message, {
+    target_route: route,
+    current_route: window.location.pathname,
+    navigation_type: 'programmatic',
+    error_stack: error.stack
+  });
+}
+
+// ✅ Good: Track component errors
+function ComponentErrorBoundary({ children }) {
+  useEffect(() => {
+    const handleError = (error, errorInfo) => {
+      insights.error('spa_component_error', error.message, {
+        component_stack: errorInfo.componentStack,
+        current_route: window.location.pathname
+      });
+    };
+    
+    // Component error handling
+    return () => {
+      // Cleanup
+    };
+  }, []);
+  
+  return children;
+}
+```
+
+## Debugging SPA Behavior
+
+### Verify SPA Detection
+
+```javascript
+// Check if SPA navigation is being tracked
+// Using debug script only:
+if (insights.context().spa_detected) {
+  console.log('✅ SPA navigation tracking active');
+} else {
+  console.log('❌ SPA navigation not detected');
+}
+```
+
+### Monitor Route Changes
+
+```javascript
+// Track route changes for debugging (debug script only)
+const originalPushState = history.pushState;
+history.pushState = function(...args) {
+  console.log('Route change detected:', args[2]);
+  return originalPushState.apply(this, args);
+};
+```
+
+The automatic SPA support in Insights ensures that your tracking works seamlessly across route changes without requiring manual configuration, while providing the flexibility to add custom tracking for business-specific events and interactions.

@@ -1,0 +1,1104 @@
+---
+title: "Single Page Applications"
+order: 2
+description: "Tracking implementation for React, Vue, Angular, and other SPA frameworks"
+---
+
+# Single Page Application Integration
+
+This guide covers tracking implementation for Single Page Applications (SPAs) including React, Vue.js, Angular, and other modern JavaScript frameworks.
+
+## Why SPA Tracking is Different
+
+**Key Challenges:**
+- **No Page Reloads**: Traditional page view tracking doesn't work with client-side routing
+- **Dynamic Content**: Elements are created and destroyed dynamically, requiring programmatic tracking
+- **Component Lifecycle**: Tracking must integrate with component mounting, updating, and unmounting
+- **State Management**: User interactions often involve complex state changes that need context
+
+**Solutions This Guide Provides:**
+- **Route Change Detection**: Capture navigation events in SPAs
+- **Component Integration**: Build tracking into reusable components
+- **Performance Monitoring**: Track SPA-specific performance metrics
+- **Framework-Specific Patterns**: Leverage each framework's unique capabilities
+
+## React Integration
+
+### Custom Hooks for Tracking
+
+**React-specific benefits:**
+React hooks provide a clean way to integrate tracking with component lifecycle and state management while maintaining reusability across your application.
+
+```jsx
+import { useEffect, useState, useCallback } from 'react';
+
+// Custom hook for insights tracking with proper async handling
+function useInsights() {
+  const [insights, setInsights] = useState(null);
+  const [isReady, setIsReady] = useState(false);
+  const [error, setError] = useState(null);
+  
+  useEffect(() => {
+    let mounted = true;
+    let timeoutId = null;
+    let attempts = 0;
+    const maxAttempts = 50; // 5 seconds maximum wait
+    
+    const checkInsights = () => {
+      if (!mounted) return;
+      
+      if (window.insights) {
+        setInsights(window.insights);
+        setIsReady(true);
+        setError(null);
+      } else {
+        attempts++;
+        if (attempts >= maxAttempts) {
+          setError(new Error('Insights failed to load within 5 seconds'));
+        } else {
+          timeoutId = setTimeout(checkInsights, 100);
+        }
+      }
+    };
+    
+    checkInsights();
+    
+    // Cleanup function
+    return () => {
+      mounted = false;
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, []);
+  
+  const trackEvent = useCallback((type, data) => {
+    if (insights) {
+      insights.event(type, data);
+    }
+  }, [insights]);
+  
+  const trackClick = useCallback((data) => {
+    if (insights) {
+      insights.click(data);
+    }
+  }, [insights]);
+  
+  const trackImpression = useCallback((data) => {
+    if (insights) {
+      insights.impression(data);
+    }
+  }, [insights]);
+  
+  const trackError = useCallback((type, message, context) => {
+    if (insights) {
+      insights.error(type, message, context);
+    }
+  }, [insights]);
+  
+  return {
+    insights,
+    isReady,
+    error,
+    trackEvent,
+    trackClick,
+    trackImpression,
+    trackError
+  };
+}
+
+// Enhanced route tracking hook with proper async handling
+function useRouteTracking() {
+  const { trackEvent, isReady } = useInsights();
+  
+  useEffect(() => {
+    if (!isReady) return; // Wait for insights to be ready
+    
+    const handleRouteChange = (url, navigationType = 'spa_route_change') => {
+      // Debounce rapid route changes
+      setTimeout(() => {
+        trackEvent('page_view', {
+          page: url,
+          timestamp: Date.now(),
+          navigation_type: navigationType,
+          user_agent: navigator.userAgent,
+          referrer: document.referrer
+        });
+      }, 0);
+    };
+    
+    // Track initial page load
+    handleRouteChange(window.location.pathname, 'initial_load');
+    
+    // Enhanced history method override with error handling
+    const originalPushState = history.pushState;
+    const originalReplaceState = history.replaceState;
+    
+    history.pushState = function(...args) {
+      try {
+        originalPushState.apply(history, args);
+        handleRouteChange(args[2] || window.location.pathname, 'push_state');
+      } catch (error) {
+        console.error('Route tracking error (pushState):', error);
+        originalPushState.apply(history, args); // Ensure navigation still works
+      }
+    };
+    
+    history.replaceState = function(...args) {
+      try {
+        originalReplaceState.apply(history, args);
+        handleRouteChange(args[2] || window.location.pathname, 'replace_state');
+      } catch (error) {
+        console.error('Route tracking error (replaceState):', error);
+        originalReplaceState.apply(history, args); // Ensure navigation still works
+      }
+    };
+    
+    const handlePopState = () => {
+      handleRouteChange(window.location.pathname, 'pop_state');
+    };
+    
+    window.addEventListener('popstate', handlePopState);
+    
+    // Cleanup function
+    return () => {
+      history.pushState = originalPushState;
+      history.replaceState = originalReplaceState;
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [trackEvent, isReady]); // Depend on isReady
+}
+
+// Trackable components
+function TrackableButton({ 
+  children, 
+  trackingId, 
+  trackingData = {}, 
+  onClick,
+  ...props 
+}) {
+  const { trackClick } = useInsights();
+  
+  const handleClick = (event) => {
+    trackClick({
+      id: trackingId,
+      category: 'react_button',
+      component: 'TrackableButton',
+      ...trackingData,
+      timestamp: Date.now()
+    });
+    
+    if (onClick) {
+      onClick(event);
+    }
+  };
+  
+  return (
+    <button onClick={handleClick} {...props}>
+      {children}
+    </button>
+  );
+}
+
+function TrackableSection({ 
+  children, 
+  trackingId, 
+  trackingData = {},
+  ...props 
+}) {
+  const { trackImpression } = useInsights();
+  const [isVisible, setIsVisible] = useState(false);
+  const sectionRef = useRef(null);
+  
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !isVisible) {
+          setIsVisible(true);
+          trackImpression({
+            id: trackingId,
+            category: 'react_section',
+            component: 'TrackableSection',
+            ...trackingData,
+            timestamp: Date.now()
+          });
+        }
+      },
+      { threshold: 0.1 }
+    );
+    
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+    
+    return () => {
+      if (sectionRef.current) {
+        observer.unobserve(sectionRef.current);
+      }
+    };
+  }, [trackingId, trackingData, trackImpression, isVisible]);
+  
+  return (
+    <section ref={sectionRef} {...props}>
+      {children}
+    </section>
+  );
+}
+```
+
+### React Component Examples
+
+```jsx
+// Enhanced product component with async tracking and error handling
+function ProductCard({ product, position, listName }) {
+  const { trackEvent, trackClick, isReady, error } = useInsights();
+  const [impressionTracked, setImpressionTracked] = useState(false);
+  const cardRef = useRef(null);
+  const observerRef = useRef(null);
+  
+  // Enhanced impression tracking with async handling
+  useEffect(() => {
+    if (!isReady || error) return; // Wait for insights to be ready
+    
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !impressionTracked) {
+          setImpressionTracked(true);
+          
+          // Async tracking with error handling
+          try {
+            trackEvent('product_impression', {
+              product_id: product.id,
+              product_name: product.name,
+              product_category: product.category,
+              price: product.price,
+              position: position,
+              list_name: listName,
+              viewport_info: {
+                width: window.innerWidth,
+                height: window.innerHeight
+              },
+              timestamp: Date.now()
+            });
+          } catch (trackingError) {
+            console.error('Product impression tracking error:', trackingError);
+          }
+        }
+      },
+      { 
+        threshold: 0.5,
+        rootMargin: '0px 0px -50px 0px' // Only track when significantly visible
+      }
+    );
+    
+    observerRef.current = observer;
+    
+    if (cardRef.current) {
+      observer.observe(cardRef.current);
+    }
+    
+    return () => {
+      if (observerRef.current && cardRef.current) {
+        observerRef.current.unobserve(cardRef.current);
+      }
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      }
+    };
+  }, [product, position, listName, impressionTracked, trackEvent, isReady, error]);
+  
+  const handleAddToCart = async () => {
+    try {
+      // Track the attempt before the action
+      trackEvent('add_to_cart_attempt', {
+        product_id: product.id,
+        product_name: product.name,
+        price: product.price,
+        source: 'product_card',
+        list_name: listName
+      });
+      
+      // Perform the add to cart action
+      await addToCart(product);
+      
+      // Track successful completion
+      trackEvent('add_to_cart_success', {
+        product_id: product.id,
+        product_name: product.name,
+        price: product.price,
+        source: 'product_card',
+        list_name: listName,
+        timestamp: Date.now()
+      });
+      
+    } catch (error) {
+      // Track failures
+      trackEvent('add_to_cart_error', {
+        product_id: product.id,
+        error_message: error.message,
+        source: 'product_card',
+        list_name: listName
+      });
+      
+      // Re-throw to let the UI handle the error
+      throw error;
+    }
+  };
+  
+  return (
+    <div ref={cardRef} className="product-card">
+      <img src={product.image} alt={product.name} />
+      <h3>{product.name}</h3>
+      <p>${product.price}</p>
+      
+      <TrackableButton
+        trackingId={`product-view-${product.id}`}
+        trackingData={{
+          product_id: product.id,
+          action: 'view_product',
+          source: 'product_card'
+        }}
+        onClick={() => navigateToProduct(product.id)}
+      >
+        View Product
+      </TrackableButton>
+      
+      <TrackableButton
+        trackingId={`add-cart-${product.id}`}
+        trackingData={{
+          product_id: product.id,
+          action: 'add_to_cart',
+          source: 'product_card'
+        }}
+        onClick={handleAddToCart}
+      >
+        Add to Cart
+      </TrackableButton>
+    </div>
+  );
+}
+
+// Enhanced App component with comprehensive tracking
+function App() {
+  const { isReady, error } = useInsights();
+  useRouteTracking();
+  
+  // Track app initialisation
+  useEffect(() => {
+    if (isReady) {
+      window.insights.event('spa_app_initialized', {
+        framework: 'react',
+        router: 'react-router-v6',
+        timestamp: Date.now(),
+        initial_route: window.location.pathname
+      });
+    }
+  }, [isReady]);
+  
+  // Handle insights loading errors
+  useEffect(() => {
+    if (error) {
+      console.error('Insights failed to load:', error);
+      // Optionally track this error to an alternative service
+    }
+  }, [error]);
+  
+  return (
+    <Router>
+      <ErrorBoundary>
+        <div className="app">
+          {/* Loading state indicator */}
+          {!isReady && !error && (
+            <div className="insights-loading" style={{ display: 'none' }}>
+              Loading analytics...
+            </div>
+          )}
+          
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/products" element={<ProductList />} />
+            <Route path="/product/:id" element={<ProductDetail />} />
+            <Route path="/cart" element={<Cart />} />
+          </Routes>
+          
+          {/* Insights tracker component */}
+          <insights-tracker tenant="your-company"></insights-tracker>
+        </div>
+      </ErrorBoundary>
+    </Router>
+  );
+}
+
+// Enhanced error boundary with comprehensive tracking
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, errorId: null };
+  }
+  
+  static getDerivedStateFromError(error) {
+    const errorId = `error_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return { hasError: true, errorId };
+  }
+  
+  componentDidCatch(error, errorInfo) {
+    // Enhanced error tracking with more context
+    const errorData = {
+      error_id: this.state.errorId,
+      error_message: error.message,
+      error_stack: error.stack,
+      component_stack: errorInfo.componentStack,
+      error_boundary: this.constructor.name,
+      current_route: window.location.pathname,
+      user_agent: navigator.userAgent,
+      timestamp: Date.now(),
+      react_version: React.version,
+      app_state: this.props.appState || {}
+    };
+    
+    // Track with fallback for when insights isn't ready
+    if (window.insights) {
+      window.insights.error('react_error', error.message, errorData);
+    } else {
+      // Store error for later tracking when insights loads
+      window.pendingErrors = window.pendingErrors || [];
+      window.pendingErrors.push({
+        type: 'react_error',
+        message: error.message,
+        context: errorData
+      });
+    }
+    
+    // Log to console for development
+    console.group(`🚨 React Error Boundary [${this.state.errorId}]`);
+    console.error('Error:', error);
+    console.error('Error Info:', errorInfo);
+    console.error('Context:', errorData);
+    console.groupEnd();
+  }
+  
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="error-boundary">
+          <h1>Something went wrong</h1>
+          <p>Error ID: {this.state.errorId}</p>
+          <button onClick={() => window.location.reload()}>
+            Reload Page
+          </button>
+        </div>
+      );
+    }
+    
+    return this.props.children;
+  }
+}
+```
+
+## Vue.js Integration
+
+### Vue Plugin for Insights
+
+```javascript
+// insights-plugin.js
+const InsightsPlugin = {
+  install(app, options = {}) {
+    const insights = {
+      isReady: false,
+      instance: null,
+      
+      async init() {
+        return new Promise((resolve) => {
+          const checkInsights = () => {
+            if (window.insights) {
+              this.instance = window.insights;
+              this.isReady = true;
+              resolve(this.instance);
+            } else {
+              setTimeout(checkInsights, 100);
+            }
+          };
+          checkInsights();
+        });
+      },
+      
+      trackEvent(type, data) {
+        if (this.isReady && this.instance) {
+          this.instance.event(type, data);
+        }
+      },
+      
+      trackClick(data) {
+        if (this.isReady && this.instance) {
+          this.instance.click(data);
+        }
+      },
+      
+      trackImpression(data) {
+        if (this.isReady && this.instance) {
+          this.instance.impression(data);
+        }
+      },
+      
+      trackError(type, message, context) {
+        if (this.isReady && this.instance) {
+          this.instance.error(type, message, context);
+        }
+      }
+    };
+    
+    // Initialize insights
+    insights.init();
+    
+    // Make available globally
+    app.config.globalProperties.$insights = insights;
+    app.provide('insights', insights);
+  }
+};
+
+export default InsightsPlugin;
+```
+
+### Vue Components
+
+```vue
+<!-- TrackableButton.vue -->
+<template>
+  <button @click="handleClick" v-bind="$attrs">
+    <slot />
+  </button>
+</template>
+
+<script>
+import { inject } from 'vue';
+
+export default {
+  name: 'TrackableButton',
+  inheritAttrs: false,
+  props: {
+    trackingId: {
+      type: String,
+      required: true
+    },
+    trackingData: {
+      type: Object,
+      default: () => ({})
+    }
+  },
+  emits: ['click'],
+  setup(props, { emit }) {
+    const insights = inject('insights');
+    
+    const handleClick = (event) => {
+      insights.trackClick({
+        id: props.trackingId,
+        category: 'vue_button',
+        component: 'TrackableButton',
+        ...props.trackingData,
+        timestamp: Date.now()
+      });
+      
+      emit('click', event);
+    };
+    
+    return { handleClick };
+  }
+};
+</script>
+
+<!-- ProductCard.vue -->
+<template>
+  <div ref="cardRef" class="product-card">
+    <img :src="product.image" :alt="product.name" />
+    <h3>{{ product.name }}</h3>
+    <p>${{ product.price }}</p>
+    
+    <TrackableButton
+      :tracking-id="`view-product-${product.id}`"
+      :tracking-data="{ product_id: product.id, action: 'view' }"
+      @click="viewProduct"
+    >
+      View Product
+    </TrackableButton>
+    
+    <TrackableButton
+      :tracking-id="`add-cart-${product.id}`"
+      :tracking-data="{ product_id: product.id, action: 'add_to_cart' }"
+      @click="addToCart"
+    >
+      Add to Cart
+    </TrackableButton>
+  </div>
+</template>
+
+<script>
+import { ref, onMounted, onUnmounted, inject } from 'vue';
+import TrackableButton from './TrackableButton.vue';
+
+export default {
+  name: 'ProductCard',
+  components: { TrackableButton },
+  props: {
+    product: Object,
+    position: Number,
+    listName: String
+  },
+  setup(props) {
+    const cardRef = ref(null);
+    const insights = inject('insights');
+    let observer = null;
+    let impressionTracked = false;
+    
+    onMounted(() => {
+      observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting && !impressionTracked) {
+            impressionTracked = true;
+            insights.trackEvent('product_impression', {
+              product_id: props.product.id,
+              product_name: props.product.name,
+              position: props.position,
+              list_name: props.listName
+            });
+          }
+        },
+        { threshold: 0.5 }
+      );
+      
+      if (cardRef.value) {
+        observer.observe(cardRef.value);
+      }
+    });
+    
+    onUnmounted(() => {
+      if (observer && cardRef.value) {
+        observer.unobserve(cardRef.value);
+      }
+    });
+    
+    const viewProduct = () => {
+      // Navigate to product
+      router.push(`/product/${props.product.id}`);
+    };
+    
+    const addToCart = () => {
+      insights.trackEvent('add_to_cart', {
+        product_id: props.product.id,
+        source: 'product_card'
+      });
+      
+      // Add to cart logic
+    };
+    
+    return { cardRef, viewProduct, addToCart };
+  }
+};
+</script>
+```
+
+### Vue Router Integration
+
+```javascript
+// router/index.js
+import { createRouter, createWebHistory } from 'vue-router';
+
+const router = createRouter({
+  history: createWebHistory(),
+  routes: [
+    { path: '/', name: 'Home', component: () => import('@/views/Home.vue') },
+    { path: '/products', name: 'Products', component: () => import('@/views/Products.vue') },
+    { path: '/product/:id', name: 'Product', component: () => import('@/views/Product.vue') }
+  ]
+});
+
+// Track route changes
+router.afterEach((to, from) => {
+  if (window.insights) {
+    window.insights.event('page_view', {
+      page: to.path,
+      page_name: to.name,
+      from_page: from.path,
+      navigation_type: 'spa_route_change',
+      timestamp: Date.now()
+    });
+  }
+});
+
+export default router;
+```
+
+## Angular Integration
+
+### Angular Service
+
+```typescript
+// insights.service.ts
+import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { Router, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs/operators';
+
+interface InsightsInstance {
+  event(type: string, data: any): void;
+  click(data: any): void;
+  impression(data: any): void;
+  error(type: string, message: string, context: any): void;
+  context(): any;
+  performance(): any;
+  experiments(): any[];
+}
+
+@Injectable({
+  providedIn: 'root'
+})
+export class InsightsService {
+  private insightsSubject = new BehaviorSubject<InsightsInstance | null>(null);
+  public insights$ = this.insightsSubject.asObservable();
+  
+  private insights: InsightsInstance | null = null;
+  private isReady = false;
+  
+  constructor(private router: Router) {
+    this.initializeInsights();
+    this.setupRouteTracking();
+  }
+  
+  private async initializeInsights(): Promise<void> {
+    return new Promise((resolve) => {
+      const checkInsights = () => {
+        if ((window as any).insights) {
+          this.insights = (window as any).insights;
+          this.isReady = true;
+          this.insightsSubject.next(this.insights);
+          resolve();
+        } else {
+          setTimeout(checkInsights, 100);
+        }
+      };
+      checkInsights();
+    });
+  }
+  
+  private setupRouteTracking(): void {
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe((event: NavigationEnd) => {
+        this.trackEvent('page_view', {
+          page: event.url,
+          navigation_type: 'spa_route_change',
+          timestamp: Date.now()
+        });
+      });
+  }
+  
+  trackEvent(type: string, data: any): void {
+    if (this.isReady && this.insights) {
+      this.insights.event(type, data);
+    }
+  }
+  
+  trackClick(data: any): void {
+    if (this.isReady && this.insights) {
+      this.insights.click(data);
+    }
+  }
+  
+  trackImpression(data: any): void {
+    if (this.isReady && this.insights) {
+      this.insights.impression(data);
+    }
+  }
+  
+  trackError(type: string, message: string, context: any): void {
+    if (this.isReady && this.insights) {
+      this.insights.error(type, message, context);
+    }
+  }
+  
+  getContext(): any {
+    return this.isReady && this.insights ? this.insights.context() : null;
+  }
+  
+  getPerformance(): any {
+    return this.isReady && this.insights ? this.insights.performance() : null;
+  }
+  
+  getExperiments(): any[] {
+    return this.isReady && this.insights ? this.insights.experiments() : [];
+  }
+}
+```
+
+### Angular Components
+
+```typescript
+// trackable-button.component.ts
+import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { InsightsService } from '../services/insights.service';
+
+@Component({
+  selector: 'app-trackable-button',
+  template: `
+    <button (click)="handleClick($event)" [attr.data-tracking-id]="trackingId">
+      <ng-content></ng-content>
+    </button>
+  `
+})
+export class TrackableButtonComponent {
+  @Input() trackingId!: string;
+  @Input() trackingData: any = {};
+  @Output() clicked = new EventEmitter<Event>();
+  
+  constructor(private insights: InsightsService) {}
+  
+  handleClick(event: Event): void {
+    this.insights.trackClick({
+      id: this.trackingId,
+      category: 'angular_button',
+      component: 'TrackableButton',
+      ...this.trackingData,
+      timestamp: Date.now()
+    });
+    
+    this.clicked.emit(event);
+  }
+}
+
+// product-card.component.ts
+import { Component, Input, OnInit, OnDestroy, ElementRef, ViewChild } from '@angular/core';
+import { InsightsService } from '../services/insights.service';
+
+@Component({
+  selector: 'app-product-card',
+  template: `
+    <div #cardElement class="product-card">
+      <img [src]="product.image" [alt]="product.name" />
+      <h3>{{ product.name }}</h3>
+      <p>\${{ product.price }}</p>
+      
+      <app-trackable-button
+        [trackingId]="'view-product-' + product.id"
+        [trackingData]="{ product_id: product.id, action: 'view' }"
+        (clicked)="viewProduct()"
+      >
+        View Product
+      </app-trackable-button>
+      
+      <app-trackable-button
+        [trackingId]="'add-cart-' + product.id"
+        [trackingData]="{ product_id: product.id, action: 'add_to_cart' }"
+        (clicked)="addToCart()"
+      >
+        Add to Cart
+      </app-trackable-button>
+    </div>
+  `
+})
+export class ProductCardComponent implements OnInit, OnDestroy {
+  @Input() product: any;
+  @Input() position!: number;
+  @Input() listName!: string;
+  @ViewChild('cardElement') cardElement!: ElementRef;
+  
+  private observer!: IntersectionObserver;
+  private impressionTracked = false;
+  
+  constructor(private insights: InsightsService) {}
+  
+  ngOnInit(): void {
+    this.setupImpressionTracking();
+  }
+  
+  ngOnDestroy(): void {
+    if (this.observer) {
+      this.observer.disconnect();
+    }
+  }
+  
+  private setupImpressionTracking(): void {
+    this.observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !this.impressionTracked) {
+          this.impressionTracked = true;
+          this.insights.trackEvent('product_impression', {
+            product_id: this.product.id,
+            product_name: this.product.name,
+            position: this.position,
+            list_name: this.listName
+          });
+        }
+      },
+      { threshold: 0.5 }
+    );
+    
+    if (this.cardElement) {
+      this.observer.observe(this.cardElement.nativeElement);
+    }
+  }
+  
+  viewProduct(): void {
+    // Navigate to product
+  }
+  
+  addToCart(): void {
+    this.insights.trackEvent('add_to_cart', {
+      product_id: this.product.id,
+      source: 'product_card'
+    });
+    
+    // Add to cart logic
+  }
+}
+```
+
+## Generic SPA Patterns
+
+### Universal Route Change Detection
+
+**When to use this approach:**
+- You need tracking that works across different SPA frameworks
+- Framework-specific solutions aren't available or suitable
+- You want a single tracking solution for mixed-framework applications
+- You need to ensure tracking works even if framework-specific hooks fail
+
+**Performance considerations:**
+Overriding browser history methods adds minimal overhead but ensures comprehensive tracking across all navigation types.
+
+```javascript
+// Universal SPA route tracking
+class SPARouteTracker {
+  constructor(insights) {
+    this.insights = insights;
+    this.currentPath = window.location.pathname;
+    this.setupRouteTracking();
+  }
+  
+  setupRouteTracking() {
+    // Override history methods
+    const originalPushState = history.pushState;
+    const originalReplaceState = history.replaceState;
+    
+    history.pushState = (...args) => {
+      originalPushState.apply(history, args);
+      this.handleRouteChange(args[2] || window.location.pathname, 'push');
+    };
+    
+    history.replaceState = (...args) => {
+      originalReplaceState.apply(history, args);
+      this.handleRouteChange(args[2] || window.location.pathname, 'replace');
+    };
+    
+    // Handle browser navigation
+    window.addEventListener('popstate', () => {
+      this.handleRouteChange(window.location.pathname, 'popstate');
+    });
+    
+    // Track initial page
+    this.handleRouteChange(this.currentPath, 'initial');
+  }
+  
+  handleRouteChange(newPath, navigationType) {
+    if (newPath !== this.currentPath) {
+      const previousPath = this.currentPath;
+      this.currentPath = newPath;
+      
+      this.insights.event('spa_navigation', {
+        from_page: previousPath,
+        to_page: newPath,
+        navigation_type: navigationType,
+        timestamp: Date.now()
+      });
+    }
+  }
+}
+
+// Initialize for any SPA framework
+if (window.insights) {
+  new SPARouteTracker(window.insights);
+}
+```
+
+### Performance Monitoring for SPAs
+
+**Why SPA performance tracking is unique:**
+- **Route Transitions**: Measure time between route changes, not just initial page load
+- **Component Rendering**: Track how long dynamic content takes to appear
+- **Resource Loading**: Monitor lazy-loaded components and code splitting impact
+- **User Experience**: Measure perceived performance during navigation
+
+**Key metrics to track:**
+- Time to interactive after route change
+- Component mount/unmount performance
+- Bundle loading times for code-split routes
+- User interaction responsiveness during transitions
+
+```javascript
+// SPA-specific performance tracking
+class SPAPerformanceTracker {
+  constructor(insights) {
+    this.insights = insights;
+    this.routeStartTime = Date.now();
+    this.setupPerformanceTracking();
+  }
+  
+  setupPerformanceTracking() {
+    // Track route change performance
+    window.addEventListener('beforeunload', () => {
+      this.trackRoutePerformance('unload');
+    });
+    
+    // Track component mount time
+    this.observeComponentMounts();
+  }
+  
+  trackRoutePerformance(eventType) {
+    const routeDuration = Date.now() - this.routeStartTime;
+    
+    this.insights.event('spa_route_performance', {
+      route: window.location.pathname,
+      duration: routeDuration,
+      event_type: eventType,
+      timestamp: Date.now()
+    });
+  }
+  
+  observeComponentMounts() {
+    // Use MutationObserver to track dynamic content loading
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+          mutation.addedNodes.forEach((node) => {
+            if (node.nodeType === Node.ELEMENT_NODE) {
+              this.trackComponentMount(node);
+            }
+          });
+        }
+      });
+    });
+    
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+  }
+  
+  trackComponentMount(element) {
+    // Track component-specific mount events
+    if (element.classList.contains('tracked-component')) {
+      const componentType = element.dataset.componentType || 'unknown';
+      
+      this.insights.event('spa_component_mounted', {
+        component_type: componentType,
+        route: window.location.pathname,
+        mount_time: Date.now() - this.routeStartTime
+      });
+    }
+  }
+  
+  onRouteChange() {
+    this.routeStartTime = Date.now();
+  }
+}
+```
+
+This comprehensive SPA integration approach ensures consistent tracking across different frameworks while maintaining framework-specific best practices.

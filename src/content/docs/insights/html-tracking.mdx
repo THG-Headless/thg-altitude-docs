@@ -1,0 +1,386 @@
+---
+title: "HTML Tracking"
+order: 2
+description: "Declarative event tracking using HTML data attributes"
+---
+
+# HTML Declarative Tracking
+
+Use `data-insights-*` attributes to track elements declaratively without writing JavaScript. This approach provides a clean separation between your content and tracking logic.
+
+## Basic Syntax
+
+All tracking attributes follow the pattern `data-insights-*`:
+
+```html
+<element 
+  data-insights-category="[category]"
+  data-insights-id="[unique-identifier]"
+  data-insights-[custom-property]="[value]"
+>
+  Content
+</element>
+```
+
+**Note:** The tracking type (click or impression) is automatically determined based on the element type. Interactive elements (buttons, links) are tracked as clicks, while other elements are tracked as impressions.
+
+### Why Automatic Type Determination?
+
+Automatic tracking type determination provides several benefits:
+- **Reduced Configuration**: No need to specify event types for standard HTML elements
+- **Consistency**: Ensures similar elements are tracked the same way across your site
+- **Error Prevention**: Eliminates common mistakes like tracking non-interactive elements as clicks
+- **Simplified Maintenance**: Changes to element types automatically update tracking behaviour
+
+The system recognises interactive elements (`<button>`, `<a>`, `<input type="submit">`) as clickable and tracks user interactions. Non-interactive elements (`<div>`, `<article>`, `<section>`) are tracked as impressions when they become visible in the viewport.
+
+## Click Tracking
+
+Track user interactions with buttons, links, and other clickable elements:
+
+### Basic Button Tracking
+
+Track call-to-action buttons to measure conversion funnel performance and A/B test different messaging:
+
+```html
+<button
+  data-insights-category="cta"
+  data-insights-id="sign-up-hero"
+  data-insights-variant="primary"
+>
+  Sign Up Free
+</button>
+```
+
+**Use this for**: Primary actions, form submissions, feature adoption tracking, and conversion optimisation.
+
+### Navigation Link Tracking
+
+Track navigation patterns to understand user journey flows and optimise site architecture:
+
+```html
+<a
+  href="/products"
+  data-insights-category="navigation"
+  data-insights-id="products-link"
+  data-insights-location="header"
+>
+  Products
+</a>
+```
+
+**Use this for**: Site navigation analysis, page flow optimisation, and understanding user intent patterns.
+
+### E-commerce Tracking
+
+```html
+<button
+  data-insights-category="purchase"
+  data-insights-id="add-to-cart"
+  data-insights-product-id="SKU-12345"
+  data-insights-price="29.99"
+  data-insights-currency="USD"
+  onclick="addToCart('SKU-12345')"
+>
+  Add to Cart
+</button>
+```
+
+## Impression Tracking
+
+Track when elements become visible to users using the Intersection Observer API:
+
+### Widget Visibility
+
+Track when widgets and components become visible to measure their effectiveness and placement impact:
+
+```html
+<div
+  data-insights-category="widget"
+  data-insights-id="product-recommendations"
+  data-insights-placement="sidebar"
+  data-insights-algorithm="collaborative-filtering"
+>
+  <!-- Recommendation widget content -->
+</div>
+```
+
+**Use this for**: Widget performance analysis, placement optimisation, and measuring recommendation engine effectiveness. The impression event fires when the element becomes visible in the user's viewport.
+
+### Content Impressions
+
+```html
+<article
+  data-insights-category="content"
+  data-insights-id="blog-post-intro-to-analytics"
+  data-insights-type="blog-post"
+  data-insights-author="john-doe"
+  data-insights-published="2024-06-26"
+>
+  <!-- Article content -->
+</article>
+```
+
+### Banner and Promotional Content
+
+```html
+<section
+  data-insights-category="banner"
+  data-insights-id="summer-sale-2024"
+  data-insights-campaign="seasonal-promotion"
+  data-insights-discount="20"
+>
+  <!-- Banner content -->
+</section>
+```
+
+## Custom Data Attributes
+
+Add any custom data by prefixing with `data-insights-`. All custom attributes will be included in the event payload:
+
+### Product Tracking
+
+```html
+<div
+  data-insights-category="product"
+  data-insights-id="product-sku-12345"
+  data-insights-product-id="SKU-12345"
+  data-insights-product-name="Gaming Laptop"
+  data-insights-product-category="electronics"
+  data-insights-price="1299.99"
+  data-insights-currency="USD"
+  data-insights-stock-level="5"
+  data-insights-brand="TechBrand"
+>
+  <!-- Product display -->
+</div>
+```
+
+### Form Tracking
+
+```html
+<form
+  data-insights-category="form"
+  data-insights-id="newsletter-signup"
+  data-insights-placement="footer"
+  data-insights-incentive="discount-code"
+>
+  <!-- Form fields -->
+  
+  <button
+    type="submit"
+    data-insights-category="form-submit"
+    data-insights-id="newsletter-signup-submit"
+    data-insights-form-type="email-capture"
+  >
+    Subscribe
+  </button>
+</form>
+```
+
+## Attribute Reference
+
+### Required Attributes
+
+- `data-insights-category`: Event category for grouping
+- `data-insights-id`: Unique identifier for the element
+
+**Note:** Event type (click/impression) is automatically determined based on element type.
+
+### Common Optional Attributes
+
+- `data-insights-variant`: Design or behavioural variant
+- `data-insights-placement`: Location on page (header, sidebar, footer, etc.)
+- `data-insights-campaign`: Marketing campaign identifier
+- `data-insights-source`: Traffic source or referrer
+- `data-insights-priority`: Element priority or importance level
+
+### E-commerce Attributes
+
+- `data-insights-product-id`: Product SKU or identifier
+- `data-insights-product-name`: Product display name
+- `data-insights-product-category`: Product category
+- `data-insights-price`: Product price
+- `data-insights-currency`: Price currency (USD, EUR, etc.)
+- `data-insights-quantity`: Item quantity
+- `data-insights-brand`: Product brand
+
+### Content Attributes
+
+- `data-insights-type`: Content type (blog-post, video, podcast, etc.)
+- `data-insights-author`: Content author
+- `data-insights-published`: Publication date
+- `data-insights-tags`: Content tags (comma-separated)
+- `data-insights-reading-time`: Estimated reading time
+
+## Advanced Patterns
+
+### Conditional Tracking
+
+Use JavaScript to conditionally add tracking attributes when you need dynamic behaviour based on user state, content type, or business logic:
+
+```javascript
+// Add tracking to featured products only
+document.querySelectorAll('.product.featured').forEach(product => {
+  product.setAttribute('data-insights-category', 'featured-product');
+  product.setAttribute('data-insights-id', `featured-${product.dataset.productId}`);
+  product.setAttribute('data-insights-featured', 'true');
+});
+```
+
+**When to use conditional tracking:**
+- **Personalized Content**: Track different variants shown to different user segments
+- **Dynamic Features**: Track elements that appear based on user actions or external data
+- **A/B Testing**: Apply tracking only to specific test variations
+- **Performance Optimization**: Limit tracking to high-value elements during peak traffic
+
+### Dynamic Attribute Updates
+
+Update tracking attributes based on user state to capture context that changes during the session:
+
+```javascript
+// Update tracking based on user authentication state
+function updateTrackingForUser(isLoggedIn) {
+  const ctaButtons = document.querySelectorAll('[data-insights-category="cta"]');
+  ctaButtons.forEach(button => {
+    button.setAttribute('data-insights-user-state', isLoggedIn ? 'logged-in' : 'anonymous');
+  });
+}
+```
+
+**Best practices for dynamic updates:**
+- **Call at State Changes**: Update attributes when user login status, cart contents, or preferences change
+- **Performance Timing**: Update attributes during idle periods to avoid blocking user interactions
+- **Batch Updates**: Group multiple attribute changes together for better performance
+- **Validation**: Ensure updates don't interfere with existing tracking data
+
+### Multi-event Tracking
+
+Track both impressions and clicks on the same element:
+
+```html
+<!-- Element tracks both impression and clicks -->
+<div
+  data-insights-category="widget"
+  data-insights-id="special-offer"
+>
+  <button
+    data-insights-category="special-offer"
+    data-insights-id="claim-offer"
+    data-insights-parent-widget="special-offer"
+  >
+    Claim Offer
+  </button>
+</div>
+```
+
+## Best Practices
+
+### Naming Conventions
+
+- Use kebab-case for IDs: `data-insights-id="product-recommendation-widget"`
+- Use descriptive categories: `navigation`, `cta`, `product`, `content`
+- Be consistent across similar elements
+
+### Data Quality
+
+- Always include required attributes (`category`, `id`)
+- Use meaningful, searchable values
+- Avoid personally identifiable information (PII)
+- Keep attribute values concise but descriptive
+
+### Performance Considerations
+
+- **Element Limit**: Keep tracked elements under 100 per page for optimal performance. This threshold balances comprehensive data collection with browser processing overhead.
+- **Impression Tracking Strategy**: Use impression tracking selectively - only track elements that directly impact business decisions. Each impression event requires Intersection Observer monitoring.
+- **Priority System**: Use `data-insights-priority="high|medium|low"` to help analytics systems focus on critical elements first during processing.
+- **Page Load Impact**: Tracking attributes themselves have negligible impact on page load, but the JavaScript processing scales with element count.
+
+**When to prioritize tracking:**
+- **High Priority**: Revenue-driving elements (buy buttons, signup forms, key CTAs)
+- **Medium Priority**: Navigation and user experience elements
+- **Low Priority**: Secondary content and informational elements
+
+### Accessibility
+
+- Tracking attributes don't affect accessibility
+- Ensure tracked elements still meet WCAG guidelines
+- Use semantic HTML elements as the foundation
+
+## Common Use Cases
+
+### E-commerce Product Pages
+
+```html
+<!-- Product card in search results -->
+<div 
+  class="product-card"
+  data-insights-category="search-result"
+  data-insights-id="product-SKU-12345"
+  data-insights-position="3"
+  data-insights-search-query="gaming laptop"
+  data-insights-price="1299.99"
+>
+  <img src="laptop.jpg" alt="Gaming Laptop">
+  <h3>Gaming Laptop Pro</h3>
+  <p>$1,299.99</p>
+  
+  <button
+    data-insights-category="product-action"
+    data-insights-id="quick-view-SKU-12345"
+    data-insights-action="quick-view"
+  >
+    Quick View
+  </button>
+</div>
+```
+
+### Content Marketing
+
+```html
+<!-- Blog article card -->
+<article
+  data-insights-category="blog-card"
+  data-insights-id="article-analytics-guide"
+  data-insights-type="how-to"
+  data-insights-reading-time="8"
+  data-insights-published="2024-06-26"
+>
+  <h2>
+    <a 
+      href="/blog/analytics-guide"
+      data-insights-category="blog-link"
+      data-insights-id="article-analytics-guide-title"
+      data-insights-source="homepage"
+    >
+      Complete Guide to Web Analytics
+    </a>
+  </h2>
+  <!-- Article summary -->
+</article>
+```
+
+### User Interface Elements
+
+```html
+<!-- Search functionality -->
+<div class="search-container">
+  <input 
+    type="search" 
+    placeholder="Search products..."
+    data-insights-category="search-input"
+    data-insights-id="main-search"
+    data-insights-placement="header"
+  >
+  
+  <button
+    type="submit"
+    data-insights-category="search-submit"
+    data-insights-id="main-search-submit"
+  >
+    Search
+  </button>
+</div>
+```
+
+This declarative approach makes it easy to add comprehensive tracking to your application without cluttering your JavaScript code, while providing rich context for analytics analysis.

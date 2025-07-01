@@ -1,0 +1,615 @@
+---
+title: "API Reference"
+order: 1
+description: "Complete API reference for all Insights methods and properties"
+---
+
+# API Reference
+
+Complete reference for all Insights JavaScript API methods, properties, and configuration options.
+
+## Global API
+
+All methods are available via the global `window.insights` object after the insights-tracker component loads.
+
+### Event Tracking
+
+#### `insights.event(type, data)`
+
+Track custom events with arbitrary data.
+
+**When to use:** For application-specific events that don't map to clicks or impressions (user actions, state changes, business events).
+
+**Parameters:**
+- `type` (string): Event type identifier
+- `data` (object): Event data payload
+
+**Example:**
+```javascript
+insights.event('user_signup', {
+  plan: 'premium',
+  source: 'landing_page',
+  trial_days: 14
+});
+```
+
+**Returns:** `void`
+
+---
+
+#### `insights.click(data)`
+
+Track manual click events programmatically.
+
+**When to use:** For dynamically created elements, complex interactions, or when HTML attributes aren't practical.
+
+**Parameters:**
+- `data` (object): Click event data
+
+**Example:**
+```javascript
+insights.click({
+  id: 'mobile_menu_toggle',
+  category: 'navigation',
+  location: 'header'
+});
+```
+
+**Returns:** `void`
+
+---
+
+#### `insights.impression(data)`
+
+Track manual impression events programmatically.
+
+**When to use:** For custom visibility logic, delayed impressions, or elements that become "visible" based on business logic rather than viewport position.
+
+**Parameters:**
+- `data` (object): Impression event data
+
+**Example:**
+```javascript
+insights.impression({
+  widget: 'product_recommendations',
+  position: 'sidebar',
+  algorithm: 'collaborative_filtering'
+});
+```
+
+**Returns:** `void`
+
+---
+
+#### `insights.error(type, message, context)`
+
+Track errors with contextual information.
+
+**When to use:** For application errors, validation failures, API errors, or business logic errors that impact user experience.
+
+**Parameters:**
+- `type` (string): Error type identifier
+- `message` (string): Human-readable error description
+- `context` (object, optional): Additional error context
+
+**Example:**
+```javascript
+insights.error('validation_error', 'Invalid email format', {
+  field: 'email',
+  form: 'signup',
+  attempt_count: 2
+});
+```
+
+**Returns:** `void`
+
+---
+
+### Data Access Methods
+
+#### `insights.context()`
+
+Retrieve current page and user context information.
+
+**When to use:** For enriching custom events with contextual data, debugging tracking issues, or adapting behaviour based on user/device properties.
+
+**Parameters:** None
+
+**Returns:** `object` - Context data including:
+- `page`: Current page information (URL, title, referrer)
+- `user`: User session data (session ID, user ID if available)
+- `device`: Device and browser information (type, OS, screen resolution)
+- `performance`: Performance metrics (load times, render metrics)
+
+**Example:**
+```javascript
+const context = insights.context();
+console.log('Current URL:', context.page.url);
+console.log('Session ID:', context.user.sessionId);
+```
+
+---
+
+#### `insights.performance()`
+
+Get current performance metrics.
+
+**When to use:** For correlating user behaviour with page performance, optimising critical user paths, or implementing performance-based A/B testing.
+
+**Parameters:** None
+
+**Returns:** `object | null` - Performance data including:
+- `loadTime`: Page load time in milliseconds
+- `renderTime`: Time to first render  
+- `resourceTiming`: Network timing data
+- `vitals`: Core Web Vitals metrics (LCP, FID, CLS)
+
+**Interpreting performance data:**
+- **loadTime < 2000ms**: Fast page, likely positive user experience
+- **loadTime 2000-4000ms**: Moderate speed, monitor conversion impact
+- **loadTime > 4000ms**: Slow page, likely affecting conversions
+- **vitals scores**: Compare against Google's Core Web Vitals thresholds
+
+**Example:**
+```javascript
+const perf = insights.performance();
+if (perf) {
+  console.log('Page load time:', perf.loadTime);
+}
+```
+
+---
+
+#### `insights.experiments()`
+
+Get active A/B test and experiment information.
+
+**When to use:** For personalizing user experiences, tracking experiment exposure events, or implementing experiment-specific logic.
+
+**Parameters:** None
+
+**Returns:** `array` - Array of active experiment identifiers
+
+**Example:**
+```javascript
+const experiments = insights.experiments();
+if (experiments.includes('hero_variant_b')) {
+  showAlternativeHero();
+}
+```
+
+---
+
+## Component Instance API
+
+Access methods directly from the `insights-tracker` component element.
+
+### Component Properties
+
+#### `tenant`
+
+Get or set the tenant identifier.
+
+**Type:** `string`
+
+**Example:**
+```javascript
+const tracker = document.querySelector('insights-tracker');
+console.log('Tenant:', tracker.tenant);
+tracker.tenant = 'new-tenant-id';
+```
+
+---
+
+### Component Methods
+
+All global API methods are also available as component instance methods with an `insights` prefix:
+
+- `tracker.insightsEvent(type, data)`
+- `tracker.insightsClick(data)`
+- `tracker.insightsImpression(data)`
+- `tracker.insightsError(type, message, context)`
+- `tracker.insightsContext()`
+- `tracker.insightsPerformance()`
+- `tracker.insightsExperiments()`
+
+**Example:**
+```javascript
+const tracker = document.querySelector('insights-tracker');
+tracker.insightsEvent('component_interaction', {
+  component: 'product_carousel',
+  action: 'slide_change'
+});
+```
+
+---
+
+## HTML Data Attributes
+
+Declarative tracking using HTML data attributes.
+
+### Required Attributes
+
+**Note:** Event type (click/impression) is automatically determined based on element type. Interactive elements (buttons, links) are tracked as clicks, while other elements are tracked as impressions.
+
+---
+
+#### `data-insights-category`
+
+Groups related events for analysis.
+
+**Type:** `string`
+
+**Example:**
+```html
+<button 
+  data-insights-category="navigation"
+  data-insights-id="main-menu"
+>
+  Menu
+</button>
+```
+
+---
+
+#### `data-insights-id`
+
+Unique identifier for the tracked element.
+
+**Type:** `string`
+
+**Example:**
+```html
+<button 
+  data-insights-category="cta"
+  data-insights-id="hero-signup-button"
+>
+  Sign Up
+</button>
+```
+
+---
+
+### Optional Attributes
+
+#### `data-insights-variant`
+
+Specifies design or behavioural variant.
+
+**Type:** `string`
+
+**Example:**
+```html
+<button 
+  data-insights-category="cta"
+  data-insights-id="signup-button"
+  data-insights-variant="primary"
+>
+  Sign Up
+</button>
+```
+
+---
+
+#### `data-insights-placement`
+
+Indicates element location on the page.
+
+**Type:** `string`
+
+**Common values:** `"header"`, `"footer"`, `"sidebar"`, `"hero"`, `"content"`
+
+**Example:**
+```html
+<nav 
+  data-insights-category="navigation"
+  data-insights-id="main-nav"
+  data-insights-placement="header"
+>
+  <!-- Navigation content -->
+</nav>
+```
+
+---
+
+#### Custom Attributes
+
+Any attribute prefixed with `data-insights-` will be included in the event payload.
+
+**Examples:**
+```html
+<!-- E-commerce tracking -->
+<button 
+  data-insights-category="product"
+  data-insights-id="add-to-cart"
+  data-insights-product-id="SKU-12345"
+  data-insights-price="29.99"
+  data-insights-currency="USD"
+>
+  Add to Cart
+</button>
+
+<!-- Content tracking -->
+<article 
+  data-insights-category="blog-post"
+  data-insights-id="analytics-guide"
+  data-insights-author="jane-smith"
+  data-insights-reading-time="8"
+  data-insights-published="2024-06-26"
+>
+  <!-- Article content -->
+</article>
+```
+
+---
+
+## Event Data Structure
+
+All events follow a consistent data structure when sent to the ingress endpoint.
+
+### Base Event Structure
+
+```typescript
+interface EventPayload {
+  stream: StreamEvent[];            // Array of events
+  sessionCookie: string;           // Session identifier
+  userCookie: string;              // User identifier
+  path: string;                    // Current page path
+  tenant: string;                  // Tenant identifier
+  device: DeviceData;              // Device information
+  origin: OriginData;              // Attribution data
+  domain: string;                  // Full domain URL
+  experiments?: ExperimentData[];  // A/B test data
+  errors?: ErrorData[];            // Error tracking data
+  performance?: PerformanceData;   // Performance metrics
+}
+
+interface StreamEvent {
+  type: string;                    // Event type (click, impression, custom)
+  category: string;                // Event category
+  id: string;                      // Element identifier
+  position: number;                // Event sequence number
+  timestamp: number;               // Event timestamp (milliseconds)
+  // ...additional custom properties
+}
+```
+
+---
+
+### Context Data Structure
+
+```typescript
+interface DeviceData {
+  user_agent: string;              // Browser user agent string
+}
+
+interface OriginData {
+  source?: string;                 // UTM source
+  medium?: string;                 // UTM medium
+  campaign?: string;               // UTM campaign
+  channel?: string;                // UTM content
+  referrer?: string;               // Document referrer
+  gsi?: {
+    offer_ids?: string;            // UTM term
+    gclid?: string;                // Google Click ID
+    fbclid?: string;               // Facebook Click ID
+  };
+}
+
+interface PerformanceData {
+  timing: {
+    navigation_time: number;
+    redirect_time: number;
+    dns_time: number;
+    connection_time: number;
+    first_byte_time: number;
+    // ... additional timing metrics
+  };
+  score: {
+    largest_contentful_paint_time?: number;  // LCP
+    first_input_delay?: number;              // FID
+    cumulative_layout_shift?: number;       // CLS
+  };
+}
+```
+
+---
+
+### Event Type Examples
+
+#### Click Event
+```javascript
+{
+  "type": "click",
+  "category": "button",
+  "id": "hero-cta",
+  "position": 1,
+  "timestamp": 1719403800000,
+  "variant": "primary",
+  "placement": "hero"
+}
+```
+
+#### Impression Event
+```javascript
+{
+  "type": "impression",
+  "category": "widget",
+  "id": "product-recommendations",
+  "position": 2,
+  "timestamp": 1719403805000,
+  "algorithm": "collaborative-filtering",
+  "item_count": 4
+}
+```
+
+#### Custom Event
+```javascript
+{
+  "type": "user_signup",
+  "category": "conversion",
+  "id": "signup-form",
+  "position": 3,
+  "timestamp": 1719403810000,
+  "plan": "premium",
+  "source": "landing_page",
+  "trial_days": 14
+}
+```
+
+#### Error Event
+**Note:** Errors are tracked separately in the `errors` array, not in the event stream.
+
+```javascript
+// In the errors array of the payload:
+{
+  "type": "validation_error",
+  "label": "Invalid email format",
+  "context": {
+    "field": "email",
+    "form": "signup"
+  },
+  "timestamp": 1719403815000,
+  "url": "https://example.com/signup",
+  "path": "/signup"
+}
+```
+
+---
+
+## Configuration Options
+
+### Component Attributes
+
+#### `tenant` (required)
+
+Identifies the data owner for analytics data.
+
+**Type:** `string`
+
+**Example:**
+```html
+<insights-tracker tenant="your-company-name"></insights-tracker>
+```
+
+#### `debug` (optional)
+
+Enables debug mode for development.
+
+**Type:** `"true"` | not present
+
+**Example:**
+```html
+<!-- Debug mode for development -->
+<insights-tracker tenant="your-company" debug="true"></insights-tracker>
+```
+
+---
+
+## Error Handling
+
+### Common Issues
+
+- **Missing tenant**: Ensure the `tenant` attribute is set on the component
+- **Script loading**: Verify the script URL is correct and accessible
+- **Missing attributes**: Elements need both `data-insights-category` and `data-insights-id`
+- **Network issues**: Check browser Network tab for failed requests
+
+### Debug Mode
+
+Enable debug mode to see detailed console logs:
+
+```html
+<!-- Use debug script -->
+<script src="https://insights.thgaltitude.com/public/insights-tracker.debug.js"></script>
+
+<!-- Or enable debug on component -->
+<insights-tracker tenant="your-company" debug="true"></insights-tracker>
+```
+
+---
+
+## Browser Support
+
+### Required Browser Features
+
+- **Custom Elements**: Web Components support
+- **Intersection Observer**: For impression tracking
+- **Navigator.sendBeacon**: For reliable event transmission
+- **Fetch API**: For network requests
+- **Promise**: For asynchronous operations
+
+### Supported Browsers
+
+- **Chrome**: 90+
+- **Firefox**: 88+
+- **Safari**: 14+
+- **Edge**: 90+
+
+### Polyfills
+
+For older browser support, include appropriate polyfills:
+
+```html
+<!-- Intersection Observer polyfill -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=IntersectionObserver"></script>
+
+<!-- Custom Elements polyfill -->
+<script src="https://unpkg.com/@webcomponents/custom-elements@1.4.3/custom-elements.min.js"></script>
+```
+
+---
+
+## TypeScript Definitions
+
+For TypeScript projects, type definitions are available:
+
+```typescript
+declare global {
+  interface Window {
+    insights: {
+      event(type: string, data: Record<string, any>): void;
+      click(data: Record<string, any>): void;
+      impression(data: Record<string, any>): void;
+      error(type: string, message: string, context?: Record<string, any>): void;
+      context(): ContextData | null;
+      performance(): PerformanceData | null;
+      experiments(): string[];
+    };
+  }
+}
+
+interface ContextData {
+  page: {
+    url: string;
+    title: string;
+    referrer: string;
+    timestamp: number;
+  };
+  user: {
+    sessionId: string;
+    userId?: string;
+  };
+  device: {
+    type: string;
+    os: string;
+    browser: string;
+    screenResolution: string;
+  };
+  performance: {
+    loadTime: number;
+    renderTime: number;
+  };
+}
+
+interface PerformanceData {
+  loadTime: number;
+  renderTime: number;
+  resourceTiming: PerformanceEntry[];
+  vitals: {
+    lcp?: number;
+    fid?: number;
+    cls?: number;
+  };
+}
+```

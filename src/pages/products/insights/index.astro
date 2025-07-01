@@ -1,0 +1,40 @@
+---
+import PageLayout from '../../../layouts/PageLayout.astro';
+import ProductHero from '../../../components/ProductHero.astro';
+
+const highlights = [
+  {
+    title: "Web Components",
+    description: "Self-contained component for easy integration"
+  },
+  {
+    title: "Event Tracking",
+    description: "Comprehensive user behavior monitoring"
+  },
+  {
+    title: "Reliable Data",
+    description: "Event queuing and automatic retry logic"
+  },
+  {
+    title: "Debug Mode", 
+    description: "Full logging for development and validation"
+  }
+];
+---
+
+<PageLayout title="Insights" description="Analytics and event tracking library for comprehensive user behavior monitoring">
+  <ProductHero
+    title="Insights"
+    description="A flexible analytics and tracking library designed for modern web applications. Track user behavior, custom events, and gather detailed analytics with minimal setup and maximum reliability."
+    icon="/statics/icons/insights.svg"
+    primaryAction={{
+      text: "View Documentation",
+      href: "/docs/insights"
+    }}
+    secondaryAction={{
+      text: "See Examples",
+      href: "https://github.com/THG-Headless/insights/tree/main/examples"
+    }}
+    highlights={highlights}
+  />
+</PageLayout>
