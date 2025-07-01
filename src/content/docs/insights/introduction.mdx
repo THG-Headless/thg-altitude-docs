@@ -1,0 +1,325 @@
+---
+title: "Getting Started"
+order: 1
+description: "Analytics and event tracking library for comprehensive user behaviour monitoring"
+---
+
+# Insights v0.2.5
+
+A flexible analytics and tracking library designed for modern web applications. Insights provides comprehensive client-side event tracking with robust backend components for data collection and authentication.
+
+## Overview
+
+Insights enables you to track user behaviour across your web applications with minimal setup and maximum flexibility. Built as a self-contained web component, it provides automatic tracking of user interactions, custom event handling, and detailed analytics data collection.
+
+### Why Web Components?
+
+Insights uses web components for **framework-agnostic implementation**, making it equally easy to integrate with React, Vue, Angular, or vanilla HTML without any framework-specific modifications. This architecture works like a **subscription to tracking** - once you add the component to your site, you're automatically subscribed to the latest tracking capabilities without worrying about version updates, as the component always pulls the most current version from the CDN.
+
+## Key Features
+
+- **Web Component Architecture**: Framework-agnostic integration that works everywhere
+- **Automatic Updates**: Always uses the latest tracking features via CDN delivery
+- **Zero Maintenance**: No version management or update cycles required
+- **Comprehensive Event Tracking**: Page views, clicks, impressions, custom events, and errors
+- **Automatic Data Collection**: Zero-configuration tracking for common user interactions
+- **Robust Data Handling**: Event queuing, batching, and reliable transmission with fallbacks
+- **Authentication & Security**: Token-based authentication for secure data transmission
+- **Debug Mode**: Full logging and validation tools for development
+- **Modern Browser APIs**: Uses Intersection Observer, Beacon API, and Custom Elements
+
+## Installation
+
+Insights provides two versions of the tracking script optimised for different environments:
+
+### Production Script (Recommended for Live Sites)
+
+```html
+<script src="https://insights.thgaltitude.com/public/insights-tracker.js"></script>
+```
+
+**Optimized for Performance:**
+- **Minified & Compressed**: ~25KB optimised bundle size
+- **Silent Operation**: No console output for maximum performance
+- **Production Ready**: Aggressive error handling and graceful degradation
+- **Optimized APIs**: Uses fastest available browser APIs (Beacon, Intersection Observer)
+
+### Debug Script (Development Only)
+
+```html
+<script src="https://insights.thgaltitude.com/public/insights-tracker.debug.js"></script>
+```
+
+**Built for Development:**
+- **Non-minified**: Full source code with readable variable names and comments
+- **Comprehensive Logging**: Detailed console output for every tracking operation
+- **Validation Warnings**: Alerts for missing attributes and configuration issues
+- **Network Monitoring**: Logs all requests and responses for debugging
+- **Error Details**: Full stack traces and diagnostic information
+
+**Important**: Always use the production script for live websites to ensure optimal performance.
+
+### Script Caching
+
+Insights scripts are optimised for performance through strategic caching:
+
+- **Browser Caching**: Scripts are cached in user browsers for **30 minutes** to balance performance with timely updates
+- **CDN Caching**: Scripts are cached on the CDN for **~1 year** for optimal global delivery performance
+- **Automatic Updates**: When new versions are released, the CDN cache is automatically purged to ensure users receive updates promptly
+
+This caching strategy minimises performance impact while ensuring you always get the latest tracking capabilities and bug fixes without any manual intervention.
+
+## Component Integration
+
+### Script and Component Placement
+
+Insights provides flexibility in how you load and place the tracking components:
+
+#### Recommended: Script in Head, Component in Body
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- Load script early for faster initialisation -->
+  <script src="https://insights.thgaltitude.com/public/insights-tracker.js"></script>
+</head>
+<body>
+  <!-- Place component where tracking should begin -->
+  <insights-tracker tenant="your-company-name"></insights-tracker>
+  
+  <!-- Your page content with tracking attributes -->
+  <button data-insights-category="cta" data-insights-id="signup">Sign Up</button>
+</body>
+</html>
+```
+
+**Benefits:**
+- **Early Script Loading**: Component definition is available as soon as the DOM starts parsing
+- **Controlled Initialization**: Tracking begins when the component is encountered in the body
+- **Optimal Performance**: No render-blocking while ensuring tracking is ready
+
+#### Alternative: Both in Head (Immediate Tracking)
+
+```html
+<head>
+  <script src="https://insights.thgaltitude.com/public/insights-tracker.js"></script>
+  <insights-tracker tenant="your-company-name"></insights-tracker>
+</head>
+```
+
+**Use when:**
+- You need tracking to start immediately on page load
+- Tracking critical early user interactions (navigation, initial impressions)
+- Single-page applications where early initialisation is important
+
+#### Alternative: Both in Body (Deferred Loading)
+
+```html
+<body>
+  <!-- Page content loads first -->
+  <main>Your content here</main>
+  
+  <!-- Load tracking after content -->
+  <script src="https://insights.thgaltitude.com/public/insights-tracker.js"></script>
+  <insights-tracker tenant="your-company-name"></insights-tracker>
+</body>
+```
+
+**Use when:**
+- Prioritising page content loading speed over tracking initialisation
+- Tracking is not critical for initial page interactions
+- Working with performance-sensitive applications
+
+### Component Lifecycle
+
+#### Initialization
+- **Automatic**: Component initializes when encountered in the DOM
+- **Authentication**: Automatically handles token acquisition and authentication
+- **Event Queue**: Begins collecting events immediately, queuing them until ready to transmit
+
+#### Runtime Behavior
+- **Self-Managing**: Handles all background processes (batching, transmission, retries)
+- **State Persistence**: Maintains session state across page navigations
+- **Graceful Degradation**: Continues operating even if network issues occur
+
+#### No Cleanup Required
+- **Automatic Management**: Component handles its own lifecycle and cleanup
+- **Memory Efficient**: Automatically manages event queues and removes processed events
+- **Page Navigation**: Properly transmits pending events before page unload
+
+## Quick Start
+
+### Complete Working Example
+
+Here's a complete HTML page with Insights tracking:
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My Website</title>
+  <!-- Include Insights script -->
+  <script src="https://insights.thgaltitude.com/public/insights-tracker.js"></script>
+</head>
+<body>
+  <!-- Required: Add insights component with your tenant ID -->
+  <insights-tracker tenant="your-company-name"></insights-tracker>
+  
+  <!-- Automatic click tracking -->
+  <button 
+    data-insights-category="cta" 
+    data-insights-id="hero-signup">
+    Sign Up Free
+  </button>
+  
+  <!-- Automatic impression tracking -->
+  <div 
+    data-insights-category="widget" 
+    data-insights-id="product-recommendations">
+    <!-- Product recommendations content -->
+  </div>
+  
+  <!-- Navigation with tracking -->
+  <nav>
+    <a href="/products" 
+       data-insights-category="navigation" 
+       data-insights-id="products-link">
+      Products
+    </a>
+  </nav>
+  
+  <!-- Manual tracking with JavaScript -->
+  <script>
+    // Wait for insights to load
+    window.addEventListener('load', () => {
+      // Track page view
+      insights.event('page_view', { 
+        page: 'homepage',
+        timestamp: Date.now()
+      });
+      
+      // Track custom events
+      insights.event('feature_used', {
+        feature: 'hero_banner',
+        variant: 'summer_2024'
+      });
+    });
+  </script>
+</body>
+</html>
+```
+
+### Step-by-Step Setup
+
+#### 1. Include the Script
+```html
+<!-- Production (use for live sites) -->
+<script src="https://insights.thgaltitude.com/public/insights-tracker.js"></script>
+
+<!-- Debug (use for development) -->
+<script src="https://insights.thgaltitude.com/public/insights-tracker.debug.js"></script>
+```
+
+#### 2. Add the Component
+```html
+<insights-tracker tenant="your-company-name"></insights-tracker>
+```
+
+#### 3. Add Tracking Attributes (Optional)
+```html
+<!-- Elements are automatically tracked when they have these attributes -->
+<button data-insights-category="cta" data-insights-id="signup-button">
+  Sign Up
+</button>
+```
+
+That's it! Insights will automatically start tracking page views and user interactions.
+
+**Component Lifecycle Notes:**
+- The component initializes automatically when it appears in the DOM
+- Tracking begins immediately and handles all background processes
+- No manual cleanup or management required - the component is fully self-contained
+
+## Core Concepts
+
+### Tenant Configuration
+
+The `tenant` attribute is **required** and serves several purposes:
+
+- **Data Ownership**: Identifies who owns the analytics data
+- **Multi-site Grouping**: Use the same tenant across multiple sites to group data
+- **Access Control**: Determines data access permissions in analytics dashboards
+
+```html
+<!-- Production setup -->
+<insights-tracker tenant="acme-corp"></insights-tracker>
+
+<!-- Development setup with debug script -->
+<script src="https://insights.thgaltitude.com/public/insights-tracker.debug.js"></script>
+<insights-tracker tenant="acme-corp"></insights-tracker>
+```
+
+**Important**: Use the same tenant value across all pages of your website.
+
+### Event Types
+
+Insights tracks several types of events automatically and provides APIs for custom tracking:
+
+- **Page Views**: Automatic navigation tracking
+- **Clicks**: User interactions with tracked elements
+- **Impressions**: Element visibility using Intersection Observer
+- **Custom Events**: Application-specific actions
+- **Errors**: Automatic 404 detection and custom error tracking
+
+## Browser Compatibility
+
+Insights is built with modern browser APIs and targets current browser versions for optimal performance and security. The minimum supported versions are:
+
+- **Chrome 90+** (April 2021)
+- **Firefox 88+** (April 2021)
+- **Safari 14+** (September 2020)
+- **Edge 90+** (April 2021)
+
+**Global Coverage:** ~90% of all browsers currently in use support these versions.
+
+### API Requirements and Browser Support
+
+Insights requires these modern browser APIs. The table below shows the first version of each browser to support each feature:
+
+| Feature | Chrome | Firefox | Safari | Edge |
+|---------|--------|---------|--------|----- |
+| Custom Elements V1 | 67 | 63 | 10.3 | 79 |
+| IntersectionObserver | 58 | 55 | 12.1 | 16 |
+| sendBeacon | 39 | 31 | 11.1 | 14 |
+| **Build Targets** | **90** | **88** | **14** | **90** |
+
+**Build Target Rationale:** While the APIs are supported in earlier versions, Insights targets more recent browser versions to:
+- Leverage performance optimisations in modern JavaScript engines
+- Ensure consistent behaviour across security-focused browser updates
+- Reduce bundle size by avoiding polyfills for older browser quirks
+- Maintain compatibility with current security and privacy standards
+
+### Unsupported Browsers
+
+- **Internet Explorer** (all versions) - lacks support for required APIs
+- **Opera Mini** - limited JavaScript execution environment
+- **Chrome < 90, Firefox < 88, Safari < 14, Edge < 90**
+
+No graceful degradation is provided for unsupported browsers - the tracking script will not function on versions below the minimum requirements.
+
+### Browser Testing
+
+For production deployments, we recommend testing on:
+- **Desktop**: Chrome 67+, Firefox 63+, Safari 12.1+, Edge 79+
+- **Mobile**: Chrome Mobile 67+, Safari iOS 12.2+, Samsung Internet 6.2+
+
+## Next Steps
+
+- Learn about [HTML tracking methods](./html-tracking) for declarative event setup
+- Explore the [JavaScript API](./javascript-api) for programmatic tracking
+- Review integration examples for your specific use case:
+  - [E-commerce tracking](./examples/ecommerce) - Product catalogs, shopping carts, and purchase flows
+  - [Single Page Applications](./examples/spa) - React, Vue, Angular integration patterns  
+  - [Content sites & blogs](./examples/content-sites) - Article engagement and reading analytics
+- Set up [debugging and development](./debugging) tools

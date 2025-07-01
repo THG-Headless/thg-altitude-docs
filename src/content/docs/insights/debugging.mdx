@@ -1,0 +1,564 @@
+---
+title: "Debugging & Development"
+order: 4
+description: "Tools and techniques for debugging and validating Insights tracking"
+---
+
+# Debugging & Development
+
+Insights provides comprehensive debugging tools and techniques to help you validate tracking implementation and troubleshoot issues during development.
+
+## Quick Troubleshooting
+
+### Verify Insights is Working
+
+**When to run this check:**
+- During initial implementation to validate setup
+- When tracking events aren't appearing in your analytics dashboard
+- After making configuration changes
+- Before deploying to production
+
+Use this function to systematically verify your tracking implementation:
+
+```javascript
+function verifyInsights() {
+  console.log('=== Insights Configuration Check ===');
+  
+  // 1. Check if script loaded
+  if (typeof insights !== 'undefined') {
+    console.log('✅ Insights script loaded successfully');
+  } else {
+    console.error('❌ Insights script not loaded');
+    return false;
+  }
+  
+  // 2. Check component
+  const tracker = document.querySelector('insights-tracker');
+  if (tracker) {
+    console.log('✅ Insights component found');
+    console.log('   Tenant:', tracker.tenant || 'NOT SET');
+  } else {
+    console.error('❌ insights-tracker component not found');
+    return false;
+  }
+  
+  // 3. Test event tracking
+  try {
+    insights.event('debug_test', { timestamp: Date.now() });
+    console.log('✅ Test event sent successfully');
+  } catch (error) {
+    console.error('❌ Failed to send test event:', error);
+    return false;
+  }
+  
+  // 4. Check trackable elements
+  const trackableElements = document.querySelectorAll('[data-insights-category]');
+  console.log(`📊 Found ${trackableElements.length} trackable elements`);
+  
+  console.log('=== Check complete ===');
+  return true;
+}
+
+// Run the check
+verifyInsights();
+
+**Interpreting the results:**
+- **All checkmarks (✅)**: Your implementation is working correctly
+- **Script loading error**: Check that the Insights script URL is correct and accessible
+- **Component missing**: Ensure you've added `<insights-tracker>` to your HTML
+- **Test event failure**: Check network connectivity and authentication configuration
+- **Zero trackable elements**: Either add `data-insights-*` attributes or use JavaScript API
+```
+
+## Debug Mode
+
+### Enabling Debug Mode
+
+Use the debug version of the script during development:
+
+```html
+<!-- Replace production script with debug version -->
+<script src="https://insights.thgaltitude.com/public/insights-tracker.debug.js"></script>
+```
+
+### Debug Features
+
+**Use debug mode during development to:**
+- **Validate Implementation**: Ensure tracking events fire when expected
+- **Troubleshoot Issues**: Identify why certain events aren't being tracked
+- **Monitor Performance**: See how tracking affects page load and interaction performance
+- **Test Integration**: Verify tracking works correctly with your application architecture
+
+Debug mode provides extensive logging and validation:
+
+- **Console Logging**: Detailed logs of all tracking activities with timestamps
+- **Event Queue Status**: Real-time information about queued and sent events
+- **Authentication Logs**: Token lifecycle and authentication status monitoring
+- **Error Details**: Comprehensive error information and automatic retry attempts
+- **Configuration Validation**: Warnings for missing or invalid configuration that could affect tracking
+
+### Debug Output Examples
+
+```javascript
+// Example debug console output
+[Insights] Component initialized with tenant: "acme-corp"
+[Insights] Authentication token acquired: tok_abc123...
+[Insights] Click event tracked: { id: "hero-cta", category: "button" }
+[Insights] Event queued (network unavailable): impression_tracking
+[Insights] Batch sent: 5 events successfully transmitted
+[Insights] Warning: Element missing data-insights-id attribute
+```
+
+## Browser Developer Tools
+
+### Network Tab Monitoring
+
+**Use network monitoring to:**
+- **Verify Events are Sent**: Confirm tracking requests are actually being transmitted
+- **Check Request Timing**: Ensure tracking doesn't block user interactions
+- **Debug Authentication**: Verify authorisation tokens are included correctly
+- **Validate Payload Structure**: Ensure event data matches your expectations
+
+Monitor tracking requests in browser DevTools:
+
+1. **Open Developer Tools** (F12 or Right-click > Inspect)
+2. **Go to Network Tab**
+3. **Filter by "Fetch/XHR" or "All"**
+4. **Trigger tracking events** (click tracked elements, navigate pages)
+5. **Look for requests** to ingress endpoints
+
+**What to look for:**
+- **Status 200**: Successful event transmission
+- **Status 401/403**: Authentication issues
+- **Status 400**: Malformed request data
+- **Network errors**: Connectivity or CORS issues
+
+### Request Inspection
+
+Examine tracking request details:
+
+```javascript
+// Example network request
+POST https://insights.thgaltitude.com/events
+Content-Type: application/json
+Authorization: Bearer tok_abc123...
+
+{
+  "tenant": "acme-corp",
+  "events": [
+    {
+      "timestamp": "2024-06-26T10:30:00.000Z",
+      "event_type": "click",
+      "event_payload": {
+        "id": "hero-cta",
+        "category": "button",
+        "variant": "primary"
+      },
+      "context": {
+        "page": {
+          "url": "https://example.com/",
+          "title": "Homepage"
+        },
+        "user": {
+          "sessionId": "sess_xyz789"
+        }
+      }
+    }
+  ]
+}
+```
+
+### Console Debugging
+
+**Interactive debugging for real-time testing:**
+Use the browser console to test tracking functionality without modifying your code:
+
+```javascript
+// Check if Insights is loaded
+console.log('Insights available:', !!window.insights);
+
+// Get tracker component
+const tracker = document.querySelector('insights-tracker');
+console.log('Tracker element:', tracker);
+
+**Console debugging techniques:**
+- **Test Events**: Send test events to verify API functionality
+- **Inspect Configuration**: Check current tracking settings and state
+- **Monitor Event Queue**: See pending events waiting to be transmitted
+- **Validate Elements**: Check which elements have tracking attributes
+console.log('Tenant configured:', tracker?.tenant);
+
+// Test event tracking
+insights.event('debug_test', { source: 'console', timestamp: Date.now() });
+
+// Get current context
+console.log('Current context:', insights.context());
+
+// Check performance data
+console.log('Performance metrics:', insights.performance());
+```
+
+## Validation Techniques
+
+### Element Tracking Validation
+
+Verify that elements have proper tracking attributes:
+
+```javascript
+// Find all trackable elements
+const trackableElements = document.querySelectorAll('[data-insights-category]');
+console.log(`Found ${trackableElements.length} trackable elements`);
+
+// Validate required attributes
+trackableElements.forEach(element => {
+  const category = element.getAttribute('data-insights-category');
+  const id = element.getAttribute('data-insights-id');
+  
+  if (!category) {
+    console.warn('Missing category:', element);
+  }
+  if (!id) {
+    console.warn('Missing ID:', element);
+  }
+  
+  console.log('Element validation:', { category, id, element });
+});
+```
+
+### Event Simulation
+
+Simulate tracking events for testing:
+
+```javascript
+// Simulate various event types
+function simulateTracking() {
+  console.log('Starting tracking simulation...');
+  
+  // Test custom events
+  insights.event('test_custom_event', {
+    test: true,
+    timestamp: Date.now(),
+    source: 'simulation'
+  });
+  
+  // Test click tracking
+  insights.click({
+    id: 'simulated_click',
+    category: 'test',
+    element_type: 'button'
+  });
+  
+  // Test impression tracking
+  insights.impression({
+    id: 'simulated_impression',
+    category: 'test',
+    widget_type: 'banner'
+  });
+  
+  // Test error tracking
+  insights.error('test_error', 'Simulated error for testing', {
+    severity: 'low',
+    component: 'debug_tools'
+  });
+  
+  console.log('Simulation complete');
+}
+
+// Run simulation
+simulateTracking();
+```
+
+### Component State Inspection
+
+Check component internal state (debug mode only):
+
+```javascript
+// Get component instance
+const tracker = document.querySelector('insights-tracker');
+
+// Check if component is properly initialized
+if (tracker) {
+  console.log('Component state:', {
+    tenant: tracker.tenant,
+    loaded: !!tracker.eventTracker,
+    authenticated: !!tracker.authToken,
+    queueSize: tracker._eventQueue?.size || 0
+  });
+} else {
+  console.error('Insights tracker component not found');
+}
+```
+
+## Testing Strategies
+
+### Unit Testing
+
+Test tracking implementation in isolation:
+
+```javascript
+// Mock insights for unit tests
+const mockInsights = {
+  event: jest.fn(),
+  click: jest.fn(),
+  impression: jest.fn(),
+  error: jest.fn(),
+  context: jest.fn(() => ({ page: { url: 'test' } })),
+  performance: jest.fn(() => ({ loadTime: 100 })),
+  experiments: jest.fn(() => [])
+};
+
+// Replace global insights for testing
+global.insights = mockInsights;
+
+// Test your tracking code
+function trackSignup(plan) {
+  insights.event('user_signup', { plan });
+}
+
+// Verify tracking calls
+test('tracks signup event', () => {
+  trackSignup('premium');
+  expect(mockInsights.event).toHaveBeenCalledWith('user_signup', { plan: 'premium' });
+});
+```
+
+### Integration Testing
+
+Test end-to-end tracking behaviour:
+
+```javascript
+// E2E test example (using Playwright/Cypress)
+test('tracks button clicks correctly', async ({ page }) => {
+  await page.goto('/test-page');
+  
+  // Wait for insights to load
+  await page.waitForFunction(() => window.insights);
+  
+  // Monitor network requests
+  const requests = [];
+  page.on('request', request => {
+    if (request.url().includes('insights')) {
+      requests.push(request);
+    }
+  });
+  
+  // Click tracked button
+  await page.click('[data-insights-id="test-button"]');
+  
+  // Verify tracking request was sent
+  await page.waitForFunction(() => requests.length > 0);
+  
+  const trackingRequest = requests[0];
+  expect(trackingRequest.method()).toBe('POST');
+  expect(await trackingRequest.postDataJSON()).toMatchObject({
+    tenant: 'test-tenant',
+    events: expect.arrayContaining([
+      expect.objectContaining({
+        event_type: 'click',
+        event_payload: expect.objectContaining({
+          id: 'test-button'
+        })
+      })
+    ])
+  });
+});
+```
+
+### Performance Testing
+
+Monitor tracking performance impact:
+
+```javascript
+// Measure tracking overhead
+function measureTrackingPerformance() {
+  const startTime = performance.now();
+  
+  // Perform multiple tracking operations
+  for (let i = 0; i < 100; i++) {
+    insights.event('performance_test', { iteration: i });
+  }
+  
+  const endTime = performance.now();
+  const duration = endTime - startTime;
+  
+  console.log(`100 tracking events took ${duration}ms`);
+  console.log(`Average per event: ${duration / 100}ms`);
+  
+  return duration;
+}
+
+// Test under different conditions
+const normalLoad = measureTrackingPerformance();
+// ... simulate high CPU usage ...
+const highLoad = measureTrackingPerformance();
+
+console.log(`Performance impact: ${((highLoad - normalLoad) / normalLoad * 100).toFixed(1)}%`);
+```
+
+## Common Issues & Solutions
+
+### Insights Not Loading
+
+```javascript
+// Check if script loaded correctly
+if (!window.insights) {
+  console.error('Insights not loaded. Check:');
+  console.error('1. Script URL is correct');
+  console.error('2. Script loaded without errors');
+  console.error('3. No content security policy blocking');
+  
+  // Check for script element
+  const script = document.querySelector('script[src*="insights-tracker"]');
+  if (!script) {
+    console.error('4. Script element not found in DOM');
+  } else {
+    console.log('Script element found:', script.src);
+  }
+}
+```
+
+### Component Not Found
+
+```javascript
+// Check if component is in DOM
+const tracker = document.querySelector('insights-tracker');
+if (!tracker) {
+  console.error('Insights tracker component not found. Check:');
+  console.error('1. <insights-tracker> element is in HTML');
+  console.error('2. Element has tenant attribute');
+  console.error('3. Script loaded before component usage');
+} else {
+  console.log('Component found with tenant:', tracker.tenant);
+}
+```
+
+### Events Not Sending
+
+```javascript
+// Debug event transmission issues
+function debugEventSending() {
+  // Check network connectivity
+  if (!navigator.onLine) {
+    console.warn('Device is offline - events will be queued');
+    return;
+  }
+  
+  // Check authentication
+  const tracker = document.querySelector('insights-tracker');
+  if (!tracker.authToken) {
+    console.warn('No auth token - check authentication endpoint');
+    return;
+  }
+  
+  // Test manual event
+  insights.event('debug_connectivity_test', {
+    timestamp: Date.now(),
+    userAgent: navigator.userAgent
+  });
+  
+  console.log('Test event sent - check network tab for request');
+}
+
+debugEventSending();
+```
+
+### Attribution Issues
+
+```javascript
+// Verify tracking attributes
+function validateTrackingAttributes() {
+  const elements = document.querySelectorAll('[data-insights-category]');
+  const issues = [];
+  
+  elements.forEach((element, index) => {
+    const category = element.getAttribute('data-insights-category');
+    const id = element.getAttribute('data-insights-id');
+    
+    if (!category) {
+      issues.push(`Element ${index}: Missing data-insights-category`);
+    }
+    
+    if (!id) {
+      issues.push(`Element ${index}: Missing data-insights-id`);
+    }
+  });
+  
+  if (issues.length > 0) {
+    console.warn('Tracking attribute issues found:');
+    issues.forEach(issue => console.warn(issue));
+  } else {
+    console.log('All tracking attributes valid');
+  }
+  
+  return issues;
+}
+
+validateTrackingAttributes();
+```
+
+## Development Workflow
+
+### Local Development Setup
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- Use debug version in development -->
+  <script src="https://insights.thgaltitude.com/public/insights-tracker.debug.js"></script>
+  
+  <!-- Development-specific configuration -->
+  <script>
+    // Override endpoints for local testing
+    window.INSIGHTS_CONFIG = {
+      debug: true,
+      endpoints: {
+        events: 'http://localhost:3000/events',
+        auth: 'http://localhost:3000/auth'
+      }
+    };
+  </script>
+</head>
+<body>
+  <!-- Test component with development tenant -->
+  <insights-tracker tenant="dev-testing"></insights-tracker>
+  
+  <!-- Test elements -->
+  <button data-insights-category="test" data-insights-id="dev-button">
+    Test Button
+  </button>
+</body>
+</html>
+```
+
+### Staging Validation
+
+```javascript
+// Staging environment validation script
+function validateStagingSetup() {
+  const checks = {
+    insightsLoaded: !!window.insights,
+    componentPresent: !!document.querySelector('insights-tracker'),
+    tenantConfigured: document.querySelector('insights-tracker')?.tenant,
+    trackableElements: document.querySelectorAll('[data-insights-category]').length,
+    debugMode: window.location.href.includes('insights-tracker.debug.js')
+  };
+  
+  console.table(checks);
+  
+  if (checks.debugMode) {
+    console.warn('Debug mode enabled in staging - switch to production script');
+  }
+  
+  if (checks.trackableElements === 0) {
+    console.warn('No trackable elements found - verify implementation');
+  }
+  
+  return checks;
+}
+
+// Run validation on page load
+document.addEventListener('DOMContentLoaded', validateStagingSetup);
+```
+
+This comprehensive debugging approach ensures reliable tracking implementation and smooth development experience.

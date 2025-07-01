@@ -199,6 +199,24 @@ export const products: Record<string, Product> = {
         href: "/docs/captcha"
       }
     ]
+  },
+  "insights": {
+    id: "insights",
+    name: "Insights",
+    description: "Analytics and event tracking library for comprehensive user behavior monitoring",
+    icon: "/statics/icons/insights.svg",
+    href: "/products/insights",
+    status: "beta",
+    quickLinks: [
+      {
+        title: "Overview",
+        href: "/products/insights"
+      },
+      {
+        title: "Documentation",
+        href: "/docs/insights"
+      }
+    ]
   }
 };
 

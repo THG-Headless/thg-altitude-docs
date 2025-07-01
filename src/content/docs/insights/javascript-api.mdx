@@ -1,0 +1,1718 @@
+---
+title: "JavaScript API"
+order: 3
+description: "Programmatic event tracking using the JavaScript API"
+---
+
+# JavaScript API
+
+The Insights JavaScript API provides programmatic access to tracking functionality. Use this API for dynamic tracking, custom events, and integration with JavaScript frameworks.
+
+## When to Use the JavaScript API vs HTML Attributes
+
+**Use JavaScript API when:**
+- **Dynamic Content**: Tracking elements that are created, modified, or removed programmatically
+- **Complex Logic**: Event tracking that depends on application state, user properties, or business logic
+- **Framework Integration**: Building reusable tracking components in React, Vue, Angular, etc.
+- **Real-time Events**: Tracking actions that don't correspond to specific DOM elements (API calls, timers, calculations)
+- **Custom Data**: Events that require computed or aggregated data not available in HTML
+
+**Use HTML Attributes when:**
+- **Static Content**: Elements that exist in your HTML and don't change dynamically
+- **Simple Tracking**: Straightforward click and impression tracking without complex logic
+- **Designer Collaboration**: Non-technical team members need to add tracking to content
+- **Performance**: Minimal JavaScript overhead for basic tracking scenarios
+
+## API Access Patterns
+
+### Global API (Recommended for Most Cases)
+
+Access tracking methods via the global `window.insights` object:
+
+```javascript
+// Available after the insights-tracker component loads
+if (window.insights) {
+  insights.event('custom_action', { data: 'value' });
+}
+```
+
+**When to Use Global API:**
+- **Single Tracker**: Most applications have one insights tracker per page
+- **Convenience**: Simple, familiar interface like Google Analytics
+- **Framework Integration**: Easy to use in React, Vue, Angular without DOM queries
+- **Legacy Migration**: Minimal changes when migrating from other analytics tools
+
+**Global API Characteristics:**
+- **DOM Query Overhead**: Uses `document.querySelector('insights-tracker')` on each call
+- **First Component Targeting**: Always targets the first tracker found in DOM
+- **Silent Failure**: No errors if component not found (debug logging only)
+
+### Component Instance API (Advanced Use Cases)
+
+Access tracking methods directly from the component:
+
+```javascript
+const tracker = document.querySelector('insights-tracker');
+if (tracker) {
+  tracker.insightsEvent('custom_action', { data: 'value' });
+}
+```
+
+**When to Use Component API:**
+- **Multiple Trackers**: Different trackers for different purposes on same page
+- **Performance Critical**: Avoid DOM query overhead in high-frequency tracking
+- **Direct Control**: Explicit component targeting and error handling
+- **Complex Integration**: Advanced scenarios requiring specific component instances
+
+**Component API Characteristics:**
+- **Direct Method Calls**: No DOM query overhead, direct function execution
+- **Explicit Targeting**: Can target specific component instances
+- **Manual Error Handling**: Developer responsible for component existence checks
+
+### Usage Guidelines
+
+**Simple Applications (Most Common):**
+```javascript
+// Use global API for straightforward tracking
+insights.event('user_action', { action: 'click', element: 'signup_button' });
+insights.click({ category: 'navigation', id: 'main_menu' });
+insights.error('validation_error', 'Email invalid', { field: 'email' });
+```
+
+**Multiple Tracker Scenarios:**
+```javascript
+// Different trackers for different data streams
+const marketingTracker = document.querySelector('insights-tracker[tenant="marketing"]');
+const analyticsTracker = document.querySelector('insights-tracker[tenant="analytics"]');
+
+marketingTracker.insightsEvent('campaign_interaction', {
+  campaign: 'summer_sale',
+  variant: 'discount_banner'
+});
+
+analyticsTracker.insightsEvent('user_behaviour', {
+  section: 'product_catalog',
+  interaction: 'filter_applied'
+});
+```
+
+**Performance-Optimized Tracking:**
+```javascript
+// Cache component reference for high-frequency tracking
+const tracker = document.querySelector('insights-tracker');
+
+function trackScrollPosition() {
+  if (tracker) {
+    tracker.insightsEvent('scroll_position', {
+      position: window.scrollY,
+      timestamp: Date.now()
+    });
+  }
+}
+
+// Use cached reference to avoid repeated DOM queries
+window.addEventListener('scroll', debounce(trackScrollPosition, 100));
+```
+
+### API Functional Equivalence
+
+**Important**: Both APIs provide identical functionality and behaviour:
+- **Same Methods**: All tracking methods available in both patterns
+- **Same Data**: Events contain identical information regardless of API used
+- **Same Processing**: Internal event handling is identical
+- **Same Reliability**: Event queuing and transmission behaviour is the same
+
+The choice between APIs is purely about convenience vs. control, not functionality differences.
+
+## Extensibility and Customization
+
+### Creating Domain-Specific Methods
+
+Extend the Insights API with methods tailored to your application's needs:
+
+```javascript
+// Create specialized tracking methods
+window.insights.trackUserAction = function(actionType, actionData) {
+  return this.event('user_action', {
+    action_type: actionType,
+    timestamp: Date.now(),
+    page_context: window.location.pathname,
+    ...actionData
+  });
+};
+
+// Create data-enriched tracking
+window.insights.trackWithContext = function(eventType, eventData) {
+  const enrichedData = {
+    ...eventData,
+    session_id: this.getSessionId(),
+    user_agent: navigator.userAgent,
+    viewport: { width: window.innerWidth, height: window.innerHeight }
+  };
+  return this.event(eventType, enrichedData);
+};
+
+// Usage of extended methods
+insights.trackUserAction('button_click', { button_id: 'signup', section: 'hero' });
+insights.trackWithContext('form_submit', { form_name: 'contact', success: true });
+```
+
+### Data Normalization Patterns
+
+Create reusable data transformation utilities:
+
+```javascript
+// Generic data normalizer factory
+window.insights.createDataNormalizer = function(schema) {
+  return function(rawData) {
+    const normalized = {};
+    for (const [key, transformer] of Object.entries(schema)) {
+      try {
+        normalized[key] = transformer(rawData);
+      } catch (error) {
+        console.warn(`Failed to normalize ${key}:`, error);
+        normalized[key] = null;
+      }
+    }
+    return normalized;
+  };
+};
+
+// Define transformation schema
+const productNormalizer = insights.createDataNormalizer({
+  item_id: (data) => data.sku || data.id || 'unknown',
+  item_name: (data) => data.title || data.name || 'untitled',
+  price: (data) => Number(data.price?.amount || data.price || 0),
+  currency: (data) => data.currency || this.getDefaultCurrency?.() || 'USD',
+  category: (data) => Array.isArray(data.categories) ? data.categories.join(' > ') : data.category
+});
+
+// Usage
+const rawProduct = { sku: 'ABC123', title: 'Widget', price: { amount: '29.99' } };
+const normalizedProduct = productNormalizer(rawProduct);
+insights.event('product_view', normalizedProduct);
+```
+
+### Event Middleware and Enrichment
+
+Automatically enhance all events with additional context:
+
+```javascript
+// Add middleware to automatically enrich events
+window.insights.addMiddleware = function(middleware) {
+  const originalEvent = this.event;
+  this.event = function(type, data) {
+    try {
+      const enrichedData = middleware(type, data);
+      return originalEvent.call(this, type, enrichedData);
+    } catch (error) {
+      console.warn('Middleware failed:', error);
+      return originalEvent.call(this, type, data);
+    }
+  };
+};
+
+// Example middleware functions
+const timestampMiddleware = (type, data) => ({
+  ...data,
+  timestamp: Date.now(),
+  iso_timestamp: new Date().toISOString()
+});
+
+const sessionMiddleware = (type, data) => ({
+  ...data,
+  session_id: sessionStorage.getItem('session_id'),
+  page_url: window.location.href,
+  referrer: document.referrer
+});
+
+const environmentMiddleware = (type, data) => ({
+  ...data,
+  environment: process.env.NODE_ENV || 'production',
+  version: window.APP_VERSION || 'unknown'
+});
+
+// Apply middleware
+insights.addMiddleware(timestampMiddleware);
+insights.addMiddleware(sessionMiddleware);
+insights.addMiddleware(environmentMiddleware);
+
+// All subsequent events will be automatically enriched
+insights.event('user_signup', { method: 'email' });
+// Results in enriched event with timestamp, session_id, page_url, etc.
+```
+
+### Multi-Instance Configuration
+
+Manage multiple tracker instances for different purposes:
+
+```html
+<!-- Multiple tracker instances -->
+<insights-tracker tenant="analytics" config='{"sampling": 1.0}'></insights-tracker>
+<insights-tracker tenant="marketing" config='{"sampling": 0.1}'></insights-tracker>
+<insights-tracker tenant="debugging" config='{"batch_size": 1}'></insights-tracker>
+```
+
+```javascript
+// Instance management utilities
+window.insights.getTrackerInstance = function(tenantName) {
+  return document.querySelector(`insights-tracker[tenant="${tenantName}"]`);
+};
+
+window.insights.trackToInstance = function(tenantName, eventType, eventData) {
+  const tracker = this.getTrackerInstance(tenantName);
+  if (tracker) {
+    tracker.insightsEvent(eventType, eventData);
+  } else {
+    console.warn(`Tracker instance '${tenantName}' not found`);
+  }
+};
+
+// Route events to different instances based on type
+window.insights.routeEvent = function(eventType, eventData) {
+  switch (eventType) {
+    case 'error':
+    case 'performance':
+      this.trackToInstance('debugging', eventType, eventData);
+      break;
+    case 'campaign_interaction':
+    case 'conversion':
+      this.trackToInstance('marketing', eventType, eventData);
+      break;
+    default:
+      this.trackToInstance('analytics', eventType, eventData);
+  }
+};
+
+// Usage
+insights.routeEvent('user_signup', { method: 'google' }); // → analytics
+insights.routeEvent('campaign_interaction', { campaign: 'summer_sale' }); // → marketing
+insights.routeEvent('error', { type: 'validation', field: 'email' }); // → debugging
+```
+
+### Defensive Programming Patterns
+
+Ensure tracking works reliably across different environments:
+
+```javascript
+// Safe tracking with fallbacks
+window.insights.safeTrack = function(type, data, options = {}) {
+  try {
+    if (this.event) {
+      return this.event(type, data);
+    } else if (options.queue) {
+      this.queueEvent(type, data);
+    }
+  } catch (error) {
+    console.warn('Tracking failed:', error);
+    if (options.fallback) {
+      options.fallback(type, data, error);
+    }
+  }
+};
+
+// Optional chaining pattern for modern environments
+window.insights.optionalTrack = function(type, data) {
+  return this.event?.(type, data);
+};
+
+// Event queuing for delayed initialization
+window.insights.eventQueue = [];
+window.insights.queueEvent = function(type, data) {
+  this.eventQueue.push({ type, data, timestamp: Date.now() });
+};
+
+window.insights.flushQueue = function() {
+  while (this.eventQueue.length > 0) {
+    const { type, data } = this.eventQueue.shift();
+    this.event(type, data);
+  }
+};
+
+// Initialize queue processing when tracker becomes available
+function initializeTracking() {
+  if (window.insights?.event) {
+    window.insights.flushQueue();
+  } else {
+    setTimeout(initializeTracking, 100);
+  }
+}
+initializeTracking();
+```
+
+### Dynamic Extension Loading
+
+Load tracking extensions conditionally based on application needs:
+
+```javascript
+// Conditional extension loading
+async function loadInsightsExtensions(extensions) {
+  const loadPromises = extensions.map(async (extension) => {
+    try {
+      await import(`/extensions/insights-${extension}.js`);
+      console.log(`Loaded ${extension} extension`);
+      return { extension, success: true };
+    } catch (error) {
+      console.warn(`Failed to load ${extension} extension:`, error);
+      return { extension, success: false, error };
+    }
+  });
+  
+  const results = await Promise.allSettled(loadPromises);
+  return results.map(result => result.value || result.reason);
+}
+
+// Environment-based extension loading
+function getRequiredExtensions() {
+  const extensions = [];
+  
+  if (window.location.pathname.includes('/shop/')) {
+    extensions.push('ecommerce');
+  }
+  
+  if (window.location.search.includes('utm_')) {
+    extensions.push('campaign-tracking');
+  }
+  
+  if (process.env.NODE_ENV === 'development') {
+    extensions.push('debug');
+  }
+  
+  return extensions;
+}
+
+// Load extensions based on current context
+loadInsightsExtensions(getRequiredExtensions()).then(results => {
+  console.log('Extension loading results:', results);
+});
+```
+
+## Event Tracking
+
+### Custom Events
+
+Track application-specific actions and user behaviours that don't map to standard click/impression events:
+
+```javascript
+// User registration
+insights.event('user_signup', {
+  plan: 'premium',
+  source: 'landing_page',
+  trial_days: 14,
+  marketing_channel: 'google_ads'
+});
+
+// Product interactions
+insights.event('product_view', {
+  productId: 'SKU-12345',
+  productName: 'Gaming Laptop',
+  category: 'electronics',
+  price: 1299.99,
+  currency: 'USD',
+  inStock: true
+});
+
+// Feature usage
+insights.event('feature_used', {
+  feature: 'advanced_search',
+  filters_applied: ['price', 'brand', 'rating'],
+  results_count: 42
+});
+```
+
+### E-commerce Events
+
+Use the extensibility patterns to create domain-specific e-commerce tracking:
+
+```javascript
+// Extend insights with e-commerce methods using normalization
+window.insights.createEcommerceTracker = function() {
+  // Helper to get current currency/locale
+  const getSessionContext = () => ({
+    currency: this.getSessionCurrency?.() || 'USD',
+    locale: this.getSessionLocale?.() || 'en'
+  });
+  
+  return {
+    trackAddToCart: (product, options = {}) => {
+      const context = getSessionContext();
+      insights.event('add_to_cart', {
+        item_id: product.id || product.sku,
+        item_name: product.name || product.title,
+        quantity: options.quantity || 1,
+        price: Number(product.price),
+        currency: context.currency,
+        cart_value: this.getCartTotal?.(),
+        source: options.source || 'unknown',
+        ...context
+      });
+    },
+    
+    trackRemoveFromCart: (product, options = {}) => {
+      const context = getSessionContext();
+      insights.event('remove_from_cart', {
+        item_id: product.id || product.sku,
+        quantity: options.quantity || 1,
+        new_cart_value: this.getCartTotal?.(),
+        reason: options.reason || 'user_action',
+        ...context
+      });
+    },
+    
+    trackPurchase: (order) => {
+      const context = getSessionContext();
+      insights.event('purchase_completed', {
+        order_id: order.id,
+        total: Number(order.total),
+        currency: context.currency,
+        items: order.items.map(item => ({
+          id: item.id || item.sku,
+          name: item.name || item.title,
+          quantity: item.quantity,
+          price: Number(item.price)
+        })),
+        payment_method: order.paymentMethod,
+        shipping_method: order.shippingMethod,
+        ...context
+      });
+    }
+  };
+};
+
+// Usage with extension
+const ecommerce = insights.createEcommerceTracker();
+
+// Track cart actions with dynamic data
+ecommerce.trackAddToCart(
+  { id: 'SKU-123', name: 'Widget', price: 29.99 },
+  { quantity: 2, source: 'product_page' }
+);
+
+ecommerce.trackPurchase({
+  id: 'ORD-456',
+  total: 59.98,
+  items: [{ id: 'SKU-123', name: 'Widget', quantity: 2, price: 29.99 }],
+  paymentMethod: 'credit_card',
+  shippingMethod: 'standard'
+});
+```
+
+## Manual Click and Impression Tracking
+
+**When to use manual tracking instead of HTML attributes:**
+- **Dynamic Elements**: Buttons and links created by JavaScript that don't exist at page load
+- **Complex Interactions**: Tracking that requires context from application state
+- **Framework Components**: Reusable components that need consistent tracking across different implementations
+- **Conditional Tracking**: Events that should only fire under specific conditions
+
+### Click Tracking
+
+Track programmatic clicks and user interactions that occur outside the normal DOM event flow:
+
+```javascript
+// Button interactions
+insights.click({
+  element: 'mobile_menu_toggle',
+  location: 'header',
+  action: 'open_menu'
+});
+
+// Navigation tracking
+insights.click({
+  category: 'navigation',
+  destination: '/products',
+  source: 'homepage_hero',
+  linkText: 'Shop Now'
+});
+
+// Dynamic element tracking
+function trackDynamicButton(buttonId, context) {
+  insights.click({
+    id: buttonId,
+    category: 'dynamic_cta',
+    context: context,
+    timestamp: Date.now()
+  });
+}
+```
+
+### Impression Tracking
+
+Track programmatic impressions when you need more control than the automatic Intersection Observer provides:
+
+**Use manual impressions for:**
+- **Custom Visibility Logic**: Elements that become "visible" based on business logic, not viewport position
+- **Delayed Impressions**: Tracking that should fire after a delay or interaction
+- **Conditional Visibility**: Impressions that depend on user state, permissions, or content loading
+- **Performance Optimization**: Batching impression events for better performance
+
+```javascript
+// Widget visibility
+insights.impression({
+  widget: 'product_recommendations',
+  position: 'homepage_hero',
+  algorithm: 'collaborative_filtering',
+  items_shown: 4
+});
+
+// Content impressions
+insights.impression({
+  content: 'promotional_banner',
+  campaign: 'summer_sale_2024',
+  placement: 'sidebar',
+  discount_percentage: 20
+});
+
+// Custom visibility tracking
+function trackCustomImpression(elementId, metadata) {
+  insights.impression({
+    id: elementId,
+    category: 'custom_content',
+    ...metadata,
+    timestamp: Date.now()
+  });
+}
+```
+
+## Error Tracking
+
+### Manual Error Tracking
+
+Track application-specific errors with rich context:
+
+```javascript
+// Form validation errors
+insights.error('validation_error', 'Invalid email format', {
+  field: 'email',
+  form: 'newsletter_signup',
+  value: 'invalid-email', // Be careful not to log sensitive data
+  attempt_count: 2
+});
+
+// API errors
+fetch('/api/user/profile')
+  .catch(error => {
+    insights.error('api_error', 'Profile load failed', {
+      endpoint: '/api/user/profile',
+      method: 'GET',
+      status_code: error.status || 'unknown',
+      error_message: error.message,
+      user_id: getCurrentUserId(),
+      retry_count: 1
+    });
+  });
+
+// Business logic errors
+if (product.inventory === 0) {
+  insights.error('business_error', 'Product out of stock', {
+    error_type: 'inventory',
+    product_id: product.id,
+    product_name: product.name,
+    category: product.category,
+    last_stocked: product.lastStocked
+  });
+}
+```
+
+### Search and Content Errors
+
+```javascript
+// Empty search results
+function handleSearchResults(query, results) {
+  if (results.length === 0) {
+    insights.error('empty_search', `No results for "${query}"`, {
+      query: query,
+      filters: getAppliedFilters(),
+      result_count: 0,
+      suggestions_shown: getSuggestionsCount(),
+      search_type: 'product_search'
+    });
+  }
+}
+
+// Content loading failures
+function handleContentLoadError(contentType, contentId) {
+  insights.error('content_load_error', 'Content failed to load', {
+    content_type: contentType,
+    content_id: contentId,
+    user_agent: navigator.userAgent,
+    connection_type: navigator.connection?.effectiveType || 'unknown'
+  });
+}
+
+// 404 Page Detection (Automatic)
+// The insights tracker automatically detects 404 pages by analysing:
+// - Page title containing "404", "not found", or "page not found"
+// - Page content for common 404 indicators
+// No configuration needed - this happens automatically
+
+// Custom error tracking for business logic
+insights.error('checkout_failure', 'Payment processing failed', {
+  step: 'payment_processing',
+  payment_method: 'credit_card',
+  amount: 99.99,
+  currency: 'USD',
+  error_code: 'CARD_DECLINED'
+});
+```
+
+## Automatic Feature Tracking
+
+### Error Tracking (Automatic)
+
+Insights automatically tracks errors and provides APIs for custom error tracking:
+
+**Automatic Error Detection:**
+- **404 Pages**: Automatically detected by analysing page title and content
+- **JavaScript Errors**: Global error and unhandled promise rejection handling
+- **Network Failures**: Failed API requests and resource loading issues
+
+**Manual Error Tracking:**
+```javascript
+// Business logic errors
+insights.error('validation_error', 'Email format invalid', {
+  field: 'email',
+  form: 'signup',
+  attempt_count: 2,
+  user_id: getCurrentUserId()
+});
+
+// API integration errors
+fetch('/api/products')
+  .catch(error => {
+    insights.error('api_error', 'Product fetch failed', {
+      endpoint: '/api/products',
+      status_code: error.status,
+      retry_count: 1,
+      user_context: getUserContext()
+    });
+  });
+
+// Custom application errors
+if (cart.total > creditLimit) {
+  insights.error('business_rule', 'Credit limit exceeded', {
+    cart_total: cart.total,
+    credit_limit: creditLimit,
+    user_tier: user.tier
+  });
+}
+```
+
+**Error Context Enrichment:**
+All errors are automatically enriched with:
+- Timestamp and page URL
+- User session information
+- Device and browser details
+- Current experiments and performance metrics
+
+### Performance Monitoring (Automatic)
+
+Insights automatically collects performance metrics with configurable sampling:
+
+**Automatically Tracked Metrics:**
+- **Core Web Vitals**: LCP (Largest Contentful Paint), FID (First Input Delay), CLS (Cumulative Layout Shift)
+- **Navigation Timing**: DNS, connection, load times using Navigation Timing API v2
+- **Paint Timing**: First paint, first contentful paint
+- **Resource Loading**: Transfer sizes and timing for critical resources
+
+**Configuration (Build-time):**
+- **Sampling Rate**: 10% in production, 100% in debug (not user-configurable)
+- **Collection Scope**: Page load performance, not ongoing runtime metrics
+- **Privacy-Safe**: No user-identifiable information in performance data
+
+**Access Performance Data:**
+```javascript
+// Get current page performance metrics
+const performance = insights.performance();
+console.log('Performance metrics:', performance);
+
+// Performance data structure:
+// {
+//   loadTime: 1247,              // Total page load time (ms)
+//   renderTime: 891,             // Time to first render (ms)
+//   coreWebVitals: {
+//     lcp: 1800,                 // Largest Contentful Paint (ms)
+//     fid: 12,                   // First Input Delay (ms)
+//     cls: 0.05                  // Cumulative Layout Shift
+//   },
+//   navigation: {
+//     dnsLookup: 45,             // DNS resolution time (ms)
+//     tcpConnect: 23,            // TCP connection time (ms)
+//     requestTime: 156           // Request/response time (ms)
+//   }
+// }
+```
+
+**Use Performance Data For:**
+- **User Experience Correlation**: Link page speed to conversion rates
+- **Performance Budgets**: Monitor performance regressions
+- **Device Optimization**: Understand performance across device types
+- **A/B Testing**: Factor performance into experiment analysis
+
+### Experiment Integration (Automatic)
+
+Insights automatically detects and tracks A/B tests and feature flags:
+
+**Setup Requirements:**
+```javascript
+// Set experiments before insights script loads
+window.__EXPERIMENTS__ = "test1:variant_a,test2:variant_b|variant_c";
+
+// Alternative object format
+window.__EXPERIMENTS__ = {
+  hero_test: 'variant_b',
+  checkout_flow: 'optimised'
+};
+```
+
+**Automatic Behavior:**
+- **Detection**: Parses `window.__EXPERIMENTS__` on initialisation
+- **Monitoring**: Polls for changes every 1000ms (if `watchForChanges: true`)
+- **Integration**: Experiment data automatically attached to all event payloads
+- **Format Support**: String format (`"name:value,name2:value2"`) or object format
+
+**Access Experiment Data:**
+```javascript
+// Get active experiments
+const experiments = insights.experiments();
+console.log('Active experiments:', experiments);
+// Returns: ["hero_test:variant_b", "checkout_flow:optimised"]
+
+// Use for conditional logic
+const activeExperiments = insights.experiments();
+if (activeExperiments.includes('hero_test:variant_b')) {
+  showVariantBHero();
+}
+
+// Track experiment exposure
+insights.event('experiment_exposure', {
+  experiment: 'checkout_flow',
+  variant: 'optimised',
+  step: 'product_page',
+  user_eligible: true
+});
+```
+
+**Experiment Data Integration:**
+- All tracking events automatically include active experiments
+- No manual correlation needed - experiments attached at payload level
+- Supports external A/B testing platforms (Optimizely, VWO, etc.)
+- Session-only tracking - no persistence across browser sessions
+
+### Context Enrichment (Automatic)
+
+Insights automatically enriches all events with contextual data:
+
+**Automatic Enrichment Includes:**
+- **Device Information**: OS, browser, screen resolution, connection type
+- **Session Data**: Visit ID, referrer, UTM parameters, GSI tracking (gclid, fbclid)
+- **Performance Metrics**: Current page performance when applicable
+- **Experiment Data**: Active A/B tests and feature flags
+- **Error Context**: Recent errors and 404 page detection
+
+**Access Context Data:**
+```javascript
+// Get comprehensive context
+const context = insights.context();
+console.log('Current context:', context);
+
+// Context structure:
+// {
+//   page: {
+//     url: 'https://example.com/products',
+//     title: 'Products | Example Store',
+//     referrer: 'https://google.com',
+//     visitId: 'uuid-visit-id',
+//     timestamp: 1640995200000
+//   },
+//   session: {
+//     sessionId: 'uuid-session-id',
+//     isNewSession: false,
+//     utm: { source: 'google', medium: 'cpc', campaign: 'summer_sale' },
+//     gsi: { gclid: 'google-click-id', fbclid: null }
+//   },
+//   device: {
+//     type: 'desktop',
+//     os: 'macOS',
+//     browser: 'Chrome 90',
+//     screenResolution: '1920x1080',
+//     connectionType: '4g'
+//   },
+//   experiments: ['hero_test:variant_b', 'checkout_flow:optimised'],
+//   performance: { /* performance metrics if available */ },
+//   errors: { /* recent error summary */ }
+// }
+```
+
+**Consumer Interaction Level:**
+- **Minimal Direct Interaction**: Context enrichment happens automatically
+- **Debug Access**: `insights.context()` available for troubleshooting
+- **No Configuration**: Enrichment features can be enabled/disabled but not customised
+- **Transparent Operation**: Works behind the scenes without developer intervention
+
+## Data Access Methods
+
+### Context Information
+
+Retrieve current page and user context for enriching custom events or debugging tracking issues:
+
+```javascript
+// Get comprehensive context (see Context Enrichment section above)
+const context = insights.context();
+console.log('Current context:', context);
+```
+
+**Use context data to:**
+- **Enrich Events**: Add contextual information to custom tracking events
+- **Debug Issues**: Understand the environment when tracking problems occur
+- **Personalization**: Adapt tracking based on device capabilities or user properties
+- **Quality Assurance**: Validate that tracking is working correctly across different environments
+
+### Performance Metrics (See Performance Monitoring Section Above)
+
+Performance metrics are automatically collected and can be accessed via `insights.performance()`. See the **Performance Monitoring (Automatic)** section above for complete details.
+
+### Experiment Information (See Experiment Integration Section Above)
+
+Experiment data is automatically detected and can be accessed via `insights.experiments()`. See the **Experiment Integration (Automatic)** section above for complete setup and usage details.
+
+## Framework Integration
+
+### Framework-Agnostic Patterns
+
+Create reusable tracking interfaces that work across different frameworks:
+
+```javascript
+// Generic tracking interface factory
+function createTrackingInterface(trackerSelector = 'insights-tracker') {
+  let trackerInstance = null;
+  const eventQueue = [];
+  
+  const initialize = () => {
+    trackerInstance = document.querySelector(trackerSelector);
+    if (trackerInstance && eventQueue.length > 0) {
+      // Flush queued events
+      eventQueue.forEach(({ type, data }) => {
+        trackerInstance.insightsEvent(type, data);
+      });
+      eventQueue.length = 0;
+    }
+  };
+  
+  const track = (type, data) => {
+    if (trackerInstance) {
+      trackerInstance.insightsEvent(type, data);
+    } else {
+      // Queue events until tracker is ready
+      eventQueue.push({ type, data, timestamp: Date.now() });
+      initialize(); // Try to initialize again
+    }
+  };
+  
+  const isReady = () => !!trackerInstance;
+  
+  return { initialize, track, isReady };
+}
+
+// Framework-agnostic component wrapper
+class TrackingComponent {
+  constructor(trackerId = null) {
+    const selector = trackerId ? `#${trackerId}` : 'insights-tracker';
+    this.tracker = createTrackingInterface(selector);
+  }
+  
+  onMount() {
+    this.tracker.initialize();
+  }
+  
+  trackInteraction(type, data) {
+    this.tracker.track(type, data);
+  }
+  
+  isTrackingReady() {
+    return this.tracker.isReady();
+  }
+}
+```
+
+### React Integration
+
+```jsx
+import { useEffect, useState } from 'react';
+
+// React hook using the generic interface
+function useInsightsTracking(tenantId = null) {
+  const [tracker, setTracker] = useState(null);
+  
+  useEffect(() => {
+    const trackingInterface = createTrackingInterface(
+      tenantId ? `insights-tracker[tenant="${tenantId}"]` : 'insights-tracker'
+    );
+    
+    trackingInterface.initialize();
+    setTracker(trackingInterface);
+    
+    // Retry initialization if not ready
+    const retryInterval = setInterval(() => {
+      if (!trackingInterface.isReady()) {
+        trackingInterface.initialize();
+      } else {
+        clearInterval(retryInterval);
+      }
+    }, 100);
+    
+    return () => clearInterval(retryInterval);
+  }, [tenantId]);
+  
+  return tracker;
+}
+
+// Trackable component using the generic interface
+function TrackableButton({ 
+  onClick, 
+  children, 
+  trackingId, 
+  trackingData = {},
+  tenantId = null
+}) {
+  const tracker = useInsightsTracking(tenantId);
+  
+  const handleClick = () => {
+    if (tracker) {
+      tracker.track('button_click', {
+        id: trackingId,
+        component: 'TrackableButton',
+        ...trackingData,
+        timestamp: Date.now()
+      });
+    }
+    onClick?.();
+  };
+  
+  return (
+    <button onClick={handleClick}>
+      {children}
+    </button>
+  );
+}
+
+// Usage
+function App() {
+  const handleSignup = () => {
+    // Handle signup logic
+  };
+  
+  return (
+    <TrackableButton
+      trackingId="hero-signup"
+      trackingData={{ variant: 'primary', placement: 'hero' }}
+      onClick={handleSignup}
+      tenantId="marketing"
+    >
+      Sign Up Free
+    </TrackableButton>
+  );
+}
+```
+
+### Vue.js Integration
+
+```vue
+<template>
+  <button @click="handleClick">
+    <slot />
+  </button>
+</template>
+
+<script>
+export default {
+  name: 'TrackableButton',
+  props: {
+    trackingId: String,
+    trackingData: {
+      type: Object,
+      default: () => ({})
+    },
+    tenantId: {
+      type: String,
+      default: null
+    }
+  },
+  data() {
+    return {
+      tracker: null
+    };
+  },
+  mounted() {
+    // Initialize using the generic interface
+    const selector = this.tenantId 
+      ? `insights-tracker[tenant="${this.tenantId}"]` 
+      : 'insights-tracker';
+    this.tracker = createTrackingInterface(selector);
+    this.tracker.initialize();
+  },
+  methods: {
+    handleClick() {
+      if (this.tracker) {
+        this.tracker.track('button_click', {
+          id: this.trackingId,
+          component: 'TrackableButton',
+          ...this.trackingData
+        });
+      }
+      this.$emit('click');
+    }
+  }
+}
+</script>
+```
+
+### Angular Integration
+
+```typescript
+import { Injectable, OnDestroy } from '@angular/core';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class InsightsService implements OnDestroy {
+  private trackers: Map<string, any> = new Map();
+  private defaultTracker: any = null;
+  
+  constructor() {
+    this.initializeTrackers();
+  }
+  
+  private initializeTrackers() {
+    // Initialize default tracker
+    this.defaultTracker = (window as any).createTrackingInterface?.('insights-tracker');
+    this.defaultTracker?.initialize();
+    
+    // Find and initialize tenant-specific trackers
+    const tenantTrackers = document.querySelectorAll('insights-tracker[tenant]');
+    tenantTrackers.forEach((element: Element) => {
+      const tenant = element.getAttribute('tenant');
+      if (tenant) {
+        const tracker = (window as any).createTrackingInterface?.(`insights-tracker[tenant="${tenant}"]`);
+        tracker?.initialize();
+        this.trackers.set(tenant, tracker);
+      }
+    });
+  }
+  
+  trackEvent(type: string, data: any, tenant?: string) {
+    const tracker = tenant ? this.trackers.get(tenant) : this.defaultTracker;
+    if (tracker) {
+      tracker.track(type, data);
+    } else if (tenant) {
+      console.warn(`Tracker for tenant '${tenant}' not found`);
+    }
+  }
+  
+  trackToAllInstances(type: string, data: any) {
+    // Track to default tracker
+    this.defaultTracker?.track(type, data);
+    
+    // Track to all tenant trackers
+    this.trackers.forEach(tracker => tracker.track(type, data));
+  }
+  
+  isTrackerReady(tenant?: string): boolean {
+    const tracker = tenant ? this.trackers.get(tenant) : this.defaultTracker;
+    return tracker?.isReady() || false;
+  }
+  
+  ngOnDestroy() {
+    this.trackers.clear();
+    this.defaultTracker = null;
+  }
+}
+```
+
+## Common Integration Patterns
+
+### SPA Route Tracking
+
+**Why SPA route tracking is essential:**
+Single Page Applications (SPAs) don't trigger traditional page load events when users navigate between views. Manual route tracking ensures you capture the user journey accurately.
+
+```javascript
+// Track page views in single page applications
+function trackPageView(route) {
+  insights.event('page_view', { 
+    route: route,
+    timestamp: Date.now(),
+    referrer: document.referrer
+  });
+}
+
+**When to implement SPA tracking:**
+- **Route Changes**: Every navigation between views or pages within your SPA
+- **Modal/Overlay Views**: Important overlay content that represents distinct user experiences
+- **Tab Switching**: When tab changes significantly alter the user's context
+- **Deep Linking**: Ensure trackable URLs correspond to meaningful user actions
+
+// React Router example
+import { useLocation } from 'react-router-dom';
+
+function usePageTracking() {
+  const location = useLocation();
+  
+  useEffect(() => {
+    trackPageView(location.pathname);
+  }, [location.pathname]);
+}
+
+// Vue Router example
+router.afterEach((to, from) => {
+  trackPageView(to.path);
+});
+```
+
+### Form Tracking
+
+**Why form tracking matters:**
+Form interactions are critical conversion points. Understanding where users start, struggle, and abandon forms helps optimise conversion rates and user experience.
+
+```javascript
+// Track form completion and abandonment
+function trackFormSubmit(formName, success, data = {}) {
+  insights.event('form_submit', {
+    form: formName,
+    success: success,
+    step: 'completion',
+    ...data
+  });
+}
+
+**Form tracking best practices:**
+- **Track Form Start**: When users first interact with any form field
+- **Track Field Completion**: For complex forms, track progress through sections
+- **Track Errors**: Validation errors and their frequency help improve form design
+- **Respect Privacy**: Never track actual form data, only interaction patterns
+
+// Example usage
+document.getElementById('contact-form').addEventListener('submit', (e) => {
+  const formData = new FormData(e.target);
+  
+  // Track form submission attempt
+  trackFormSubmit('contact_form', true, {
+    fields_completed: formData.entries().length,
+    source: 'contact_page'
+  });
+});
+
+// Track form abandonment
+let formStartTime = null;
+const form = document.getElementById('signup-form');
+
+form.addEventListener('focusin', () => {
+  if (!formStartTime) {
+    formStartTime = Date.now();
+    insights.event('form_start', { form: 'signup' });
+  }
+});
+
+window.addEventListener('beforeunload', () => {
+  if (formStartTime && !form.submitted) {
+    insights.event('form_abandon', {
+      form: 'signup',
+      time_spent: Date.now() - formStartTime
+    });
+  }
+});
+```
+
+### E-commerce Conversion Tracking
+
+**Critical for revenue optimisation:**
+E-commerce tracking reveals the customer journey from product discovery to purchase completion, enabling data-driven optimisation of conversion rates and revenue.
+
+```javascript
+// Track purchase funnel
+function trackPurchase(orderId, total, items) {
+  insights.event('purchase', {
+    order_id: orderId,
+    total: total,
+    currency: 'USD',
+    item_count: items.length,
+    items: items.map(item => ({
+      id: item.id,
+      name: item.name,
+      category: item.category,
+      price: item.price,
+      quantity: item.quantity
+    }))
+  });
+}
+
+**E-commerce tracking strategy:**
+- **Product Discovery**: Track how users find products (search, category browsing, recommendations)
+- **Product Engagement**: Measure product page views, image interactions, reviews read
+- **Cart Behavior**: Monitor cart additions, removals, and abandonment patterns
+- **Checkout Flow**: Identify friction points in the purchase process
+- **Post-Purchase**: Track order confirmations and user satisfaction
+
+// Track cart actions
+function trackAddToCart(product) {
+  insights.event('add_to_cart', {
+    product_id: product.id,
+    product_name: product.name,
+    price: product.price,
+    category: product.category,
+    source: 'product_page'
+  });
+}
+
+// Track checkout steps
+function trackCheckoutStep(step, data = {}) {
+  insights.event('checkout_step', {
+    step: step,
+    cart_value: getCartTotal(),
+    items_count: getCartItemCount(),
+    ...data
+  });
+}
+
+// Usage examples
+trackCheckoutStep('shipping_info');
+trackCheckoutStep('payment_info', { payment_method: 'credit_card' });
+trackCheckoutStep('confirmation', { order_id: '12345' });
+```
+
+### Authentication Flow Overview
+
+Insights handles authentication automatically for secure data transmission:
+
+**Automatic Authentication Features:**
+- **Token Management**: JWT tokens acquired and refreshed automatically
+- **Session Handling**: User and session cookies managed transparently
+- **Retry Logic**: Automatic token refresh with exponential backoff
+- **Background Processing**: Authentication happens without user interaction
+
+**What Consumers Need to Know:**
+- **Requests Made**: Insights makes authentication requests to the ingress service
+- **Cookie Storage**: Session tokens stored as `localStorage` and cookies
+- **Network Activity**: Background authentication and token refresh
+- **No Configuration**: Authentication is fully managed - no setup required
+
+**Authentication is Transparent:**
+```javascript
+// No authentication code needed - handled automatically
+insights.event('user_action', { action: 'signup' });
+// ^ This event is automatically authenticated and transmitted securely
+```
+
+**For Network Monitoring:**
+If you monitor network traffic, you'll see:
+- Authentication token requests to insights authentication endpoint
+- Periodic token refresh (configurable interval, 2 retry attempts max)
+- Event transmission with proper authentication headers
+
+### Network Transmission Strategy
+
+Insights uses modern browser APIs for reliable event transmission:
+
+**Primary Method - Beacon API:**
+- **Fire-and-Forget**: Guaranteed transmission even during page unload
+- **CORS Avoidance**: Uses `text/plain` content type to avoid preflight requests
+- **Browser Optimisation**: Leverages browser's optimised transmission scheduling
+- **Reliable**: Not blocked by page navigation or browser tab closure
+
+**Fallback Method - Fetch with Keepalive:**
+- **Modern Alternative**: When Beacon API unavailable or fails
+- **Keepalive Flag**: Ensures request completes even during page navigation
+- **Error Handling**: Detailed response parsing and retry logic
+- **Compatibility**: Works in environments where Beacon API has limitations
+
+**Transmission Characteristics:**
+```javascript
+// Automatic batching and transmission - no configuration needed
+insights.event('user_action', { action: 'click' });
+// ^ Batched with other events and sent via Beacon API or fetch fallback
+```
+
+**Transmission Triggers:**
+- **Size Limit**: 32KB batch size limit (approximately 100-300 events depending on data)
+- **Time Limit**: 10 second maximum wait time
+- **Page Navigation**: Immediate transmission on SPA route changes
+- **Page Unload**: Final transmission before browser tab closes
+- **Component Disconnect**: Transmission when tracker component is removed
+
+**Reliability Features:**
+- **Automatic Retry**: Up to 2 retry attempts with exponential backoff
+- **Network Failure Handling**: Graceful degradation when network unavailable
+- **Queue Management**: Events preserved during temporary network issues
+- **Silent Operation**: Network transmission happens transparently
+
+**Performance Impact:**
+- **Minimal Overhead**: Batching reduces network requests
+- **Non-Blocking**: Transmission doesn't impact page performance
+- **Optimized Timing**: Browser handles transmission scheduling efficiently
+- **No User Impact**: Invisible to end users
+
+### User Authentication Tracking
+
+**Understanding user acquisition and retention:**
+Authentication events reveal user acquisition patterns, preferred login methods, and potential friction in the signup/login process.
+
+```javascript
+// Track user lifecycle events
+function trackUserSignup(method, userType = 'standard') {
+  insights.event('user_signup', {
+    method: method, // 'email', 'google', 'facebook'
+    user_type: userType,
+    timestamp: Date.now()
+  });
+}
+
+**Authentication tracking insights:**
+- **Acquisition Channels**: Which signup methods convert best for different user segments
+- **Onboarding Optimization**: Where new users drop off during registration
+- **Login Success Rates**: Technical issues affecting user access
+- **User Segmentation**: Different behaviour patterns between social vs. email signups
+
+function trackUserLogin(method, success) {
+  insights.event('user_login', {
+    method: method,
+    success: success,
+    timestamp: Date.now()
+  });
+}
+
+// Usage
+document.getElementById('signup-form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  
+  // Attempt signup
+  signupUser(formData)
+    .then(() => {
+      trackUserSignup('email', 'premium');
+    })
+    .catch((error) => {
+      insights.error('signup_failure', 'User signup failed', {
+        method: 'email',
+        error: error.message
+      });
+    });
+});
+```
+
+## Advanced Usage
+
+### Conditional Tracking
+
+```javascript
+// Track based on user state
+function trackConditionally(eventType, data) {
+  const user = getCurrentUser();
+  const enhancedData = {
+    ...data,
+    user_type: user?.isPremium ? 'premium' : 'free',
+    user_tenure: user ? calculateTenure(user.signupDate) : null,
+    experiment_group: insights.experiments()
+  };
+  
+  insights.event(eventType, enhancedData);
+}
+
+// Debounced tracking for high-frequency events
+function debounce(func, wait) {
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
+
+const debouncedTrack = debounce((eventType, data) => {
+  insights.event(eventType, data);
+}, 1000);
+
+// Usage for search input
+function onSearchInput(query) {
+  debouncedTrack('search_input', { 
+    query_length: query.length,
+    has_suggestions: query.length > 2,
+    timestamp: Date.now()
+  });
+}
+```
+
+### Error Boundary Integration
+
+```javascript
+// React Error Boundary
+class InsightsErrorBoundary extends React.Component {
+  componentDidCatch(error, errorInfo) {
+    insights.error('react_error', error.message, {
+      component_stack: errorInfo.componentStack,
+      error_stack: error.stack,
+      timestamp: Date.now()
+    });
+  }
+  
+  render() {
+    if (this.state.hasError) {
+      return <h1>Something went wrong.</h1>;
+    }
+    return this.props.children;
+  }
+}
+
+// Global error handling
+window.addEventListener('error', (event) => {
+  insights.error('javascript_error', event.message, {
+    filename: event.filename,
+    lineno: event.lineno,
+    colno: event.colno,
+    stack: event.error?.stack
+  });
+});
+
+// Promise rejection handling
+window.addEventListener('unhandledrejection', (event) => {
+  insights.error('unhandled_promise', event.reason, {
+    promise: event.promise,
+    timestamp: Date.now()
+  });
+});
+```
+
+### Performance Considerations and Limits
+
+**Automatic Batching (Built-in):**
+Insights automatically batches events for optimal performance - no manual batching needed:
+
+```javascript
+// These events are automatically batched together
+insights.event('user_action', { action: 'click' });
+insights.event('page_scroll', { position: 100 });
+insights.event('feature_used', { feature: 'search' });
+// ^ All batched and sent together when size/time limits reached
+```
+
+**Transmission Limits (Build-time Configuration):**
+- **Batch Size**: 32KB maximum payload size per transmission
+- **Batch Timeout**: 10 seconds maximum wait time
+- **Retry Attempts**: 2 maximum retries with exponential backoff
+- **Element Tracking**: No artificial limits on number of tracked elements
+
+**Performance Best Practices:**
+```javascript
+// ✅ Good: Let Insights handle batching automatically
+insights.event('user_action', { action: 'click', element: 'button' });
+
+// ✅ Good: High-frequency events with debouncing
+const debouncedScroll = debounce(() => {
+  insights.event('scroll_position', { y: window.scrollY });
+}, 250);
+
+// ❌ Avoid: Manual batching (unnecessary complexity)
+// Insights already does this automatically
+
+// ✅ Good: Efficient element tracking
+document.querySelectorAll('[data-insights-category]');
+// ^ Can track hundreds of elements efficiently
+```
+
+**Scale Considerations:**
+- **Memory Usage**: Event queue automatically manages memory usage
+- **DOM Performance**: IntersectionObserver scales well with hundreds of elements  
+- **Network Efficiency**: 32KB batches optimise network usage vs. memory
+- **Browser Limits**: No practical limits for typical web application usage
+
+**Note**: The previous documentation mention of a 100 element limit was incorrect. Insights can efficiently track hundreds of elements with no hard limits.
+
+### Cross-Domain and Subdomain Tracking
+
+Insights provides limited cross-domain capabilities:
+
+**Subdomain Support (Supported):**
+```javascript
+// UTM and GSI parameters persist across subdomains
+// blog.example.com → shop.example.com
+// Cookies shared with domain: .example.com
+```
+
+**Cross-Domain Limitations:**
+- **No true cross-domain tracking** between different root domains
+- **No shared user identification** across unrelated domains  
+- **Parameter persistence** works within domain boundaries only
+- **Session continuity** limited to same root domain and subdomains
+
+**UTM Parameter Handling:**
+```javascript
+// Automatic UTM parameter extraction and persistence
+// ?utm_source=google&utm_medium=cpc&utm_campaign=summer
+// Stored in cookies for 30 days within domain
+
+// GSI tracking (Google/Facebook Click IDs)
+// ?gclid=abc123&fbclid=def456
+// Automatically extracted and persisted
+```
+
+**Cookie Strategy:**
+- **Domain Setting**: `.example.com` for subdomain sharing
+- **Security**: `SameSite=Lax` and `Secure` flags
+- **Expiration**: 30 days for parameter cookies
+- **Privacy**: No cross-domain user tracking capabilities
+
+**Implementation Example:**
+```javascript
+// Automatic subdomain parameter persistence
+// user visits: blog.example.com?utm_source=google
+// → UTM data stored with domain: .example.com
+// user navigates: shop.example.com
+// → UTM data automatically available
+
+// Check UTM persistence across subdomains
+const context = insights.context();
+console.log('Persistent UTM data:', context.utm);
+// { source: 'google', medium: 'cpc', campaign: 'summer_sale' }
+```
+```
+
+## Event Queue and Component Lifecycle
+
+### Event Queue Overview
+
+Insights uses a sophisticated event queue system to ensure reliable event delivery:
+
+**Queue Behavior:**
+- **Automatic Queuing**: All events are queued immediately when tracked
+- **Reliable Storage**: Events preserved in memory until successfully transmitted
+- **Batch Processing**: Events grouped for efficient network transmission
+- **Guaranteed Delivery**: Queue ensures no events are lost during network issues
+
+**How the Queue Works:**
+```javascript
+// All these events are automatically queued
+insights.event('user_action', { action: 'click' });     // → Queue position 1
+insights.click({ id: 'button-1' });                     // → Queue position 2
+insights.impression({ id: 'banner-1' });                // → Queue position 3
+
+// Queue automatically processes when:
+// - Size reaches 32KB limit
+// - 10 seconds timeout reached
+// - Page navigation occurs
+// - Component disconnects
+```
+
+**Queue Processing Conditions:**
+- **Size Threshold**: Queue processes when batch reaches 32KB
+- **Time Threshold**: Maximum 10 seconds between transmissions
+- **Navigation Events**: Immediate processing on SPA route changes
+- **Page Unload**: Final transmission before browser tab closes
+- **Component Lifecycle**: Processing triggered by component disconnect
+
+**Benefits for Developers:**
+- **No Event Loss**: Events are preserved during temporary network issues
+- **Performance**: Batching reduces network overhead
+- **Reliability**: Automatic retry logic handles transmission failures
+- **Transparency**: Queue management happens automatically
+
+### Component Lifecycle Integration
+
+**Component Initialization:**
+```javascript
+// Automatic behaviour when component loads
+// 1. Component registers custom element definition
+// 2. Authentication token acquired automatically
+// 3. Event queue initialized and ready
+// 4. Background processing begins
+
+// Your code can start tracking immediately
+insights.event('component_ready', { timestamp: Date.now() });
+```
+
+**Automatic Lifecycle Management:**
+- **Initialization**: Component self-configures when added to DOM
+- **Event Collection**: Queue begins accepting events immediately
+- **Background Processing**: Handles authentication, batching, transmission
+- **Memory Management**: Automatic cleanup of processed events
+- **Graceful Shutdown**: Ensures pending events are sent before disconnect
+
+**Component States:**
+```javascript
+// Check component readiness (for debugging)
+const tracker = document.querySelector('insights-tracker');
+if (tracker) {
+  console.log('Component state:', {
+    connected: tracker.isConnected,
+    tenant: tracker.tenant,
+    authenticated: !!window.insights,
+    queue_size: window.insights?.context()?.queue_size || 0
+  });
+}
+```
+
+**Lifecycle Events You Can Track:**
+```javascript
+// Track component initialisation completion
+window.addEventListener('load', () => {
+  if (window.insights) {
+    insights.event('tracking_initialized', {
+      tenant: document.querySelector('insights-tracker')?.tenant,
+      page: window.location.pathname,
+      timestamp: Date.now()
+    });
+  }
+});
+
+// Track before page unload
+window.addEventListener('beforeunload', () => {
+  if (window.insights) {
+    insights.event('session_ending', {
+      session_duration: Date.now() - performance.timing.navigationStart,
+      page: window.location.pathname
+    });
+  }
+});
+```
+
+**Integration with Framework Lifecycles:**
+```javascript
+// React useEffect integration
+useEffect(() => {
+  // Track component mount
+  insights?.event('react_component_mounted', {
+    component: 'ProductList',
+    props: { category, page }
+  });
+  
+  return () => {
+    // Track component unmount
+    insights?.event('react_component_unmounted', {
+      component: 'ProductList'
+    });
+  };
+}, []);
+
+// Vue lifecycle integration
+export default {
+  mounted() {
+    this.$insights?.event('vue_component_mounted', {
+      component: this.$options.name
+    });
+  },
+  
+  beforeDestroy() {
+    this.$insights?.event('vue_component_destroyed', {
+      component: this.$options.name
+    });
+  }
+};
+```
+
+**Important Lifecycle Considerations:**
+- **No Manual Cleanup**: Component handles all cleanup automatically
+- **Queue Persistence**: Events remain queued across component state changes
+- **Async Loading**: Queue accepts events even before full initialisation
+- **Framework Agnostic**: Works regardless of how component is managed
+
+This comprehensive JavaScript API enables sophisticated tracking scenarios while maintaining clean, maintainable code.
