@@ -1,0 +1,157 @@
+---
+title: "Introducing Astro Integration v2.0"
+description: "A major update to the Altitude Astro Integration with simplified configuration, improved single tenancy support, and breaking changes you need to know about."
+pubDate: 2025-07-15
+author: "Victor Elgersma"
+image: "/statics/images/blog/logo.jpg"
+tags: ["astro", "integration", "v2", "release"]
+---
+
+We're excited to announce the release of **Astro Integration v2.0**—a major update that simplifies configuration, improves single tenancy support, and streamlines the developer experience. This release includes several breaking changes, so read on to understand what's new and how to upgrade.
+
+## What's New in v2.0
+
+### Simplified Configuration API
+
+The biggest change in v2.0 is how you configure the integration. We've moved from a direct parameter approach to a more flexible options object:
+
+**Before (v1):**
+
+```js
+// astro.config.mjs
+import tenants from "./config";
+export default defineConfig({
+  integrations: [
+    altitudeMiddleware(tenants, { enabled: true, graphql: gqlIndex }), // ❌ Direct parameters
+  ],
+  output: "server",
+  // remaining config
+});
+```
+
+**After (v2):**
+
+```js
+// astro.config.mjs
+import tenants from "./config";
+export default defineConfig({
+  integrations: [
+    altitudeMiddleware({
+      // ✅ Options object
+      config: tenants, // ✅ Config property
+      api: { enabled: true, graphql: gqlIndex },
+    }),
+  ],
+  output: "server",
+  // ... remaining config
+});
+```
+
+This new approach makes the API more flexible and future-proof.
+
+### Streamlined Domain Configuration
+
+We've simplified how domains are configured across your tenant configs. The old nested object structure was unnecessarily complex and confusing—v2.0 replaces it with a simple, intuitive array:
+
+**Before (v1):**
+
+```js
+// config/powerman.js
+domains: {
+  default: "www.example.com",        // ❌ Unnecessary nesting
+  variants: ["www.example.com", "www.example.fr"]  // ❌ Confusing structure
+}
+// ... remaining keys remain the same
+```
+
+**After (v2):**
+
+```js
+// config/powerman.js
+domains: ["www.example.com", "www.example.fr"]; // ✅ Simple, clear array
+// ... remaining keys remain the same
+```
+
+This change eliminates the confusing distinction between `default` and `variants`, reduces complexity, and makes tenant configuration much more intuitive. When migrating, just make sure that the value for `domains.default` is the first item in the new `domains` array.
+
+### Improved Single Tenancy Mode
+
+Single tenancy mode has received significant improvements in v2.0:
+
+- **Simplified setup**: The i18n key is no longer required for basic single tenancy configurations
+- **Better performance**: Rewrites now only occur for i18n-enabled tenants
+- **Fixed bugs**: Several issues with single tenancy mode have been resolved
+
+### Optional KV Configuration
+
+The top-level KV key is now optional, giving you more flexibility in how you structure your configuration files.
+
+## Breaking Changes
+
+⚠️ **Important**: v2.0 includes several breaking changes that require code updates:
+
+### 1. Configuration Structure
+
+All configurations must now be passed as an options object (see examples above).
+
+### 2. Domain References
+
+If you reference `domains.variants` in your middleware or other code, update it to `domains`.
+
+For example
+
+```js
+// Update this:
+locals?.altitude?.runtime?.config?.domains?.variants.includes(...)
+
+// To this:
+locals?.altitude?.runtime?.config?.domains?.includes(...)
+```
+
+### 3. Removed Features
+
+- **Cookie routing** has been removed. This feature was deprecated because it was only used by the [account](https://github.com/THG-Headless/account) repository, which has since migrated to resolving locales directly from the `x-altitude-instance` header.
+- Several global context keys like `preferredLocale`, amd `localeCookie` are no longer bound to `context.altitude`.
+
+### 4. i18n Requirements
+
+- `locales<Object>.domain` is now a required property when using i18n. In v1.x, locales could be determined from cookies or URL paths. v2.0 now requires that each localized site has an associated global top-level domain (gTLD). This is now enforced by through schema validation, so you will get a build-time error if this key is missing.
+
+## Migration Guide
+
+Upgrading to v2.0 is straightforward but requires a few manual steps. Follow our [comprehensive migration guide](/docs/astro-integration/v2.0.0/guides/migration-v2) for detailed steps on updating your `astro.config.mjs` and tenant configurations.
+
+## Getting Started with v2.0
+
+If you're new to the Altitude Astro Integration, v2.0 is the perfect time to get started. Our [getting started guide](/docs/astro-integration/v2.0.0/guides/getting-started) covers both single tenancy and multi-tenancy setups with clear examples.
+
+## Why Upgrade?
+
+v2.0 brings several benefits that make it worth upgrading:
+
+- **Cleaner APIs**: More intuitive configuration structure
+- **Better Performance**: Optimizations for both single and multi-tenancy modes
+- **Future-Proof**: Flexible architecture ready for upcoming features
+- **Bug Fixes**: Resolved several issues from v1.x
+
+## Need Help?
+
+- 📖 **Documentation**: Check our [full documentation](/docs/astro-integration/v2.0.0/)
+- 🔄 **Migration**: Follow our [step-by-step migration guide](/docs/astro-integration/v2.0.0/guides/migration-v2)
+- 📋 **Changelog**: Review the [complete changelog](/docs/astro-integration/changelog) for all changes
+- 💬 **Support**: Contact the Altitude Commerce team through the usual Teams channels
+
+## What's Next?
+
+We're already working on exciting new features for future releases. Stay tuned for updates on enhanced i18n capabilities, performance improvements, and fully-fledged path-based i18n support.
+
+Ready to upgrade? Start with our [migration guide](/docs/astro-integration/v2.0.0/guides/migration-v2) and experience the improved developer experience that v2.0 brings to your Altitude projects.
+
+## Quick Links
+
+- **[Getting Started Guide](/docs/astro-integration/v2.0.0/guides/getting-started)** - New to the integration? Start here
+- **[Migration Guide](/docs/astro-integration/v2.0.0/guides/migration-v2)** - Step-by-step upgrade instructions
+- **[Full Documentation](/docs/astro-integration/v2.0.0/)** - Complete v2.0 documentation
+- **[Changelog](/docs/astro-integration/changelog)** - All changes and release notes
+- **[GitHub Releases](https://github.com/THG-AltitudeSiteBuilds/astro-integration/releases/)** - Official release notes
+- **[npm Package](https://www.npmjs.com/package/@thg-altitude/astro-integration)** - Install the latest version
