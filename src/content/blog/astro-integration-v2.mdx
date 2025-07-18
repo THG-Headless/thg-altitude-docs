@@ -78,7 +78,7 @@ This change eliminates the confusing distinction between `default` and `variants
 
 Single tenancy mode has received significant improvements in v2.0:
 
-- **Simplified setup**: The i18n key is no longer required for basic single tenancy configurations
+- **Simplified setup**: The i18n key is no longer required for applications that do not need localisation.
 - **Better performance**: Rewrites now only occur for i18n-enabled tenants
 - **Fixed bugs**: Several issues with single tenancy mode have been resolved
 
@@ -110,7 +110,7 @@ locals?.altitude?.runtime?.config?.domains?.includes(...)
 
 ### 3. Removed Features
 
-- **Cookie routing** has been removed. This feature was deprecated because it was only used by the [account](https://github.com/THG-Headless/account) repository, which has since migrated to resolving locales directly from the `x-altitude-instance` header.
+- **Cookie routing** has been removed. This feature was deprecated because it was only used by the [account](https://github.com/THG-Headless/account) repository, which has since migrated to resolving locales directly from the `Host` request header.
 - Several global context keys like `preferredLocale`, amd `localeCookie` are no longer bound to `context.altitude`.
 
 ### 4. i18n Requirements
@@ -144,8 +144,6 @@ v2.0 brings several benefits that make it worth upgrading:
 ## What's Next?
 
 We're already working on exciting new features for future releases. Stay tuned for updates on enhanced i18n capabilities, performance improvements, and fully-fledged path-based i18n support.
-
-Ready to upgrade? Start with our [migration guide](/docs/astro-integration/v2.0.0/guides/migration-v2) and experience the improved developer experience that v2.0 brings to your Altitude projects.
 
 ## Quick Links
 
