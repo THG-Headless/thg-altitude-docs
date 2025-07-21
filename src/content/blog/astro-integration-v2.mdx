@@ -118,7 +118,7 @@ locals?.altitude?.runtime?.config?.domains?.includes(...)
 
 ### 3. Removed Features
 
-- **Cookie routing** has been removed. This feature was deprecated because it was only used by the [account](https://github.com/THG-Headless/account) repository, which has since migrated to resolving locales directly from the `Host` request header.
+- **Cookie routing** has been removed. This feature was deprecated because it was only used by the [account](https://github.com/THG-Headless/account) repository, which has since migrated to resolving locales directly from the `Host` request header in production, and the `x-altitude-instance` header in local development.
 - Several global context keys like `preferredLocale`, and `localeCookie` are no longer bound to `context.altitude`.
 
 ### 4. i18n Requirements
