@@ -3,6 +3,8 @@ title: Astro Integration
 description: Astro Integration configuration reference guide.
 ---
 
+# Astro Integration
+
 Middleware and utilities to make developing Altitude websites with Astro even better.
 
 - 👯‍♂️ **[Multitenancy](./v2.0.0/reference/multi-tenancy)** Support for multi-tenancy via GTLD-based tenant-switching.
@@ -11,7 +13,6 @@ Middleware and utilities to make developing Altitude websites with Astro even be
 - 🔌 **[Commerce APIs](./v2.0.0/reference/commerce-api):** Access to the commerce API with ready-made helpers and proxies
 
 ---
-
 
 ## Resources
 
