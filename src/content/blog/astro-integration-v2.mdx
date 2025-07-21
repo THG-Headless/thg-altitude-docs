@@ -74,13 +74,23 @@ domains: ["www.example.com", "www.example.fr"]; // ✅ Simple, clear array
 
 This change eliminates the confusing distinction between `default` and `variants`, reduces complexity, and makes tenant configuration much more intuitive. When migrating, just make sure that the value for `domains.default` is the first item in the new `domains` array.
 
-### Improved Single Tenancy Mode
+### Decoupled Tenancy and i18n
 
-Single tenancy mode has received significant improvements in v2.0:
+We've completely separated tenancy and internationalization concerns, giving you much more flexibility:
 
-- **Simplified setup**: The i18n key is no longer required for applications that do not need localisation.
-- **Better performance**: Rewrites now only occur for i18n-enabled tenants
-- **Fixed bugs**: Several issues with single tenancy mode have been resolved
+- **Single tenant + i18n**: Add the `i18n` key to your build config—no multitenancy required
+- **Single tenant only**: Simple setup with no header-switching or complex configuration
+- **Multi-tenant + i18n**: Full flexibility to mix tenants with and without internationalization
+- **Multi-tenant only**: Clean tenant separation without i18n overhead
+
+### Fixed Single Tenancy Mode
+
+Single tenancy mode was broken in v1.x and has been completely rebuilt in v2.0:
+
+- **Actually works**: Single tenancy mode now functions properly (it was non-functional in v1.x)
+- **Simplified setup**: No i18n configuration required for basic single-tenant sites
+- **Better performance**: Rewrites only occur for i18n-enabled tenants, not all tenants
+- **No workarounds needed**: Clean, straightforward configuration without header manipulation
 
 ### Optional KV Configuration
 
@@ -98,8 +108,6 @@ All configurations must now be passed as an options object (see examples above).
 
 If you reference `domains.variants` in your middleware or other code, update it to `domains`.
 
-For example
-
 ```js
 // Update this:
 locals?.altitude?.runtime?.config?.domains?.variants.includes(...)
@@ -111,11 +119,11 @@ locals?.altitude?.runtime?.config?.domains?.includes(...)
 ### 3. Removed Features
 
 - **Cookie routing** has been removed. This feature was deprecated because it was only used by the [account](https://github.com/THG-Headless/account) repository, which has since migrated to resolving locales directly from the `Host` request header.
-- Several global context keys like `preferredLocale`, amd `localeCookie` are no longer bound to `context.altitude`.
+- Several global context keys like `preferredLocale`, and `localeCookie` are no longer bound to `context.altitude`.
 
 ### 4. i18n Requirements
 
-- `locales<Object>.domain` is now a required property when using i18n. In v1.x, locales could be determined from cookies or URL paths. v2.0 now requires that each localized site has an associated global top-level domain (gTLD). This is now enforced by through schema validation, so you will get a build-time error if this key is missing.
+- `locales<Object>.domain` is now a required property when using i18n. In v1.x, locales could be determined from cookies or URL paths. v2.0 now requires that each localized site has an associated global top-level domain (gTLD). This is now enforced through schema validation, so you will get a build-time error if this key is missing.
 
 ## Migration Guide
 
