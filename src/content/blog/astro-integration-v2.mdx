@@ -76,11 +76,11 @@ When migrating, just make sure that the value for `domains.default` is the first
 
 ### Decoupled Tenancy and i18n
 
-We've completely separated tenancy and internationalization concerns, giving you much more flexibility:
+We've completely separated tenancy and internationalization concerns, giving you much more flexibility to run the integration in the following 4 configurations.
 
 - **Single tenant + i18n**: Add the `i18n` key to your build config—no multitenancy required
 - **Single tenant only**: Simple setup with no header-switching or complex configuration
-- **Multi-tenant + i18n**: Full flexibility to mix tenants with and without internationalization
+- **Multi-tenant + i18n**: All tenants must have the `i18n` key
 - **Multi-tenant only**: Clean tenant separation without i18n overhead
 
 ### Fixed Single Tenancy Mode
