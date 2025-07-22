@@ -194,3 +194,56 @@ const handleSubmit = async () => {
 };
 </script>
 ```
+
+## Turnstile specific
+By default Turnstile will execute on render, to defer this execution to mimic an invisible-stlye mechanism seen in hCaptcha and reCAPTCHA you can specify the execution mode to be `execution: 'execute'`.
+This means execute must be called manually.
+
+```typescript
+import { Captcha } from "@thg-altitude/captcha";
+
+const ContactForm = () => {
+  let turnstile;
+  const [form, setForm] = useState({ name: '', email: '', message: '' });
+
+  useEffect(() => {
+    // Initialize invisible Turnstile widget
+    turnstile = new Captcha('turnstile', 'your-site-key');
+    turnstileRef.current.render('turnstile-container', 'form-captcha', {
+      appearance: 'execute',
+      execution: 'execute',
+      onToken: (token) => {
+        // Token received, now submit the form
+        submitForm(token);
+      }
+    });
+  }, []);
+
+  const handleSubmit = async (e) => {    
+    // Trigger CAPTCHA verification before form submission
+    await turnstileRef.current.execute('form-captcha');
+  };
+
+  const submitForm = async (captchaToken) => {
+    // Submit form with CAPTCHA token
+    const response = await fetch('/api/contact', {
+      method: 'POST',
+      body: JSON.stringify({ ...form, captchaToken })
+    });
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <input type="text" placeholder="Name" required />
+      <input type="email" placeholder="Email" required />
+      <textarea placeholder="Message" required></textarea>
+      
+      <div ref={containerRef} id="captchaContainer" />
+      
+      <button type="submit" >
+        Submit
+      </button>
+    </form>
+  );
+};
+```
