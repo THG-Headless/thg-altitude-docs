@@ -6,7 +6,8 @@ description: Visible CAPTCHA implementation examples.
 
 # Visible CAPTCHA Examples
 
-Visible CAPTCHAs are rendered using the `render` method and execute automatically when a user interacts with them. For reCAPTCHA, set `invisible: false` in the constructor options.
+Visible CAPTCHAs are rendered using the `render` method and execute automatically when a user interacts with them, therefore there is no requirement to call `execute`.
+Here the token should be stored in state until the form is ready to submit.
 
 ## Basic Implementation
 
@@ -15,20 +16,17 @@ import { Captcha } from '@thg-altitude/captcha';
 
 const captcha = new Captcha({
     provider: 'hcaptcha', // 'recaptcha' | 'hcaptcha' | 'turnstile'
-    siteKey: 'your-hcaptcha-site-key',
-    // invisible: false, // for reCAPTCHA only
+    siteKey: 'your-hcaptcha-site-key'
 });
 
 await captcha.render('captcha-container', 'contact-form', {
     size: 'normal', // 'normal' | 'compact'
-    onToken: (token) => {
-        console.log('CAPTCHA solved:', token);
-        // Submit your form with the token
-        submitForm(token);
+    onToken: (captchaToken) => {
+        console.log('CAPTCHA solved:', captchaToken); // Fixed variable name
+        setToken(captchaToken);
     },
     onError: () => {
-        console.log('CAPTCHA error occurred');
-        // Handle CAPTCHA error - maybe show error message to user
+        // Handle CAPTCHA error - CAPTCHA has failed to render
         showErrorMessage('Security verification failed. Please try again.');
     },
     onExpired: () => {
@@ -72,12 +70,12 @@ function ContactForm() {
     }, []);
 
     const handleCaptchaToken = (token: string) => {
-        setCaptchaToken(token);
+        setCaptchaToken(token); //Set token in state
         setError(''); // Clear any previous errors
     };
 
     const handleCaptchaError = () => {
-        setCaptchaToken(null);
+        setCaptchaToken(null); // Clear captcha token value in state
         setError('Security verification failed. Please try again.');
     };
 
@@ -95,14 +93,30 @@ function ContactForm() {
         }
 
         try {
-            await submitForm();
-            // Reset form and CAPTCHA on success
+            await submitForm(captchaToken); // Pass the token
             captcha.current?.reset('contact-form');
             setCaptchaToken(null);
         } catch (error) {
             setError('Form submission failed. Please try again.');
         }
     };
+
+    async function submitForm(token: string) {
+        const response = await fetch('/api/contact', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Captcha-Response': token
+            },
+            body: data
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to submit form');
+        }
+        
+        return response.json();
+    }
 
     return (
         <form onSubmit={handleSubmit}>
@@ -118,25 +132,6 @@ function ContactForm() {
             </button>
         </form>
     );
-}
-
-async function submitForm(token: string) {
-    const headers = {
-                'X-Captcha-Type': headerType,
-                'X-Captcha-Response': captchaToken
-            };
-
-    const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers,
-        body: data
-    });
-    
-    if (!response.ok) {
-        throw new Error('Failed to submit form');
-    }
-    
-    return response.json();
 }
 ```
 
@@ -186,12 +181,12 @@ onUnmounted(() => {
 });
 
 const handleCaptchaToken = (token: string) => {
-    captchaToken.value = token;
+    captchaToken.value = token; // Set captcha token value in state
     error.value = ''; // Clear any previous errors
 };
 
 const handleCaptchaError = () => {
-    captchaToken.value = null;
+    captchaToken.value = null; // Clear captcha token value in state
     error.value = 'Security verification failed. Please try again.';
 };
 
@@ -207,29 +202,25 @@ const handleSubmit = async () => {
     }
 
     try {
-        await submitForm(captchaToken.value);
+        await submitForm(captchaToken.value); // Pass the token
         
-        // Reset form and CAPTCHA on success
+        // Reset form
         email.value = '';
         message.value = '';
         captcha.reset('vue-form');
         captchaToken.value = null;
-                
     } catch (err) {
         error.value = 'Form submission failed. Please try again.';
-        console.error('Form submission error:', err);
     }
 };
 
 async function submitForm(token: string) {
-    const headers = {
-                'X-Captcha-Type': headerType,
-                'X-Captcha-Response': captchaToken
-            };
-
     const response = await fetch('/api/contact', {
         method: 'POST',
-        headers,
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Captcha-Response': token
+        },
         body: data
     });
     
