@@ -16,7 +16,7 @@ Set `size: invisible` in your Captcha config for reCAPTCHA and HCaptcha to enabl
 
 ```typescript
 const captcha = new Captcha({
-  provider: "recaptcha", // or 'hcaptcha'/'turnsitle'
+  provider: "recaptcha", // or 'hcaptcha'/'turnstile'
   siteKey: "your-site-key",
 });
 ```
@@ -41,7 +41,7 @@ document.getElementById("submit-btn").onclick = async () => {
     await invisibleCaptcha.execute("form-protection");
     const token = await invisibleCaptcha.getToken("form-protection");
 
-    // Submit form with token
+    // ✅ Recommended - automatic submission on token
     await submitForm(token);
   } catch (error) {
     console.error("CAPTCHA verification failed:", error);
@@ -51,6 +51,7 @@ document.getElementById("submit-btn").onclick = async () => {
 ```
 
 ## Framework Integration Examples
+For framework integrations, it's recommended to pass your form submission function to the `onToken` callback for cleaner code flow and prevent any race conditions that may occur by trying to use the token before the callback is complete.
 
 ### React
 
@@ -85,7 +86,7 @@ function ContactForm() {
 
   const submitForm = async (token) => {
     try {
-      //submit function with captcha token
+      // ✅ Recommended - automatic submission on token
       await fetch(..., token)
     } catch (error) {
       console.error("Fetch error", error);
@@ -157,6 +158,7 @@ onMounted(async () => {
   await captcha.render(containerId, captchaId, {
           size: 'invisible',
           onToken: (captchaToken) => {
+              // ✅ Recommended - automatic submission
               submitForm(captchaToken)
           },
           onError: () => {
