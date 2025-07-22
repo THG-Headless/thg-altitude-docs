@@ -31,7 +31,7 @@ const invisibleCaptcha = new Captcha({
   siteKey: "your-invisible-recaptcha-key",
 });
 
-await invisibleCaptcha.render("hidden-container", "form-protection", {
+await invisibleCaptcha.render("container-id", "form-protection", {
   size: "invisible",
 });
 
@@ -84,8 +84,6 @@ function ContactForm() {
   }, []);
 
   const submitForm = async (token) => {
-    e.preventDefault();
-
     try {
       //submit function with captcha token
       await fetch(..., token)
@@ -187,6 +185,7 @@ const handleSubmit = async () => {
   if (!captcha) return;
 
   try {
+    // execute captcha, because the onToken callback is the submit function this will be called when a token is created
     await captcha.execute('contact-form');
 
   } catch (error) {

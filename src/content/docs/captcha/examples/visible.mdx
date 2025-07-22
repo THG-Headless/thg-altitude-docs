@@ -22,7 +22,7 @@ const captcha = new Captcha({
 await captcha.render('captcha-container', 'contact-form', {
     size: 'normal', // 'normal' | 'compact'
     onToken: (captchaToken) => {
-        console.log('CAPTCHA solved:', captchaToken); // Fixed variable name
+        console.log('CAPTCHA solved:', captchaToken);
         setToken(captchaToken);
     },
     onError: () => {
@@ -203,10 +203,11 @@ const handleSubmit = async () => {
 
     try {
         await submitForm(captchaToken.value); // Pass the token
-        
+
         // Reset form
         email.value = '';
         message.value = '';
+        // Reset captcha
         captcha.reset('vue-form');
         captchaToken.value = null;
     } catch (err) {
