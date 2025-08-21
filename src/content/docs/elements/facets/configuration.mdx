@@ -57,16 +57,18 @@ The `options` prop contains settings for API requests:
 #### concessionCode
 - • **Type:** `String`
 - • **Required:** No
-- Concession code to be passed in Horizon requests
+- Concession code to be passed in Horizon requests. There is no default value here so concessionCode will not be included in the query if one is not provided in the props.
 
 #### skipRedirects
 - • **Type:** `Boolean`
 - • **Required:** No
+- • **Default:** `false`
 - Value of skipRedirects to be passed in Horizon requests
 
 #### skipRecursivePathSearch
 - • **Type:** `Boolean`
 - • **Required:** No
+- • **Default:** `false`
 - Value of skipRecursivePathSearch to be passed in Horizon requests, for collection page queries only 
 
 ### Example Configuration
