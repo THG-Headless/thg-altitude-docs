@@ -54,10 +54,19 @@ const navigation: NavSection[] = [
         title: "Insights",
         href: "/products/insights",
         items: [
-          { title: "Overview", href: "/docs/insights" },
-          { title: "Setup Guide", href: "/docs/insights/setup" },
-          { title: "Analytics", href: "/docs/insights/analytics" },
-          { title: "API Reference", href: "/docs/insights/api" },
+          { title: "Overview", href: "/docs/insights/overview" },
+          { title: "Installation", href: "/docs/insights/installation" },
+          { title: "Configuration", href: "/docs/insights/configuration" },
+          { title: "Event Tracking", href: "/docs/insights/tracking" },
+          {
+            title: "Advanced",
+            href: "/docs/insights/advanced",
+            items: [
+              { title: "JavaScript API", href: "/docs/insights/advanced/javascript-api" },
+              { title: "Browser Requirements", href: "/docs/insights/advanced/browser-requirements" },
+              { title: "Payload Schema", href: "/docs/insights/advanced/payload-schema" },
+            ],
+          },
         ],
       },
       {
