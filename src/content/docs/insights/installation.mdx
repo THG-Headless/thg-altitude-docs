@@ -37,9 +37,7 @@ The appropriate component should be imported within the main template used acros
 <!DOCTYPE html>
 <html>
   <head>
-    <script type="module">
-      import "@thg-altitude/insights/mpa";
-    </script>
+    <insights-tracker tenant={tenantConfig?.siteName || 'altitude'}></insights-tracker>
   </head>
   <body>
     <!-- Your content -->
