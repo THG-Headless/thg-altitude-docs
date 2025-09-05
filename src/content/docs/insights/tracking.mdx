@@ -104,25 +104,6 @@ This would result in an event object like seen below being submitted to the even
 }
 ```
 
-## JavaScript API
-
-The JavaScript API provides programmatic tracking when HTML attributes are insufficient. All methods are available via the global `window.insights` object after the insights-tracker component loads.
-
-### Page View Tracking
-
-Track page views with custom data for manual page view tracking or adding context to automatic page views.
-
-```javascript
-// Track page view with context
-window.insights.pageView({
-  page: "checkout",
-  step: 1,
-  total: 99.99,
-});
-```
-
-**Returns:** `Promise<boolean>` - Success status
-
 ### Custom Event Tracking
 
 Track custom events beyond clicks and impressions. Events follow the same structured format as HTML-tracked events for consistency.
