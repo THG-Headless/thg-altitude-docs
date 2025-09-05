@@ -13,9 +13,11 @@ The Insights tracking system uses a two-stream architecture to efficiently captu
 Insights separates tracking data into two distinct streams, each optimized for its specific purpose:
 
 ### Page View Stream
+
 Captures navigation events and page-level context whenever a user visits a new page or route. This stream provides the foundation for understanding user journeys and associating subsequent events with their page context.
 
-### Event Stream  
+### Event Stream
+
 Tracks granular user interactions like clicks, impressions, and custom events. Events are batched together for efficient transmission while maintaining their association with the originating page through UUIDs.
 
 ## Page View Stream
@@ -32,17 +34,14 @@ interface PageViewPayload {
   path: string;
   uuid: string;
   timestamp: number;
-  
+
   // Context
   device: {
     user_agent: string;
-    viewport?: { width: number; height: number; };
+    viewport?: { width: number; height: number };
   };
   domain: string;
   tenant: string;
-  
-  // Custom page data
-  [key: string]: any;
 }
 ```
 
@@ -86,11 +85,12 @@ interface EventBatchPayload {
   schemaVersion: string;
   tenant: string;
   batch_timestamp: number;
-  
+
   // Events array
   events: Array<{
-    event_category: string;  // 'click', 'impression', or custom
-    event_data: {            // Flexible data object
+    event_category: string; // 'click', 'impression', or custom
+    event_data: {
+      // Flexible data object
       [key: string]: any;
     };
     timestamp: number;
