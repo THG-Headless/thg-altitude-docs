@@ -158,6 +158,8 @@ window.insights.event("video_play", {
 - `type` (string): Event category (e.g., 'hover', 'form_submit', 'video_play')
 - `eventData` (object): Event data with `category`, `id`, and custom properties
 
+> Note that the type and event data are flexible. Type accespts any string, and event data can include any custom properties as needed.
+
 **Returns:** `Promise<boolean>` - Success status
 
 This produces events like:
