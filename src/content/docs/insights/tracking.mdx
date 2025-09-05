@@ -29,13 +29,40 @@ Here we see an example of a signup button, where the click event is tracked:
   data-insights-track="click"
   data-insights-category="button"
   data-insights-id="signup-cta"
-  data-insights-action="signup"
 >
   Sign Up
 </button>
 ```
 
 This would result in the following event object being submitted to the events stream when clicked:
+
+```json
+{
+  "event_category": "click",
+  "event_data": {
+    "category": "button",
+    "id": "signup-cta"
+  },
+  "timestamp": 1704067260000
+}
+```
+
+#### Custom attributes
+
+Clicks, along with all other types of events support the addition of custom attributes. These follow the pattern `data-insights-*`. As an example, we could use:
+
+```html
+<button
+  data-insights-track="click"
+  data-insights-category="button"
+  data-insights-id="signup-cta"
+  data-insights-action="signup"
+>
+  Sign Up
+</button>
+```
+
+Which would result in the `action` property being added to the `event_data` object in the event payload.
 
 ```json
 {
@@ -58,7 +85,6 @@ Like clicks, we can track impressions in the same way. These events are triggere
   data-insights-track="impression"
   data-insights-category="product"
   data-insights-id="featured-product"
-  data-insights-price="19.99"
 >
   <h3>Protein Shake</h3>
   <p>High-performance protein shake for athletes ...</p>
@@ -72,8 +98,7 @@ This would result in an event object like seen below being submitted to the even
   "event_category": "impression",
   "event_data": {
     "category": "product",
-    "id": "featured-product",
-    "price": "19.99"
+    "id": "featured-product"
   },
   "timestamp": 1704067260000
 }
@@ -92,7 +117,7 @@ Track page views with custom data for manual page view tracking or adding contex
 window.insights.pageView({
   page: "checkout",
   step: 1,
-  total: 99.99
+  total: 99.99,
 });
 ```
 
@@ -108,7 +133,7 @@ window.insights.event("hover", {
   category: "product",
   id: "featured-product",
   price: "19.99",
-  position: "above-fold"
+  position: "above-fold",
 });
 
 // Track form submission
@@ -116,7 +141,7 @@ window.insights.event("form_submit", {
   category: "form",
   id: "newsletter-signup",
   success: true,
-  fields_completed: 3
+  fields_completed: 3,
 });
 
 // Track video interaction
@@ -124,11 +149,12 @@ window.insights.event("video_play", {
   category: "video",
   id: "product-demo",
   duration: 120,
-  position: 30
+  position: 30,
 });
 ```
 
 **Parameters:**
+
 - `type` (string): Event category (e.g., 'hover', 'form_submit', 'video_play')
 - `eventData` (object): Event data with `category`, `id`, and custom properties
 
