@@ -16,12 +16,12 @@ Set `size: invisible` in your Captcha config for reCAPTCHA and HCaptcha to enabl
 
 ```typescript
 const captcha = new Captcha({
-  provider: "recaptcha", // or 'hcaptcha'/'turnstile'
+  provider: "recaptcha", // or 'hcaptcha'/'turnstile'/'friendlyCaptcha'
   siteKey: "your-site-key",
 });
 ```
 
-**Note:** Turnstile doesn't require the `invisible` flag - its behavior is configured in the Cloudflare dashboard.
+**Note:** Turnstile doesn't require the `invisible` flag - its behavior is configured in the Cloudflare dashboard. Friendly Captcha works similarly to invisible mode by default, using the `startMode` option to control when puzzles are solved.
 
 ```typescript
 import { Captcha } from "@thg-altitude/captcha";
@@ -195,6 +195,110 @@ const handleSubmit = async () => {
   }
 };
 </script>
+```
+
+## Friendly Captcha with Manual Execution
+
+Friendly Captcha can work in an invisible-like mode using `startMode: 'none'` which requires manual execution:
+
+```typescript
+import { Captcha } from "@thg-altitude/captcha";
+
+const friendlyCaptcha = new Captcha({
+  provider: "friendlyCaptcha",
+  siteKey: "your-friendly-captcha-site-key",
+});
+
+// Render with manual start mode
+await friendlyCaptcha.render("captcha-container", "form-protection", {
+  startMode: "none", // Requires manual execution
+  onToken: (token) => {
+    // Token received, submit form automatically
+    submitForm(token);
+  },
+  onError: () => {
+    console.error("Friendly Captcha verification failed");
+  }
+});
+
+// Execute on form submission
+document.getElementById("submit-btn").onclick = async () => {
+  try {
+    await friendlyCaptcha.execute("form-protection");
+    // Token will be provided via onToken callback
+  } catch (error) {
+    console.error("CAPTCHA verification failed:", error);
+  }
+};
+```
+
+### React Example with Friendly Captcha
+
+```typescript
+import { useEffect } from "react";
+import { Captcha } from "@thg-altitude/captcha";
+
+function ContactForm() {
+  let friendlyCaptcha;
+  const captchaId = "contact-form";
+  const containerId = "friendly-captcha-container";
+
+  useEffect(() => {
+    friendlyCaptcha = new Captcha({
+      provider: "friendlyCaptcha",
+      siteKey: "your-friendly-captcha-site-key",
+    });
+
+    friendlyCaptcha.render(containerId, captchaId, {
+      startMode: "none", // Manual execution
+      onToken: (captchaToken) => {
+        submitForm(captchaToken);
+      },
+      onError: () => {
+        console.error("Friendly Captcha error:", captchaId);
+      },
+    });
+  }, []);
+
+  const submitForm = async (token) => {
+    try {
+      await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Captcha-Response': token
+        },
+        body: JSON.stringify(formData)
+      });
+    } catch (error) {
+      console.error("Form submission failed:", error);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!friendlyCaptcha) return;
+
+    try {
+      await friendlyCaptcha.execute(captchaId);
+      // Form submission happens in onToken callback
+    } catch (error) {
+      console.error("Friendly Captcha failed:", error);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <input type="text" placeholder="Name" required />
+      <input type="email" placeholder="Email" required />
+      <textarea placeholder="Message" required></textarea>
+
+      <div id={containerId}></div>
+
+      <button type="submit">Submit</button>
+    </form>
+  );
+}
 ```
 
 ## Turnstile specific

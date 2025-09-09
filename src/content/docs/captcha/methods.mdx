@@ -19,6 +19,7 @@ await captcha.render(
     'unique-widget-id',
     {
         size?: 'normal' | 'compact' | 'invisible' | 'flexible'; // flexible only for Turnstile
+        startMode?: 'auto' | 'focus' | 'none'; // Friendly Captcha only
         onToken?: (token: string) => void;
         onError?: () => void;
         onExpired?: () => void;

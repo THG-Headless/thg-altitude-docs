@@ -6,12 +6,12 @@ description: Framework agnostic captcha abstractions for simplified integration.
 
 # CAPTCHA Abstraction
 
-A framework-agnostic TypeScript library that provides a unified abstraction layer for multiple CAPTCHA providers. This package allows you to easily switch between Google reCAPTCHA, hCaptcha, and Cloudflare Turnstile without changing your application code.
+A framework-agnostic TypeScript library that provides a unified abstraction layer for multiple CAPTCHA providers. This package allows you to easily switch between Google reCAPTCHA, hCaptcha, Cloudflare Turnstile, and Friendly Captcha without changing your application code.
 
 ## Features
 
 - 🔄 **Framework Agnostic**: Works with any JavaScript framework or vanilla JavaScript
-- 🎯 **Multiple Providers**: Support for reCAPTCHA (v2), hCaptcha, and Turnstile
+- 🎯 **Multiple Providers**: Support for reCAPTCHA (v2), hCaptcha, Turnstile, and Friendly Captcha
 - 🔧 **Unified API**: Single interface for all providers
 - 🚀 **TypeScript Support**: Full type safety and IntelliSense
 - 📦 **Lightweight**: Minimal dependencies, loads provider scripts on demand
@@ -31,7 +31,7 @@ npm install @thg-altitude/captcha
 
 ```typescript
 interface CaptchaConfig {
-    provider: 'recaptcha' | 'hcaptcha' | 'turnstile';
+    provider: 'recaptcha' | 'hcaptcha' | 'turnstile' | 'friendlyCaptcha';
     siteKey: string;
 }
 ```
@@ -41,7 +41,7 @@ import { Captcha } from '@thg-altitude/captcha';
 
 // Create a CAPTCHA instance
 const captcha = new Captcha({
-    provider: 'recaptcha', // 'recaptcha' | 'hcaptcha' | 'turnstile'
+    provider: 'recaptcha', // 'recaptcha' | 'hcaptcha' | 'turnstile' | 'friendlyCaptcha'
     siteKey: 'your-site-key'
 });
 
@@ -72,6 +72,11 @@ await captcha.render('captcha-container', 'login-form', {
 - ✅ Non-interactive
 - ✅ Invisible (dashboard configured)
 
+### Friendly Captcha
+- ✅ Automatic puzzle solving
+- ✅ Privacy-focused (GDPR compliant)
+- ✅ Configurable start modes (auto/focus/none)
+
 ## Provider-Specific Notes
 
 ### reCAPTCHA
@@ -90,6 +95,16 @@ await captcha.render('captcha-container', 'login-form', {
 - No separate invisible mode configuration needed (this is handled in your turnstile dashboard)
 - Supports appearance modes `always`, `interaction-only` or `execute`
 - Support for execution modes (see [invisible examples](/docs/captcha/examples/invisible#turnstile-specific) for more details)
+
+### Friendly Captcha
+- Privacy-focused CAPTCHA solution that complies with GDPR
+- Automatically solves puzzles without user interaction in most cases
+- Supports three start modes:
+  - `auto`: Puzzle starts automatically when widget loads (default)
+  - `focus`: Puzzle starts when widget gains focus
+  - `none`: Puzzle must be started programmatically using `execute()`
+- Uses SDK version 0.1.31 from CDN
+- Reset functionality is handled automatically by the widget's built-in restart button
 
 ## Error Handling
 

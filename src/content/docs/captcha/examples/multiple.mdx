@@ -29,9 +29,17 @@ const signupCaptcha = new Captcha({
     siteKey: 'your-hcaptcha-key'
 });
 
-// Render both with unique IDs
+const checkoutCaptcha = new Captcha({
+    provider: 'friendlyCaptcha',
+    siteKey: 'your-friendly-captcha-key'
+});
+
+// Render all with unique IDs
 await loginCaptcha.render('login-captcha-container', 'login-form');
 await signupCaptcha.render('signup-captcha-container', 'signup-form');
+await checkoutCaptcha.render('checkout-captcha-container', 'checkout-form', {
+    startMode: 'none' // Manual execution for checkout
+});
 
 // Handle each independently
 document.getElementById('login-btn').onclick = async () => {
@@ -42,4 +50,11 @@ document.getElementById('login-btn').onclick = async () => {
 document.getElementById('signup-btn').onclick = async () => {
     const token = await signupCaptcha.getToken('signup-form');
     submitSignupForm(token);
+};
+
+document.getElementById('checkout-btn').onclick = async () => {
+    // Execute Friendly Captcha manually, then get token
+    await checkoutCaptcha.execute('checkout-form');
+    const token = await checkoutCaptcha.getToken('checkout-form');
+    submitCheckoutForm(token);
 };

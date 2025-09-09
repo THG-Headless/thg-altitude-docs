@@ -15,7 +15,7 @@ Here the token should be stored in state until the form is ready to submit.
 import { Captcha } from '@thg-altitude/captcha';
 
 const captcha = new Captcha({
-    provider: 'hcaptcha', // 'recaptcha' | 'hcaptcha' | 'turnstile'
+    provider: 'hcaptcha', // 'recaptcha' | 'hcaptcha' | 'turnstile' | 'friendlyCaptcha'
     siteKey: 'your-hcaptcha-site-key'
 });
 
@@ -232,6 +232,49 @@ async function submitForm(token: string) {
     return response.json();
 }
 </script>
+```
+
+## Friendly Captcha Example
+
+Friendly Captcha offers a privacy-focused solution that automatically solves puzzles without user interaction in most cases:
+
+```typescript
+import { Captcha } from '@thg-altitude/captcha';
+
+const friendlyCaptcha = new Captcha({
+    provider: 'friendlyCaptcha',
+    siteKey: 'your-friendly-captcha-site-key'
+});
+
+// Auto start mode (default) - puzzle starts automatically
+await friendlyCaptcha.render('captcha-container', 'signup-form', {
+    startMode: 'auto', // 'auto' | 'focus' | 'none'
+    onToken: (captchaToken) => {
+        console.log('Friendly Captcha solved:', captchaToken);
+        setToken(captchaToken);
+    },
+    onError: () => {
+        showErrorMessage('Security verification failed. Please try again.');
+    },
+    onExpired: () => {
+        showMessage('Security verification expired. Please complete it again.');
+    }
+});
+
+// Focus start mode - puzzle starts when widget gains focus
+await friendlyCaptcha.render('captcha-container-2', 'login-form', {
+    startMode: 'focus',
+    onToken: (token) => setLoginToken(token)
+});
+
+// None start mode - requires programmatic execution
+await friendlyCaptcha.render('captcha-container-3', 'checkout-form', {
+    startMode: 'none',
+    onToken: (token) => setCheckoutToken(token)
+});
+
+// Later, trigger the puzzle manually
+await friendlyCaptcha.execute('checkout-form');
 ```
 
 ## Best Practices for Visible CAPTCHAs
