@@ -105,7 +105,7 @@ await captcha.render('captcha-container', 'login-form', {
 - Automatically solves puzzles without user interaction in most cases
 - Supports three start modes:
   - `auto`: Puzzle starts automatically when widget loads (default)
-  - `focus`: Puzzle starts when widget gains focus
+  - `focus`: Puzzle starts when user focuses on any form input within the same form
   - `none`: Puzzle must be started programmatically using `execute()`
 - Uses SDK version 0.1.31 from CDN (`https://cdn.jsdelivr.net/npm/@friendlycaptcha/sdk@0.1.31/site.min.js`)
 - Widget events include `frc:widget.complete`, `frc:widget.error`, and `frc:widget.expire`

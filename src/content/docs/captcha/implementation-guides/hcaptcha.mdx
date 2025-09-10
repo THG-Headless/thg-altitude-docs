@@ -1,5 +1,5 @@
 ---
-title: "hCaptcha Examples"
+title: "hCaptcha"
 order: 2
 description: Complete implementation examples for hCaptcha integration.
 ---
@@ -11,6 +11,19 @@ hCaptcha provides privacy-focused bot protection with both visible and invisible
 ## Visible hCaptcha
 
 Visible hCaptcha displays a checkbox that users must interact with. The token is generated automatically when the user completes the challenge.
+
+## Key Points for hCaptcha
+
+### Configuration
+- **Single site key**: Same key works for both visible and invisible modes
+- **Visible mode**: Use `size: 'normal'` or `size: 'compact'`
+- **Invisible mode**: Use `size: 'invisible'` and manual execution
+
+### Best Practices
+- Always handle all three event callbacks (`onToken`, `onError`, `onExpired`)
+- Reset widgets after successful form submission
+- For invisible mode, trigger execution on form submission, not page load
+- hCaptcha provides better privacy compliance compared to reCAPTCHA
 
 ### Basic Implementation
 
@@ -300,17 +313,3 @@ const handleSubmit = async () => {
 };
 </script>
 ```
-
-## Key Points for hCaptcha
-
-### Configuration
-- **Single site key**: Same key works for both visible and invisible modes
-- **Visible mode**: Use `size: 'normal'` or `size: 'compact'`
-- **Invisible mode**: Use `size: 'invisible'` and manual execution
-
-### Best Practices
-- Always handle the `onError` callback for failed verifications
-- Reset widgets after successful form submission
-- Use `onExpired` for visible mode to handle token expiration
-- For invisible mode, trigger execution on form submission, not page load
-- hCaptcha provides better privacy compliance compared to reCAPTCHA

@@ -1,16 +1,35 @@
 ---
-title: "Friendly Captcha Examples"
+title: "Friendly Captcha"
 order: 4
 description: Complete implementation examples for Friendly Captcha v2 integration.
 ---
 
 # Friendly Captcha Examples
 
-Friendly Captcha provides privacy-focused, GDPR-compliant bot protection that automatically solves puzzles without user interaction in most cases. It uses the Friendly Captcha SDK v0.1.31 and supports three different start modes.
+Friendly Captcha provides privacy-focused, GDPR-compliant bot protection that automatically solves puzzles without user interaction in most cases. It uses the Friendly Captcha (v2) SDK v0.1.31 and supports three different start modes.
+
+## Key Points for Friendly Captcha
+
+### Implementation Details
+- **SDK Version**: Uses v0.1.31 from CDN (`https://cdn.jsdelivr.net/npm/@friendlycaptcha/sdk@0.1.31/site.min.js`)
+- **Widget Events**: Listens for `frc:widget.complete`, `frc:widget.error`, and `frc:widget.expire`
+- **Privacy-focused**: GDPR compliant, no third-party cookies
+- **Automatic solving**: Puzzles typically solve without user interaction
+
+### Start Modes
+- **`auto`** (default): Puzzle starts automatically when widget loads
+- **`focus`**: Puzzle starts when user focuses on any form input within the same form
+- **`none`**: Puzzle must be started programmatically using `execute()`
+
+### Best Practices
+- When using start mode `none`, you must call `execute()` manually to start the puzzle. For `auto` and `focus` modes, the puzzle starts automatically and `execute()` is not required.
+- Always handle all three event callbacks (`onToken`, `onError`, `onExpired`)
+- Reset widgets after successful form submission to clear stored tokens
+- The `reset()` method calls the widget's `reset()` function and clears token storage
 
 ## Auto Mode (Default)
 
-Auto mode starts the puzzle automatically when the widget loads, providing the smoothest user experience.
+Auto mode starts the puzzle automatically when the widget loads, providing the smoothest user experience. However, in cases where a form on the page may not alwayds be submitted by users the `focus` mode may be more appropriate.
 
 ### Basic Implementation
 
@@ -123,7 +142,7 @@ function ContactForm() {
 
 ## Focus Mode
 
-Focus mode starts the puzzle when the widget gains focus, providing user control over when verification begins.
+Focus mode starts the puzzle when a user focuses on any input field within the same form as the widget, providing user control over when verification begins.
 
 ### Basic Implementation
 
@@ -135,8 +154,8 @@ const friendlyCaptcha = new Captcha({
     siteKey: 'your-friendly-captcha-site-key'
 });
 
-await friendlyCaptcha.render('captcha-container', 'login-form', {
-    startMode: 'focus', // Widget starts when user focuses on it
+await friendlyCaptcha.render('captcha-container', 'login-captcha', {
+    startMode: 'focus', // Widget starts when user focuses on the form the captcha widget is contained in 
     onToken: (captchaToken) => {
         console.log('Friendly Captcha solved:', captchaToken);
         setLoginToken(captchaToken);
@@ -145,7 +164,7 @@ await friendlyCaptcha.render('captcha-container', 'login-form', {
         showErrorMessage('Security verification failed. Please try again.');
     },
     onExpired: () => {
-        showMessage('Security verification expired. Please focus on the widget again.');
+        showMessage('Security verification expired. Please focus on a form input to restart.');
     }
 });
 ```
@@ -175,7 +194,7 @@ function LoginForm() {
                 onError: () => setError('Security verification failed. Please try again.'),
                 onExpired: () => {
                     setCaptchaToken(null);
-                    setError('Security verification expired. Please focus on the widget again.');
+                    setError('Security verification expired. Please focus on a form input to restart.');
                 }
             });
         }
@@ -189,7 +208,7 @@ function LoginForm() {
         e.preventDefault();
         
         if (!captchaToken) {
-            setError('Please complete security verification by focusing on the widget.');
+            setError('Please complete security verification by focusing on a form input.');
             return;
         }
 
@@ -209,9 +228,7 @@ function LoginForm() {
             
             {error && <div className="error-message">{error}</div>}
             
-            <div ref={captchaRef} id="captcha-container"></div>
-            <p className="captcha-hint">Click or tap the widget above to start verification</p>
-            
+            <div ref={captchaRef} id="captcha-container"></div>            
             <button type="submit" disabled={!captchaToken}>
                 Login
             </button>
@@ -421,24 +438,3 @@ const handleSubmit = async () => {
 };
 </script>
 ```
-
-## Key Points for Friendly Captcha
-
-### Implementation Details
-- **SDK Version**: Uses v0.1.31 from CDN (`https://cdn.jsdelivr.net/npm/@friendlycaptcha/sdk@0.1.31/site.min.js`)
-- **Widget Events**: Listens for `frc:widget.complete`, `frc:widget.error`, and `frc:widget.expire`
-- **Privacy-focused**: GDPR compliant, no third-party cookies
-- **Automatic solving**: Puzzles typically solve without user interaction
-
-### Start Modes
-- **`auto`** (default): Puzzle starts automatically when widget loads
-- **`focus`**: Puzzle starts when widget gains focus
-- **`none`**: Puzzle must be started programmatically using `execute()`
-
-### Best Practices
-- **Auto mode**: Best for forms where verification can happen immediately
-- **Focus mode**: Good for giving users control over when verification starts
-- **None mode**: Ideal for invisible-like behavior, triggered on form submission
-- Always handle all three event callbacks (`onToken`, `onError`, `onExpired`)
-- Reset widgets after successful form submission to clear stored tokens
-- The `reset()` method calls the widget's `reset()` function and clears token storage

@@ -1,5 +1,5 @@
 ---
-title: "Turnstile Examples"
+title: "Cloudflare Turnstile"
 order: 3
 description: Complete implementation examples for Cloudflare Turnstile integration.
 ---
@@ -11,6 +11,25 @@ Cloudflare Turnstile provides seamless bot protection with minimal user friction
 ## Visible Turnstile
 
 Visible Turnstile displays a widget that users interact with. By default, it executes automatically on render.
+
+## Key Points for Turnstile
+
+### Configuration
+- **Widget behavior**: Configured in Cloudflare dashboard, not just code
+- **Appearance modes**: 
+  - `always`: Widget always visible
+  - `interaction-only`: Shows only when user interaction detected
+  - `execute`: Shows only when manually executed
+- **Execution modes**:
+  - `render`: Executes immediately when rendered (default)
+  - `execute`: Waits for manual execution via `execute()` method
+- **Size options**: `normal`, `compact`, `flexible`
+
+### Best Practices
+- Use `execution: 'execute'` with `appearance: 'execute'` for invisible-like behavior
+- Configure challenge difficulty and appearance in Cloudflare dashboard
+- Always handle all three event callbacks (`onToken`, `onError`, `onExpired`)
+- Reset widgets after successful form submission
 
 ### Basic Implementation
 
@@ -418,23 +437,3 @@ const handleSubmit = async () => {
 };
 </script>
 ```
-
-## Key Points for Turnstile
-
-### Configuration
-- **Widget behavior**: Configured in Cloudflare dashboard, not just code
-- **Appearance modes**: 
-  - `always`: Widget always visible
-  - `interaction-only`: Shows only when user interaction detected
-  - `execute`: Shows only when manually executed
-- **Execution modes**:
-  - `render`: Executes immediately when rendered (default)
-  - `execute`: Waits for manual execution via `execute()` method
-- **Size options**: `normal`, `compact`, `flexible`
-
-### Best Practices
-- Use `execution: 'execute'` with `appearance: 'execute'` for invisible-like behavior
-- Configure challenge difficulty and appearance in Cloudflare dashboard
-- Always handle the `onError` callback for failed verifications
-- Reset widgets after successful form submission
-- Turnstile provides the smoothest user experience among CAPTCHA providers

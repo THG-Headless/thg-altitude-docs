@@ -1,5 +1,5 @@
 ---
-title: "reCAPTCHA Examples"
+title: "reCAPTCHA"
 order: 1
 description: Complete implementation examples for Google reCAPTCHA v2 integration.
 ---
@@ -11,6 +11,19 @@ Google reCAPTCHA v2 provides robust bot protection with both visible checkbox an
 ## Visible reCAPTCHA
 
 Visible reCAPTCHA displays a checkbox that users must interact with. The token is generated automatically when the user completes the challenge.
+
+
+## Key Points for reCAPTCHA
+
+### Configuration
+- **Visible mode**: Use standard site key with `size: 'normal'` or `size: 'compact'`
+- **Invisible mode**: Requires different site key and `size: 'invisible'`
+- **Badge position**: For invisible mode, control badge placement with `badge` option
+
+### Best Practices
+- Always handle all three event callbacks (`onToken`, `onError`, `onExpired`)
+- Reset widgets after successful form submission
+- For invisible mode, trigger execution on form submission, not page load
 
 ### Basic Implementation
 
@@ -302,16 +315,3 @@ const handleSubmit = async () => {
 };
 </script>
 ```
-
-## Key Points for reCAPTCHA
-
-### Configuration
-- **Visible mode**: Use standard site key with `size: 'normal'` or `size: 'compact'`
-- **Invisible mode**: Requires different site key and `size: 'invisible'`
-- **Badge position**: For invisible mode, control badge placement with `badge` option
-
-### Best Practices
-- Always handle the `onError` callback for failed verifications
-- Reset widgets after successful form submission
-- Use `onExpired` for visible mode to handle token expiration
-- For invisible mode, trigger execution on form submission, not page load
