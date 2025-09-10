@@ -1,0 +1,440 @@
+---
+title: "Turnstile Examples"
+order: 3
+description: Complete implementation examples for Cloudflare Turnstile integration.
+---
+
+# Cloudflare Turnstile Examples
+
+Cloudflare Turnstile provides seamless bot protection with minimal user friction. Widget behavior is configured in the Cloudflare dashboard, offering flexible appearance and execution modes.
+
+## Visible Turnstile
+
+Visible Turnstile displays a widget that users interact with. By default, it executes automatically on render.
+
+### Basic Implementation
+
+```typescript
+import { Captcha } from '@thg-altitude/captcha';
+
+const turnstile = new Captcha({
+    provider: 'turnstile',
+    siteKey: 'your-turnstile-site-key'
+});
+
+await turnstile.render('captcha-container', 'contact-form', {
+    size: 'normal', // 'normal' | 'compact' | 'flexible'
+    appearance: 'always', // 'always' | 'interaction-only' | 'execute'
+    onToken: (captchaToken) => {
+        console.log('Turnstile solved:', captchaToken);
+        setToken(captchaToken);
+    },
+    onError: () => {
+        showErrorMessage('Security verification failed. Please try again.');
+    },
+    onExpired: () => {
+        console.log('Turnstile token expired');
+        showMessage('Security verification expired. Please complete it again.');
+    }
+});
+```
+
+### React Implementation
+
+```typescript
+import { useEffect, useRef, useState } from 'react';
+import { Captcha } from '@thg-altitude/captcha';
+
+function ContactForm() {
+    const captchaRef = useRef<HTMLDivElement>(null);
+    const captcha = useRef<Captcha>();
+    const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+    const [error, setError] = useState<string>('');
+
+    useEffect(() => {
+        captcha.current = new Captcha({
+            provider: 'turnstile',
+            siteKey: 'your-turnstile-site-key'
+        });
+
+        if (captchaRef.current) {
+            captcha.current.render(captchaRef.current, 'contact-form', {
+                size: 'normal',
+                appearance: 'always',
+                onToken: handleCaptchaToken,
+                onError: handleCaptchaError,
+                onExpired: handleCaptchaExpired
+            });
+        }
+
+        return () => {
+            captcha.current?.reset('contact-form');
+        };
+    }, []);
+
+    const handleCaptchaToken = (token: string) => {
+        setCaptchaToken(token);
+        setError('');
+    };
+
+    const handleCaptchaError = () => {
+        setCaptchaToken(null);
+        setError('Security verification failed. Please try again.');
+    };
+
+    const handleCaptchaExpired = () => {
+        setCaptchaToken(null);
+        setError('Security verification expired. Please complete it again.');
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        
+        if (!captchaToken) {
+            setError('Please complete the security verification.');
+            return;
+        }
+
+        try {
+            await submitForm(captchaToken);
+            captcha.current?.reset('contact-form');
+            setCaptchaToken(null);
+        } catch (error) {
+            setError('Form submission failed. Please try again.');
+        }
+    };
+
+    return (
+        <form onSubmit={handleSubmit}>
+            <input type="email" placeholder="Email" required />
+            <textarea placeholder="Message" required />
+            
+            {error && <div className="error-message">{error}</div>}
+            
+            <div ref={captchaRef} id="captcha-container"></div>
+            
+            <button type="submit" disabled={!captchaToken}>
+                Submit
+            </button>
+        </form>
+    );
+}
+```
+
+### Vue Implementation
+
+```vue
+<template>
+    <form @submit.prevent="handleSubmit">
+        <input v-model="email" type="email" placeholder="Email" required />
+        <textarea v-model="message" placeholder="Message" required />
+        
+        <div v-if="error" class="error-message">{{ error }}</div>
+        
+        <div ref="captchaContainer" id="captcha-container"></div>
+        
+        <button type="submit" :disabled="!captchaToken">Submit</button>
+    </form>
+</template>
+
+<script setup lang="ts">
+import { ref, onMounted, onUnmounted } from 'vue';
+import { Captcha } from '@thg-altitude/captcha';
+
+const captchaContainer = ref<HTMLDivElement>();
+const captchaToken = ref<string | null>(null);
+const error = ref<string>('');
+const email = ref('');
+const message = ref('');
+let captcha: Captcha;
+
+onMounted(async () => {
+    captcha = new Captcha({
+        provider: 'turnstile',
+        siteKey: 'your-turnstile-site-key'
+    });
+
+    if (captchaContainer.value) {
+        await captcha.render(captchaContainer.value, 'vue-form', {
+            size: 'normal',
+            appearance: 'always',
+            onToken: handleCaptchaToken,
+            onError: handleCaptchaError,
+            onExpired: handleCaptchaExpired
+        });
+    }
+});
+
+onUnmounted(() => {
+    captcha?.reset('vue-form');
+});
+
+const handleCaptchaToken = (token: string) => {
+    captchaToken.value = token;
+    error.value = '';
+};
+
+const handleCaptchaError = () => {
+    captchaToken.value = null;
+    error.value = 'Security verification failed. Please try again.';
+};
+
+const handleCaptchaExpired = () => {
+    captchaToken.value = null;
+    error.value = 'Security verification expired. Please complete it again.';
+};
+
+const handleSubmit = async () => {
+    if (!captchaToken.value) {
+        error.value = 'Please complete the security verification.';
+        return;
+    }
+
+    try {
+        await submitForm(captchaToken.value);
+        
+        // Reset form
+        email.value = '';
+        message.value = '';
+        captcha.reset('vue-form');
+        captchaToken.value = null;
+    } catch (err) {
+        error.value = 'Form submission failed. Please try again.';
+    }
+};
+</script>
+```
+
+## Invisible/Execute Mode Turnstile
+
+Turnstile can be configured to defer execution until manually triggered, similar to invisible reCAPTCHA/hCaptcha.
+
+### Basic Implementation
+
+```typescript
+import { Captcha } from '@thg-altitude/captcha';
+
+const turnstile = new Captcha({
+    provider: 'turnstile',
+    siteKey: 'your-turnstile-site-key'
+});
+
+await turnstile.render('container-id', 'form-protection', {
+    appearance: 'execute', // Widget appears only when executed
+    execution: 'execute', // Defer execution until execute() is called
+    onToken: (token) => {
+        // Automatically submit form when token is received
+        submitForm(token);
+    },
+    onError: () => {
+        console.error('Turnstile verification failed');
+    }
+});
+
+// Execute on form submission
+document.getElementById('submit-btn').onclick = async () => {
+    try {
+        await turnstile.execute('form-protection');
+        // Token will be provided via onToken callback
+    } catch (error) {
+        console.error('CAPTCHA verification failed:', error);
+    }
+};
+```
+
+### React Implementation
+
+```typescript
+import { useEffect, useState } from 'react';
+import { Captcha } from '@thg-altitude/captcha';
+
+function ContactForm() {
+    let turnstile;
+    const [form, setForm] = useState({ name: '', email: '', message: '' });
+    const captchaId = 'contact-form';
+    const containerId = 'turnstile-container';
+
+    useEffect(() => {
+        turnstile = new Captcha({
+            provider: 'turnstile',
+            siteKey: 'your-turnstile-site-key'
+        });
+
+        turnstile.render(containerId, captchaId, {
+            appearance: 'execute',
+            execution: 'execute',
+            onToken: (token) => {
+                // Token received, submit form automatically
+                submitForm(token);
+            },
+            onError: () => {
+                console.error('Turnstile verification failed');
+            }
+        });
+    }, []);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        
+        try {
+            // Trigger CAPTCHA verification before form submission
+            await turnstile.execute(captchaId);
+            // Form submission happens in onToken callback
+        } catch (error) {
+            console.error('Turnstile failed:', error);
+        }
+    };
+
+    const submitForm = async (captchaToken) => {
+        try {
+            const response = await fetch('/api/contact', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Captcha-Response': captchaToken
+                },
+                body: JSON.stringify(form)
+            });
+
+            if (response.ok) {
+                // Reset form and captcha
+                setForm({ name: '', email: '', message: '' });
+                turnstile.reset(captchaId);
+            }
+        } catch (error) {
+            console.error('Form submission failed:', error);
+        }
+    };
+
+    return (
+        <form onSubmit={handleSubmit}>
+            <input 
+                type="text" 
+                placeholder="Name" 
+                value={form.name}
+                onChange={(e) => setForm({...form, name: e.target.value})}
+                required 
+            />
+            <input 
+                type="email" 
+                placeholder="Email" 
+                value={form.email}
+                onChange={(e) => setForm({...form, email: e.target.value})}
+                required 
+            />
+            <textarea 
+                placeholder="Message" 
+                value={form.message}
+                onChange={(e) => setForm({...form, message: e.target.value})}
+                required
+            />
+            
+            <div id={containerId}></div>
+            
+            <button type="submit">Submit</button>
+        </form>
+    );
+}
+```
+
+### Vue Implementation
+
+```vue
+<template>
+    <form @submit.prevent="handleSubmit">
+        <input v-model="form.name" type="text" placeholder="Name" required />
+        <input v-model="form.email" type="email" placeholder="Email" required />
+        <textarea v-model="form.message" placeholder="Message" required></textarea>
+
+        <div id="captchaContainer"></div>
+
+        <button type="submit">Submit</button>
+    </form>
+</template>
+
+<script setup>
+import { ref, onMounted, onUnmounted, reactive } from 'vue';
+import { Captcha } from '@thg-altitude/captcha';
+
+let captcha: Captcha;
+const captchaId = 'contact-form';
+const containerId = 'captchaContainer';
+
+const form = reactive({
+    name: '',
+    email: '',
+    message: ''
+});
+
+onMounted(async () => {
+    captcha = new Captcha({
+        provider: 'turnstile',
+        siteKey: 'your-turnstile-site-key'
+    });
+
+    await captcha.render(containerId, captchaId, {
+        appearance: 'execute',
+        execution: 'execute',
+        onToken: (captchaToken) => {
+            submitForm(captchaToken);
+        },
+        onError: () => {
+            console.error('Error rendering captcha:', captchaId);
+        }
+    });
+});
+
+onUnmounted(() => {
+    captcha?.reset(captchaId);
+});
+
+const submitForm = async (token) => {
+    try {
+        await fetch('/api/contact', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Captcha-Response': token
+            },
+            body: JSON.stringify(form)
+        });
+        
+        // Reset form
+        Object.assign(form, { name: '', email: '', message: '' });
+        captcha.reset(captchaId);
+    } catch (error) {
+        console.error('Form submission failed:', error);
+    }
+};
+
+const handleSubmit = async () => {
+    if (!captcha) return;
+
+    try {
+        await captcha.execute(captchaId);
+    } catch (error) {
+        console.error('Turnstile failed:', error);
+    }
+};
+</script>
+```
+
+## Key Points for Turnstile
+
+### Configuration
+- **Widget behavior**: Configured in Cloudflare dashboard, not just code
+- **Appearance modes**: 
+  - `always`: Widget always visible
+  - `interaction-only`: Shows only when user interaction detected
+  - `execute`: Shows only when manually executed
+- **Execution modes**:
+  - `render`: Executes immediately when rendered (default)
+  - `execute`: Waits for manual execution via `execute()` method
+- **Size options**: `normal`, `compact`, `flexible`
+
+### Best Practices
+- Use `execution: 'execute'` with `appearance: 'execute'` for invisible-like behavior
+- Configure challenge difficulty and appearance in Cloudflare dashboard
+- Always handle the `onError` callback for failed verifications
+- Reset widgets after successful form submission
+- Turnstile provides the smoothest user experience among CAPTCHA providers

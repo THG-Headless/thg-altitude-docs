@@ -1,0 +1,317 @@
+---
+title: "reCAPTCHA Examples"
+order: 1
+description: Complete implementation examples for Google reCAPTCHA v2 integration.
+---
+
+# Google reCAPTCHA v2 Examples
+
+Google reCAPTCHA v2 provides robust bot protection with both visible checkbox and invisible modes. It requires different site keys for visible vs invisible implementations.
+
+## Visible reCAPTCHA
+
+Visible reCAPTCHA displays a checkbox that users must interact with. The token is generated automatically when the user completes the challenge.
+
+### Basic Implementation
+
+```typescript
+import { Captcha } from '@thg-altitude/captcha';
+
+const recaptcha = new Captcha({
+    provider: 'recaptcha',
+    siteKey: 'your-recaptcha-site-key' // Different key needed for invisible mode
+});
+
+await recaptcha.render('captcha-container', 'contact-form', {
+    size: 'normal', // 'normal' | 'compact'
+    onToken: (captchaToken) => {
+        console.log('reCAPTCHA solved:', captchaToken);
+        setToken(captchaToken);
+    },
+    onError: () => {
+        showErrorMessage('Security verification failed. Please try again.');
+    },
+    onExpired: () => {
+        console.log('reCAPTCHA token expired');
+        showMessage('Security verification expired. Please complete it again.');
+    }
+});
+```
+
+### React Implementation
+
+```typescript
+import { useEffect, useRef, useState } from 'react';
+import { Captcha } from '@thg-altitude/captcha';
+
+function ContactForm() {
+    const captchaRef = useRef<HTMLDivElement>(null);
+    const captcha = useRef<Captcha>();
+    const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+    const [error, setError] = useState<string>('');
+
+    useEffect(() => {
+        captcha.current = new Captcha({
+            provider: 'recaptcha',
+            siteKey: 'your-recaptcha-site-key'
+        });
+
+        if (captchaRef.current) {
+            captcha.current.render(captchaRef.current, 'contact-form', {
+                size: 'normal',
+                onToken: handleCaptchaToken,
+                onError: handleCaptchaError,
+                onExpired: handleCaptchaExpired
+            });
+        }
+
+        return () => {
+            captcha.current?.reset('contact-form');
+        };
+    }, []);
+
+    const handleCaptchaToken = (token: string) => {
+        setCaptchaToken(token);
+        setError('');
+    };
+
+    const handleCaptchaError = () => {
+        setCaptchaToken(null);
+        setError('Security verification failed. Please try again.');
+    };
+
+    const handleCaptchaExpired = () => {
+        setCaptchaToken(null);
+        setError('Security verification expired. Please complete it again.');
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        
+        if (!captchaToken) {
+            setError('Please complete the security verification.');
+            return;
+        }
+
+        try {
+            await submitForm(captchaToken);
+            captcha.current?.reset('contact-form');
+            setCaptchaToken(null);
+        } catch (error) {
+            setError('Form submission failed. Please try again.');
+        }
+    };
+
+    return (
+        <form onSubmit={handleSubmit}>
+            <input type="email" placeholder="Email" required />
+            <textarea placeholder="Message" required />
+            
+            {error && <div className="error-message">{error}</div>}
+            
+            <div ref={captchaRef} id="captcha-container"></div>
+            
+            <button type="submit" disabled={!captchaToken}>
+                Submit
+            </button>
+        </form>
+    );
+}
+```
+
+## Invisible reCAPTCHA
+
+Invisible reCAPTCHA runs in the background and only shows a challenge when suspicious activity is detected. It requires manual execution and a different site key.
+
+### Basic Implementation
+
+```typescript
+import { Captcha } from '@thg-altitude/captcha';
+
+const invisibleRecaptcha = new Captcha({
+    provider: 'recaptcha',
+    siteKey: 'your-invisible-recaptcha-key' // Different key for invisible mode
+});
+
+await invisibleRecaptcha.render('container-id', 'form-protection', {
+    size: 'invisible',
+    badge: 'bottomright', // 'bottomright' | 'bottomleft' | 'inline'
+    onToken: (token) => {
+        // Automatically submit form when token is received
+        submitForm(token);
+    },
+    onError: () => {
+        console.error('reCAPTCHA verification failed');
+    }
+});
+
+// Execute on form submission
+document.getElementById('submit-btn').onclick = async () => {
+    try {
+        await invisibleRecaptcha.execute('form-protection');
+        // Token will be provided via onToken callback
+    } catch (error) {
+        console.error('CAPTCHA verification failed:', error);
+    }
+};
+```
+
+### React Implementation
+
+```typescript
+import { useEffect } from 'react';
+import { Captcha } from '@thg-altitude/captcha';
+
+function ContactForm() {
+    let captcha;
+    const captchaId = 'contact-form';
+    const containerId = 'contact-form-recaptcha';
+
+    useEffect(() => {
+        captcha = new Captcha({
+            provider: 'recaptcha',
+            siteKey: 'your-invisible-recaptcha-key'
+        });
+
+        captcha.render(containerId, captchaId, {
+            size: 'invisible',
+            badge: 'bottomright',
+            onToken: (captchaToken) => {
+                submitForm(captchaToken);
+            },
+            onError: () => {
+                console.error('Error rendering captcha:', captchaId);
+            }
+        });
+    }, []);
+
+    const submitForm = async (token) => {
+        try {
+            await fetch('/api/contact', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Captcha-Response': token
+                },
+                body: JSON.stringify(formData)
+            });
+        } catch (error) {
+            console.error('Form submission failed:', error);
+        }
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!captcha) return;
+
+        try {
+            await captcha.execute(captchaId);
+            // Form submission happens in onToken callback
+        } catch (error) {
+            console.error('reCAPTCHA failed:', error);
+        }
+    };
+
+    return (
+        <form onSubmit={handleSubmit}>
+            <input type="text" placeholder="Name" required />
+            <input type="email" placeholder="Email" required />
+            <textarea placeholder="Message" required></textarea>
+
+            <div id={containerId}></div>
+
+            <button type="submit">Submit</button>
+        </form>
+    );
+}
+```
+
+### Vue Implementation
+
+```vue
+<template>
+    <form @submit.prevent="handleSubmit">
+        <input v-model="form.name" type="text" placeholder="Name" required />
+        <input v-model="form.email" type="email" placeholder="Email" required />
+        <textarea v-model="form.message" placeholder="Message" required></textarea>
+
+        <div id="captchaContainer"></div>
+
+        <button type="submit">Submit</button>
+    </form>
+</template>
+
+<script setup>
+import { ref, onMounted, onUnmounted, reactive } from 'vue';
+import { Captcha } from '@thg-altitude/captcha';
+
+let captcha: Captcha;
+const captchaId = 'contact-form';
+const containerId = 'captchaContainer';
+
+const form = reactive({
+    name: '',
+    email: '',
+    message: ''
+});
+
+onMounted(async () => {
+    captcha = new Captcha({
+        provider: 'recaptcha',
+        siteKey: 'your-invisible-recaptcha-key'
+    });
+
+    await captcha.render(containerId, captchaId, {
+        size: 'invisible',
+        onToken: (captchaToken) => {
+            submitForm(captchaToken);
+        },
+        onError: () => {
+            console.error('Error rendering captcha:', captchaId);
+        }
+    });
+});
+
+onUnmounted(() => {
+    captcha?.reset(captchaId);
+});
+
+const submitForm = async (token) => {
+    try {
+        await fetch('/api/contact', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Captcha-Response': token
+            },
+            body: JSON.stringify(form)
+        });
+    } catch (error) {
+        console.error('Form submission failed:', error);
+    }
+};
+
+const handleSubmit = async () => {
+    if (!captcha) return;
+
+    try {
+        await captcha.execute(captchaId);
+    } catch (error) {
+        console.error('reCAPTCHA failed:', error);
+    }
+};
+</script>
+```
+
+## Key Points for reCAPTCHA
+
+### Configuration
+- **Visible mode**: Use standard site key with `size: 'normal'` or `size: 'compact'`
+- **Invisible mode**: Requires different site key and `size: 'invisible'`
+- **Badge position**: For invisible mode, control badge placement with `badge` option
+
+### Best Practices
+- Always handle the `onError` callback for failed verifications
+- Reset widgets after successful form submission
+- Use `onExpired` for visible mode to handle token expiration
+- For invisible mode, trigger execution on form submission, not page load
