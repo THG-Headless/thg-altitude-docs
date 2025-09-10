@@ -246,34 +246,37 @@ const friendlyCaptcha = new Captcha({
     siteKey: 'your-friendly-captcha-site-key'
 });
 
-// Auto start mode (default) - puzzle starts automatically
+// Auto start mode (default) - puzzle starts automatically when widget loads
 await friendlyCaptcha.render('captcha-container', 'signup-form', {
-    startMode: 'auto', // 'auto' | 'focus' | 'none'
+    startMode: 'auto', // Default - widget starts solving immediately
     onToken: (captchaToken) => {
+        // Called when frc:widget.complete event fires
         console.log('Friendly Captcha solved:', captchaToken);
         setToken(captchaToken);
     },
     onError: () => {
+        // Called when frc:widget.error event fires
         showErrorMessage('Security verification failed. Please try again.');
     },
     onExpired: () => {
+        // Called when frc:widget.expire event fires
         showMessage('Security verification expired. Please complete it again.');
     }
 });
 
 // Focus start mode - puzzle starts when widget gains focus
 await friendlyCaptcha.render('captcha-container-2', 'login-form', {
-    startMode: 'focus',
+    startMode: 'focus', // Widget starts when user focuses on it
     onToken: (token) => setLoginToken(token)
 });
 
 // None start mode - requires programmatic execution
 await friendlyCaptcha.render('captcha-container-3', 'checkout-form', {
-    startMode: 'none',
+    startMode: 'none', // Widget waits for execute() call
     onToken: (token) => setCheckoutToken(token)
 });
 
-// Later, trigger the puzzle manually
+// Later, trigger the puzzle manually by calling widget.start()
 await friendlyCaptcha.execute('checkout-form');
 ```
 

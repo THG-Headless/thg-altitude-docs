@@ -103,8 +103,9 @@ await captcha.render('captcha-container', 'login-form', {
   - `auto`: Puzzle starts automatically when widget loads (default)
   - `focus`: Puzzle starts when widget gains focus
   - `none`: Puzzle must be started programmatically using `execute()`
-- Uses SDK version 0.1.31 from CDN
-- Reset functionality is handled automatically by the widget's built-in restart button
+- Uses SDK version 0.1.31 from CDN (`https://cdn.jsdelivr.net/npm/@friendlycaptcha/sdk@0.1.31/site.min.js`)
+- Widget events include `frc:widget.complete`, `frc:widget.error`, and `frc:widget.expire`
+- Reset functionality resets both the widget state and token storage
 
 ## Error Handling
 

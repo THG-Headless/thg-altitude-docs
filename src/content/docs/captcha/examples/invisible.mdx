@@ -199,7 +199,7 @@ const handleSubmit = async () => {
 
 ## Friendly Captcha with Manual Execution
 
-Friendly Captcha can work in an invisible-like mode using `startMode: 'none'` which requires manual execution:
+Friendly Captcha can work in an invisible-like mode using `startMode: 'none'` which requires manual execution. The widget is created using the Friendly Captcha SDK and listens for widget events:
 
 ```typescript
 import { Captcha } from "@thg-altitude/captcha";
@@ -211,21 +211,27 @@ const friendlyCaptcha = new Captcha({
 
 // Render with manual start mode
 await friendlyCaptcha.render("captcha-container", "form-protection", {
-  startMode: "none", // Requires manual execution
+  startMode: "none", // Requires manual execution via execute()
   onToken: (token) => {
-    // Token received, submit form automatically
+    // Called when frc:widget.complete event fires
+    // Token received from event.detail.response
     submitForm(token);
   },
   onError: () => {
+    // Called when frc:widget.error event fires
     console.error("Friendly Captcha verification failed");
+  },
+  onExpired: () => {
+    // Called when frc:widget.expire event fires
+    console.log("Friendly Captcha token expired");
   }
 });
 
-// Execute on form submission
+// Execute on form submission - calls widget.start()
 document.getElementById("submit-btn").onclick = async () => {
   try {
     await friendlyCaptcha.execute("form-protection");
-    // Token will be provided via onToken callback
+    // Token will be provided via onToken callback when puzzle completes
   } catch (error) {
     console.error("CAPTCHA verification failed:", error);
   }
@@ -250,13 +256,19 @@ function ContactForm() {
     });
 
     friendlyCaptcha.render(containerId, captchaId, {
-      startMode: "none", // Manual execution
+      startMode: "none", // Manual execution - widget won't start until execute() is called
       onToken: (captchaToken) => {
+        // Event handler for frc:widget.complete
         submitForm(captchaToken);
       },
       onError: () => {
+        // Event handler for frc:widget.error
         console.error("Friendly Captcha error:", captchaId);
       },
+      onExpired: () => {
+        // Event handler for frc:widget.expire
+        console.log("Friendly Captcha token expired:", captchaId);
+      }
     });
   }, []);
 
