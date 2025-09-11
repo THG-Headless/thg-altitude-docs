@@ -63,5 +63,5 @@ curl -X POST "https://www.uat.platform.thgaltitude.com/api/v1/sites/:siteId/kv-s
 ## Limitations
 
 - JDT (JSON Data Type) schemas are not supported
-- Schema validation occurs only during value updates
+- Draft-2020-12 is not supported
 - Maximum schema size: 100KB
