@@ -39,10 +39,13 @@ The KV Schema API supports full CRUD operations for both Key and Glob patterns:
 - Update schema definitions
 - Delete schemas
 
-### API Request Structure for POST and PUT
+### Example API Request Structure for POST
 
-```json
-{
+```bash
+curl -X POST "https://www.uat.platform.thgaltitude.com/api/v1/sites/:siteId/kv-schema/:kvStoreId" \
+-H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+-H "Content-Type: application/json" \
+-d '{
   "pattern": "user:*", // Key pattern to match (string)
   "matchType": "GLOB",
   "schema": {
@@ -54,20 +57,7 @@ The KV Schema API supports full CRUD operations for both Key and Glob patterns:
     },
     "required": ["name", "value"]
   }
-}
-```
-
-### Implementation Example
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "name": { "type": "string" },
-    "value": { "type": "number" }
-  },
-  "required": ["name", "value"]
-}
+}'
 ```
 
 ## Limitations
