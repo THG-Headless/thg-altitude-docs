@@ -19,15 +19,17 @@ await captcha.render(
     'unique-widget-id',
     {
         size?: 'normal' | 'compact' | 'invisible' | 'flexible'; // flexible only for Turnstile
-        onToken?: (token: string) => void;
-        onError?: () => void;
-        onExpired?: () => void;
+        startMode?: 'auto' | 'focus' | 'none'; // Friendly Captcha only
+        onToken?: (token: string) => void; // Called on frc:widget.complete for Friendly Captcha
+        onError?: () => void; // Called on frc:widget.error for Friendly Captcha
+        onExpired?: () => void; // Called on frc:widget.expire for Friendly Captcha
     }
 );
 ```
 
 #### `execute(id)`
 Programmatically executes an invisible CAPTCHA (triggers the challenge).
+For Friendly Captcha, this calls the `start()` method on the widget when `startMode` is set to `'none'`.
 
 ```typescript
 await captcha.execute('widget-id');
@@ -42,7 +44,16 @@ const token = await captcha.getToken('widget-id');
 
 #### `reset(id)`
 Resets a CAPTCHA widget to its initial state.
+For Friendly Captcha, this calls the `reset()` method on the widget and clears the stored token.
 
 ```typescript
 captcha.reset('widget-id');
+```
+
+#### `load()`
+Manually loads the provider's script. This is automatically called by `render()`, but can be called separately for preloading.
+For Friendly Captcha, this loads the SDK from CDN if not already loaded.
+
+```typescript
+await captcha.load();
 ```

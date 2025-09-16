@@ -1,0 +1,440 @@
+---
+title: "Friendly Captcha"
+order: 4
+description: Complete implementation examples for Friendly Captcha v2 integration.
+---
+
+# Friendly Captcha Examples
+
+Friendly Captcha provides privacy-focused, GDPR-compliant bot protection that automatically solves puzzles without user interaction in most cases. It uses the Friendly Captcha (v2) SDK v0.1.31 and supports three different start modes.
+
+## Key Points for Friendly Captcha
+
+### Implementation Details
+- **SDK Version**: Uses v0.1.31 from CDN (`https://cdn.jsdelivr.net/npm/@friendlycaptcha/sdk@0.1.31/site.min.js`)
+- **Widget Events**: Listens for `frc:widget.complete`, `frc:widget.error`, and `frc:widget.expire`
+- **Privacy-focused**: GDPR compliant, no third-party cookies
+- **Automatic solving**: Puzzles typically solve without user interaction
+
+### Start Modes
+- **`auto`** (default): Puzzle starts automatically when widget loads
+- **`focus`**: Puzzle starts when user focuses on any form input within the same form
+- **`none`**: Puzzle must be started programmatically using `execute()`
+
+### Best Practices
+- When using start mode `none`, you must call `execute()` manually to start the puzzle. For `auto` and `focus` modes, the puzzle starts automatically and `execute()` is not required.
+- Always handle all three event callbacks (`onToken`, `onError`, `onExpired`)
+- Reset widgets after successful form submission to clear stored tokens
+- The `reset()` method calls the widget's `reset()` function and clears token storage
+
+## Auto Mode (Default)
+
+Auto mode starts the puzzle automatically when the widget loads, providing the smoothest user experience. However, in cases where a form on the page may not alwayds be submitted by users the `focus` mode may be more appropriate.
+
+### Basic Implementation
+
+```typescript
+import { Captcha } from '@thg-altitude/captcha';
+
+const friendlyCaptcha = new Captcha({
+    provider: 'friendlyCaptcha',
+    siteKey: 'your-friendly-captcha-site-key'
+});
+
+await friendlyCaptcha.render('captcha-container', 'contact-form', {
+    startMode: 'auto', // Default - widget starts solving immediately
+    onToken: (captchaToken) => {
+        // Called when frc:widget.complete event fires
+        console.log('Friendly Captcha solved:', captchaToken);
+        setToken(captchaToken);
+    },
+    onError: () => {
+        // Called when frc:widget.error event fires
+        showErrorMessage('Security verification failed. Please try again.');
+    },
+    onExpired: () => {
+        // Called when frc:widget.expire event fires
+        showMessage('Security verification expired. Please complete it again.');
+    }
+});
+```
+
+### React Implementation
+
+```typescript
+import { useEffect, useRef, useState } from 'react';
+import { Captcha } from '@thg-altitude/captcha';
+
+function ContactForm() {
+    const captchaRef = useRef<HTMLDivElement>(null);
+    const captcha = useRef<Captcha>();
+    const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+    const [error, setError] = useState<string>('');
+
+    useEffect(() => {
+        captcha.current = new Captcha({
+            provider: 'friendlyCaptcha',
+            siteKey: 'your-friendly-captcha-site-key'
+        });
+
+        if (captchaRef.current) {
+            captcha.current.render(captchaRef.current, 'contact-form', {
+                startMode: 'auto',
+                onToken: handleCaptchaToken,
+                onError: handleCaptchaError,
+                onExpired: handleCaptchaExpired
+            });
+        }
+
+        return () => {
+            captcha.current?.reset('contact-form');
+        };
+    }, []);
+
+    const handleCaptchaToken = (token: string) => {
+        setCaptchaToken(token);
+        setError('');
+    };
+
+    const handleCaptchaError = () => {
+        setCaptchaToken(null);
+        setError('Security verification failed. Please try again.');
+    };
+
+    const handleCaptchaExpired = () => {
+        setCaptchaToken(null);
+        setError('Security verification expired. Please complete it again.');
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        
+        if (!captchaToken) {
+            setError('Please wait for security verification to complete.');
+            return;
+        }
+
+        try {
+            await submitForm(captchaToken);
+            captcha.current?.reset('contact-form');
+            setCaptchaToken(null);
+        } catch (error) {
+            setError('Form submission failed. Please try again.');
+        }
+    };
+
+    return (
+        <form onSubmit={handleSubmit}>
+            <input type="email" placeholder="Email" required />
+            <textarea placeholder="Message" required />
+            
+            {error && <div className="error-message">{error}</div>}
+            
+            <div ref={captchaRef} id="captcha-container"></div>
+            
+            <button type="submit" disabled={!captchaToken}>
+                Submit
+            </button>
+        </form>
+    );
+}
+```
+
+## Focus Mode
+
+Focus mode starts the puzzle when a user focuses on any input field within the same form as the widget, providing user control over when verification begins.
+
+### Basic Implementation
+
+```typescript
+import { Captcha } from '@thg-altitude/captcha';
+
+const friendlyCaptcha = new Captcha({
+    provider: 'friendlyCaptcha',
+    siteKey: 'your-friendly-captcha-site-key'
+});
+
+await friendlyCaptcha.render('captcha-container', 'login-captcha', {
+    startMode: 'focus', // Widget starts when user focuses on the form the captcha widget is contained in 
+    onToken: (captchaToken) => {
+        console.log('Friendly Captcha solved:', captchaToken);
+        setLoginToken(captchaToken);
+    },
+    onError: () => {
+        showErrorMessage('Security verification failed. Please try again.');
+    },
+    onExpired: () => {
+        showMessage('Security verification expired. Please focus on a form input to restart.');
+    }
+});
+```
+
+### React Implementation
+
+```typescript
+import { useEffect, useRef, useState } from 'react';
+import { Captcha } from '@thg-altitude/captcha';
+
+function LoginForm() {
+    const captchaRef = useRef<HTMLDivElement>(null);
+    const captcha = useRef<Captcha>();
+    const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+    const [error, setError] = useState<string>('');
+
+    useEffect(() => {
+        captcha.current = new Captcha({
+            provider: 'friendlyCaptcha',
+            siteKey: 'your-friendly-captcha-site-key'
+        });
+
+        if (captchaRef.current) {
+            captcha.current.render(captchaRef.current, 'login-form', {
+                startMode: 'focus',
+                onToken: (token) => setCaptchaToken(token),
+                onError: () => setError('Security verification failed. Please try again.'),
+                onExpired: () => {
+                    setCaptchaToken(null);
+                    setError('Security verification expired. Please focus on a form input to restart.');
+                }
+            });
+        }
+
+        return () => {
+            captcha.current?.reset('login-form');
+        };
+    }, []);
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        
+        if (!captchaToken) {
+            setError('Please complete security verification by focusing on a form input.');
+            return;
+        }
+
+        try {
+            await submitLoginForm(captchaToken);
+            captcha.current?.reset('login-form');
+            setCaptchaToken(null);
+        } catch (error) {
+            setError('Login failed. Please try again.');
+        }
+    };
+
+    return (
+        <form onSubmit={handleSubmit}>
+            <input type="email" placeholder="Email" required />
+            <input type="password" placeholder="Password" required />
+            
+            {error && <div className="error-message">{error}</div>}
+            
+            <div ref={captchaRef} id="captcha-container"></div>            
+            <button type="submit" disabled={!captchaToken}>
+                Login
+            </button>
+        </form>
+    );
+}
+```
+
+## None Mode (Manual Execution)
+
+None mode requires programmatic execution, similar to invisible CAPTCHA behavior from other providers.
+
+### Basic Implementation
+
+```typescript
+import { Captcha } from '@thg-altitude/captcha';
+
+const friendlyCaptcha = new Captcha({
+    provider: 'friendlyCaptcha',
+    siteKey: 'your-friendly-captcha-site-key'
+});
+
+// Render with manual start mode
+await friendlyCaptcha.render('captcha-container', 'checkout-form', {
+    startMode: 'none', // Widget waits for execute() call
+    onToken: (token) => {
+        // Called when frc:widget.complete event fires
+        // Token received from event.detail.response
+        submitForm(token);
+    },
+    onError: () => {
+        // Called when frc:widget.error event fires
+        console.error('Friendly Captcha verification failed');
+    },
+    onExpired: () => {
+        // Called when frc:widget.expire event fires
+        console.log('Friendly Captcha token expired');
+    }
+});
+
+// Execute on form submission - calls widget.start()
+document.getElementById('submit-btn').onclick = async () => {
+    try {
+        await friendlyCaptcha.execute('checkout-form');
+        // Token will be provided via onToken callback when puzzle completes
+    } catch (error) {
+        console.error('CAPTCHA verification failed:', error);
+    }
+};
+```
+
+### React Implementation
+
+```typescript
+import { useEffect } from 'react';
+import { Captcha } from '@thg-altitude/captcha';
+
+function CheckoutForm() {
+    let friendlyCaptcha;
+    const captchaId = 'checkout-form';
+    const containerId = 'friendly-captcha-container';
+
+    useEffect(() => {
+        friendlyCaptcha = new Captcha({
+            provider: 'friendlyCaptcha',
+            siteKey: 'your-friendly-captcha-site-key'
+        });
+
+        friendlyCaptcha.render(containerId, captchaId, {
+            startMode: 'none', // Manual execution - widget won't start until execute() is called
+            onToken: (captchaToken) => {
+                // Event handler for frc:widget.complete
+                submitForm(captchaToken);
+            },
+            onError: () => {
+                // Event handler for frc:widget.error
+                console.error('Friendly Captcha error:', captchaId);
+            },
+            onExpired: () => {
+                // Event handler for frc:widget.expire
+                console.log('Friendly Captcha token expired:', captchaId);
+            }
+        });
+    }, []);
+
+    const submitForm = async (token) => {
+        try {
+            await fetch('/api/checkout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Captcha-Response': token
+                },
+                body: JSON.stringify(formData)
+            });
+        } catch (error) {
+            console.error('Form submission failed:', error);
+        }
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!friendlyCaptcha) return;
+
+        try {
+            await friendlyCaptcha.execute(captchaId);
+            // Form submission happens in onToken callback
+        } catch (error) {
+            console.error('Friendly Captcha failed:', error);
+        }
+    };
+
+    return (
+        <form onSubmit={handleSubmit}>
+            <input type="text" placeholder="Name" required />
+            <input type="email" placeholder="Email" required />
+            <textarea placeholder="Message" required></textarea>
+
+            <div id={containerId}></div>
+
+            <button type="submit">Submit</button>
+        </form>
+    );
+}
+```
+
+### Vue Implementation
+
+```vue
+<template>
+    <form @submit.prevent="handleSubmit">
+        <input v-model="form.name" type="text" placeholder="Name" required />
+        <input v-model="form.email" type="email" placeholder="Email" required />
+        <textarea v-model="form.message" placeholder="Message" required></textarea>
+
+        <div id="captchaContainer"></div>
+
+        <button type="submit">Submit</button>
+    </form>
+</template>
+
+<script setup>
+import { ref, onMounted, onUnmounted, reactive } from 'vue';
+import { Captcha } from '@thg-altitude/captcha';
+
+let captcha: Captcha;
+const captchaId = 'contact-form';
+const containerId = 'captchaContainer';
+
+const form = reactive({
+    name: '',
+    email: '',
+    message: ''
+});
+
+onMounted(async () => {
+    captcha = new Captcha({
+        provider: 'friendlyCaptcha',
+        siteKey: 'your-friendly-captcha-site-key'
+    });
+
+    await captcha.render(containerId, captchaId, {
+        startMode: 'none',
+        onToken: (captchaToken) => {
+            submitForm(captchaToken);
+        },
+        onError: () => {
+            console.error('Error rendering captcha:', captchaId);
+        },
+        onExpired: () => {
+            console.log('Captcha expired:', captchaId);
+        }
+    });
+});
+
+onUnmounted(() => {
+    captcha?.reset(captchaId);
+});
+
+const submitForm = async (token) => {
+    try {
+        await fetch('/api/contact', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Captcha-Response': token
+            },
+            body: JSON.stringify(form)
+        });
+        
+        // Reset form
+        Object.assign(form, { name: '', email: '', message: '' });
+        captcha.reset(captchaId);
+    } catch (error) {
+        console.error('Form submission failed:', error);
+    }
+};
+
+const handleSubmit = async () => {
+    if (!captcha) return;
+
+    try {
+        await captcha.execute(captchaId);
+    } catch (error) {
+        console.error('Friendly Captcha failed:', error);
+    }
+};
+</script>
+```
