@@ -1,0 +1,76 @@
+---
+title: "JavaScript API"
+order: 1
+description: "Variant-specific methods and advanced configuration"
+---
+
+# JavaScript API
+
+This page documents variant-specific methods and advanced configuration options. For core tracking methods, see [Event Tracking](/docs/insights/tracking).
+
+## Variant-Specific Methods
+
+### MPA Additional Methods
+
+The MPA variant (`@thg-altitude/insights/mpa`) extends the base API with:
+
+#### `insights.impression(data)`
+
+Track impression events programmatically, following the same structure as HTML impression tracking.
+
+**Parameters:**
+
+- `data` (object): Impression data with `category`, `id`, and custom properties
+
+**Returns:** `Promise<boolean>` - Success status
+
+```javascript
+// Track impression programmatically
+insights.impression({
+  category: "product",
+  id: "featured-item",
+  price: "29.99",
+});
+```
+
+#### `insights.flush()`
+
+Manually flush all queued events to the server.
+
+**Returns:** `Promise<void>`
+
+```javascript
+// Manually flush event queue
+await insights.flush();
+```
+
+#### `insights.context()`
+
+Get the current tracker context including configuration and state.
+
+**Returns:** `object` - Current tracker context
+
+```javascript
+// Get tracker context
+const context = insights.context();
+```
+
+### SPA Additional Methods
+
+The SPA variant (`@thg-altitude/insights/spa`) extends the base API with:
+
+#### `insights.triggerNavigation(trigger)`
+
+Manually trigger a navigation event for single-page applications.
+
+**Parameters:**
+
+- `trigger` (string, optional): The trigger source (defaults to 'manual')
+
+**Returns:** `string | null` - The new page UUID after navigation
+
+```javascript
+// Trigger manual navigation
+const newPageUUID = insights.triggerNavigation("manual");
+console.log("New page UUID:", newPageUUID);
+```

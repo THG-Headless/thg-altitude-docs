@@ -1,0 +1,141 @@
+---
+title: "Payload Schema"
+order: 3
+description: "Structure of data sent from the Insights client using two-stream architecture"
+---
+
+# Payload Schema
+
+The Insights tracking system uses a two-stream architecture to efficiently capture and transmit different types of user data. This separation allows for optimized processing of page-level context versus granular user interactions, ensuring both performance and data completeness.
+
+## Two-Stream Architecture
+
+Insights separates tracking data into two distinct streams, each optimized for its specific purpose:
+
+### Page View Stream
+
+Captures navigation events and page-level context whenever a user visits a new page or route. This stream provides the foundation for understanding user journeys and associating subsequent events with their page context.
+
+### Event Stream
+
+Tracks granular user interactions like clicks, impressions, and custom events. Events are batched together for efficient transmission while maintaining their association with the originating page through UUIDs.
+
+## Page View Stream
+
+Page views are automatically tracked when navigation occurs and can be enriched with custom data specific to your application's needs.
+
+### Structure
+
+```typescript
+interface PageViewPayload {
+  // Core identification
+  session_cookie: string;
+  user_cookie: string;
+  path: string;
+  uuid: string;
+  timestamp: number;
+
+  // Context
+  device: {
+    user_agent: string;
+    viewport?: { width: number; height: number };
+  };
+  domain: string;
+  tenant: string;
+}
+```
+
+### Example Page View
+
+When a user navigates to your product listing page, the following payload is automatically generated and sent to the page view endpoint:
+
+```json
+{
+  "session_cookie": "sess_abc123",
+  "user_cookie": "user_xyz789",
+  "path": "/products",
+  "uuid": "550e8400-e29b-41d4-a716-446655440000",
+  "timestamp": 1704067200000,
+  "device": {
+    "user_agent": "Mozilla/5.0...",
+    "viewport": { "width": 1920, "height": 1080 }
+  },
+  "domain": "https://example.com",
+  "tenant": "my-company",
+  "page": "products",
+  "category": "listing"
+}
+```
+
+The `uuid` field is particularly important as it links all subsequent events on this page back to this page view, enabling complete journey reconstruction.
+
+## Event Stream
+
+Events capture user interactions and are automatically batched for optimal network efficiency. The batching mechanism reduces request overhead while ensuring timely data delivery.
+
+### Batch Structure
+
+Multiple events are collected and sent together in a single payload:
+
+```typescript
+interface EventBatchPayload {
+  // Batch identification
+  batch_id: string;
+  page_uuid: string;
+  schemaVersion: string;
+  tenant: string;
+  batch_timestamp: number;
+
+  // Events array
+  events: Array<{
+    event_category: string; // 'click', 'impression', or custom
+    event_data: {
+      // Flexible data object
+      [key: string]: any;
+    };
+    timestamp: number;
+  }>;
+}
+```
+
+### Example Event Batch
+
+This example shows a typical batch containing both a click event and an impression event from the same page session:
+
+```json
+{
+  "batch_id": "batch_550e8400-e29b-41d4-a716-446655440001",
+  "page_uuid": "550e8400-e29b-41d4-a716-446655440000",
+  "schemaVersion": "0.2",
+  "tenant": "my-company",
+  "batch_timestamp": 1704067260500,
+  "events": [
+    {
+      "event_category": "click",
+      "event_data": {
+        "category": "button",
+        "id": "signup-header",
+        "campaign": "summer_sale"
+      },
+      "timestamp": 1704067260000
+    },
+    {
+      "event_category": "impression",
+      "event_data": {
+        "category": "product",
+        "id": "laptop_123",
+        "position": 3,
+        "price": "999.99"
+      },
+      "timestamp": 1704067265000
+    }
+  ]
+}
+```
+
+Notice how the `page_uuid` matches the UUID from the page view example above, establishing the relationship between the page context and these user interactions. The flexible `event_data` structure accommodates any custom properties your tracking requires while maintaining consistency through the `category` and `id` fields.
+
+## Next Steps
+
+- **[JavaScript API](./javascript-api)** - Methods for sending this data
+- **[Event Tracking](../tracking)** - HTML attribute tracking approach
