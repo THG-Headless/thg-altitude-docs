@@ -16,7 +16,7 @@ For more information about KV stores:
 
 - JSON Schema (exclusively), we do not currently support JDT
 - Supported JSON Schema versions:
-  - draft-07 (https://json-schema.org/draft-07/draft-handrews-json-schema-01) (recommended)
+  - [draft-07](https://json-schema.org/draft-07/draft-handrews-json-schema-01) (recommended)
   - draft-2019-09
   - draft-06
   - draft-04
