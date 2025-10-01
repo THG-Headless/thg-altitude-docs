@@ -18,12 +18,22 @@ The prop `id` must always be passed and must be unique if there are multiple ins
 
 #### Mode
 
-**Type:** `'async'` \
-**Required: False**
+**Type:** `String` \
+**Required: False** \
+**Default:** `'blocking'` \
+**Accepted Values:** `'async'` | `'blocking'`
 
-The `mode` prop dicatates whether the hydration should occur immediately or whether it should be deferred. By default, the absence of this prop signals that hydration should occur immediately and the component itself will trigger the hydration. This can be overriden by providing `async` as a value to the prop.
+The `mode` prop dictates whether the hydration should occur immediately or whether it should be deferred. 
 
-When no mode prop has been passed, product data **must** be sent to the component within the [options](/packages/elements/#options) prop. This will be used to display a presentational layer before interactive elements are hydrated, which reduces Cumulative Layout Shift (CLS). Components using `async` mode can utilise a named slot `elements-variations-loading` to apply a custom loading state.
+- **`'blocking'` (default)**:  Renders variations immediately with full functionality. The component
+  displays a presentational layer using the provided product data, then hydrates interactive
+  elements. This reduces Cumulative Layout Shift (CLS) and provides immediate user
+  interaction.
+- **`'async'`**: Shows a loading state initially and defers variation hydration until manually triggered.
+
+When using `'blocking'` mode, product data **must** be sent to the component within the [options](/packages/elements/#options) prop. This will be used to display a presentational layer before interactive elements are hydrated, which reduces Cumulative Layout Shift (CLS). 
+
+Components using `'async'` mode can utilise a named slot `elements-variations-loading` to apply a custom loading state.
 
 ## Vue
 
