@@ -1,5 +1,5 @@
 ---
-title: KV Store Schema Validation
+title: KV Schema Validation
 ---
 
 ## Overview
@@ -41,11 +41,11 @@ The KV Schema API supports full CRUD operations for both Key and Glob patterns:
 
 ## Special Cases & Rules:
 
-- If multiple glob patterns match a KV pair, the most specific glob pattern takes precedence, and the value must satisfy all applicable schemas.
-- You can create a glob schema even if no keys currently match.
-- You cannot create a key schema unless a corresponding key already exists.
+- If multiple glob patterns match a KV pair, the **most specific glob pattern takes precedence**, and the value must satisfy all applicable schemas.
+- You **can create a glob schema** even if no keys currently match.
+- You **cannot create a key schema** unless a corresponding key already exists.
 - If a KV pair does not match its schema, the create/update operation fails.
-- KV values must always be a JSON object if it is defined against a schema.
+- KV values must always be a **JSON object** if it is defined against a schema.
 - If you attempt to create a glob schema but existing values do not match, the schema creation will fail.
 
 ### Example API Request Structure for POST
