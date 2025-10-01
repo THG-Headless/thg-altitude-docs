@@ -55,16 +55,22 @@ curl -X POST "https://www.uat.platform.thgaltitude.com/api/v1/sites/:siteId/kv-s
 -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
 -H "Content-Type: application/json" \
 -d '{
-  "pattern": "user:*", // Key pattern to match (string)
+  "pattern": "user:*",
   "matchType": "GLOB",
   "schema": {
-    // JSON Schema definition (object)
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "generalGlobSchema",
     "type": "object",
+    "required": ["id", "name"],
     "properties": {
-      "name": { "type": "string" },
-      "value": { "type": "number" }
+      "id": {
+        "type": "string"
+      },
+      "name": {
+        "type": "string"
+      }
     },
-    "required": ["name", "value"]
+    "additionalProperties": false
   }
 }'
 ```
