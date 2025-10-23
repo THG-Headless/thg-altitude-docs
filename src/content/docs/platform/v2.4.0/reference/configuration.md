@@ -8,7 +8,7 @@ title: Edge Configuration
 
 | Key                 | Required | Type                                                             | Examples   | Description                                                               |
 | ------------------- | -------- | ---------------------------------------------------------------- | ---------- | ------------------------------------------------------------------------- |
-| version             | Yes      | String                                                           | v2.2       | Altitude Edge Configuration Version. The current latest version is `v2.2` |
+| version             | Yes      | String                                                           | v2.4       | Altitude Edge Configuration Version. The current latest version is `v2.4` |
 | provider            | Yes      | String                                                           | cloudflare | Cloud Provider                                                            |
 | routes              | Yes      | Array[[Routes Configuration](#routes)]                           |            |                                                                           |
 | cache               | No       | Array[[Cache Configuration](#cache)]                             |            |                                                                           |
@@ -68,6 +68,7 @@ For source code which requires a build step, the following values are added unde
 
 | Key             | Required | Type   | Examples    | Description                                                                                               |
 | --------------- | -------- | ------ | ----------- | --------------------------------------------------------------------------------------------------------- |
+| preBuildCommand | No       | String | node setup.js | The script or command that is run prior to the command to build the app
 | command         | Yes      | String | build       | The name of the script command to run to build the app                                                    |
 | output          | Yes      | String |             | The output sub-fields relate to the output of the build step                                              |
 | directory       | Yes      | String | dist        | The location of the compiled source code                                                                  |
