@@ -1,0 +1,64 @@
+---
+title: "Migration from v2 to v3"
+description: "A guide to migrating from v2 to v3 of the Altitude Astro integration"
+---
+
+import { Aside } from "@components/docs";
+
+<Aside type="note">
+  This migration guide assumes you are running the integration in
+  **multitenancy** mode.
+</Aside>
+
+# Migration Guide: v2 → v3
+
+This guide outlines the key changes and steps required to migrate your Altitude Astro integration from version 2.x to 3.x.
+
+## 1. Update the Integration Package
+
+Update your `package.json` to use the new v3 version:
+
+```sh
+npm install @thg-altitude/astro-integration@^3.0.0
+```
+
+## 2. Update Integration Usage in `astro.config.mjs` if you are using the [commerce API](../reference/commerce-api):
+
+**Before (v2):**
+
+```js
+altitudeMiddleware({
+  config: tenants,
+  api: { enabled: true, graphql: gqlIndex }
+});
+```
+
+**After (v3):**
+
+```js
+altitudeMiddleware({
+  config: tenants,
+  api: { enabled: true, graphql: gqlIndex, dirName: "[locale]" }
+});
+```
+
+- In v3, if your application uses the commerce API you now need to specify the location of your api route using the dirName prop.
+- This will be "/api/commerce" if no dirName is supplied or "/'dirName'/api/commerce if it is supplied.
+
+
+## 3. Update Tenant Config Structure
+
+- The structure of the i18n block within configs has changed where now the configs are split by domain, an example config can be found [here](./getting-started.md).
+- An additional `pathBasedRouting` key has been added on a domain basis.
+- Remove an `exclusionList` keys.
+- Update all tenant config files accordingly.
+
+
+## 4. Test Your Migration
+
+- Run your site locally and verify that all tenants resolve correctly.
+- Check that domain-based routing and tenant switching still work as expected.
+
+---
+
+For more details, see the [release notes](https://github.com/THG-AltitudeSiteBuilds/astro-integration/releases) on GitHub, consult the [changelog](../../changelog.mdx) or contact the Altitude Commerce team via the usual channels.
