@@ -73,23 +73,6 @@ Configuration is handled through data attributes on the script tag.
 ></script>
 ```
 
-## Programmatic Installation
-
-For applications using a bundler, you can install and initialise Insights programmatically:
-
-```javascript
-import { insights } from '@thg-altitude/insights';
-
-insights({
-  channel: 'myprotein',
-  subsite: 'en',
-  storefront: 'nutrition',
-  pageType: 'Product'  // optional
-});
-```
-
-This approach is useful for single-page applications where you need more control over initialisation timing.
-
 ## Verification
 
 After adding the script, verify the installation by checking for the presence of the global `insights` object via the browser console:
@@ -109,5 +92,6 @@ You should also see network requests firing on page load.
 
 ## Next Steps
 
-1. **[Tracking](./tracking)** - Track user interactions with HTML attributes
-2. **[JavaScript API](./advanced/javascript-api)** - Programmatic tracking for advanced scenarios
+1. **[Page Types](./page-types)** - Configure page type tracking for richer analytics
+2. **[Event Tracking](./tracking)** - Track user interactions with HTML attributes
+3. **[JavaScript API](./advanced/javascript-api)** - Programmatic tracking for advanced scenarios

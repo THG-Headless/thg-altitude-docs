@@ -90,44 +90,6 @@ console.log("Page UUID:", window.insights.uuid);
 
 > **Note:** The `.uuid` property may be `undefined` before the SDK has initialised. Use `getPageUUID()` if you need a guaranteed string value (returns `'unknown'` when not initialised).
 
-## Programmatic Initialisation
-
-For applications using a bundler, you can initialise Insights programmatically:
-
-```javascript
-import { insights } from '@thg-altitude/insights';
-
-insights({
-  channel: 'myprotein',
-  subsite: 'en',
-  storefront: 'nutrition',
-  pageType: 'Product'  // optional
-});
-```
-
-### Configuration Options
-
-| Property | Required | Description |
-|----------|----------|-------------|
-| `channel` | Yes | Your brand or channel identifier |
-| `subsite` | Yes | Your locale or subsite identifier |
-| `storefront` | Yes | Your storefront category |
-| `pageType` | No | Page type for analytics context |
-
-### `cleanup()`
-
-Stop tracking and clean up all event listeners. Useful for single-page applications when navigating away or reinitialising:
-
-```javascript
-import { cleanup } from '@thg-altitude/insights';
-
-// Stop all tracking
-cleanup();
-
-// Re-initialise with new config if needed
-insights({ channel: 'newchannel', subsite: 'en', storefront: 'nutrition' });
-```
-
 ## Debug Mode
 
 Enable debug logging to see tracking activity in the browser console:
@@ -178,4 +140,3 @@ Elements added to the page after initial load are automatically detected for HTM
 ## Next Steps
 
 - **[Event Tracking](../tracking)** - HTML attribute tracking (simpler approach)
-- **[Payload Schema](./payload-schema)** - Understand the data structure
