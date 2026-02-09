@@ -1,76 +1,181 @@
 ---
 title: "JavaScript API"
 order: 1
-description: "Variant-specific methods and advanced configuration"
+description: "Programmatic tracking methods for advanced scenarios"
 ---
 
 # JavaScript API
 
-This page documents variant-specific methods and advanced configuration options. For core tracking methods, see [Event Tracking](/docs/insights/tracking).
+Use the JavaScript API when HTML attribute tracking isn't suitable - for example, tracking hover events, form submissions, or integrating with existing event handlers.
 
-## Variant-Specific Methods
+For most use cases, [HTML attribute tracking](/docs/insights/tracking) is simpler and recommended.
 
-### MPA Additional Methods
+## API Reference
 
-The MPA variant (`@thg-altitude/insights/mpa`) extends the base API with:
+All methods are available on the global `window.insights` object after the script has loaded.
 
-#### `insights.impression(data)`
+### `window.insights.event(name, data)`
 
-Track impression events programmatically, following the same structure as HTML impression tracking.
+Track custom events programmatically.
 
 **Parameters:**
 
-- `data` (object): Impression data with `category`, `id`, and custom properties
+- `name` (string): Event type (e.g., `'hover'`, `'form_submit'`, `'video_play'`)
+- `data` (object): Event data with any custom properties
 
-**Returns:** `Promise<boolean>` - Success status
+**Returns:** `void` - Event is queued for batch upload
 
 ```javascript
-// Track impression programmatically
-insights.impression({
+// Track a hover event
+window.insights.event("hover", {
+  category: "product",
+  id: "featured-product",
+  price: "19.99",
+});
+
+// Track form submission
+window.insights.event("form_submit", {
+  category: "form",
+  id: "newsletter-signup",
+  success: true,
+});
+
+// Track video interaction
+window.insights.event("video_play", {
+  category: "video",
+  id: "product-demo",
+  duration: 120,
+});
+```
+
+### `window.insights.impression(data)`
+
+Track impressions programmatically. Useful when HTML attributes can't be applied.
+
+**Parameters:**
+
+- `data` (object): Impression data with any custom properties
+
+**Returns:** `void` - Event is queued for batch upload
+
+```javascript
+// Track impression for dynamically loaded content
+window.insights.impression({
+  category: "recommendation",
+  id: "similar-product-123",
+  position: 3,
+});
+```
+
+### `window.insights.getPageUUID()`
+
+Get the current page UUID. Useful for correlating front-end events with back-end data.
+
+**Returns:** `string` - Current page UUID, or `'unknown'` if not yet initialised
+
+```javascript
+const pageUUID = window.insights.getPageUUID();
+console.log("Current page UUID:", pageUUID);
+```
+
+### `window.insights.uuid`
+
+Direct access to the current page UUID as a property.
+
+**Type:** `string | undefined` - Current page UUID, or `undefined` before initialisation
+
+```javascript
+console.log("Page UUID:", window.insights.uuid);
+```
+
+> **Note:** The `.uuid` property may be `undefined` before the SDK has initialised. Use `getPageUUID()` if you need a guaranteed string value (returns `'unknown'` when not initialised).
+
+## Programmatic Initialisation
+
+For applications using a bundler, you can initialise Insights programmatically:
+
+```javascript
+import { insights } from '@thg-altitude/insights';
+
+insights({
+  channel: 'myprotein',
+  subsite: 'en',
+  storefront: 'nutrition',
+  pageType: 'Product'  // optional
+});
+```
+
+### Configuration Options
+
+| Property | Required | Description |
+|----------|----------|-------------|
+| `channel` | Yes | Your brand or channel identifier |
+| `subsite` | Yes | Your locale or subsite identifier |
+| `storefront` | Yes | Your storefront category |
+| `pageType` | No | Page type for analytics context |
+
+### `cleanup()`
+
+Stop tracking and clean up all event listeners. Useful for single-page applications when navigating away or reinitialising:
+
+```javascript
+import { cleanup } from '@thg-altitude/insights';
+
+// Stop all tracking
+cleanup();
+
+// Re-initialise with new config if needed
+insights({ channel: 'newchannel', subsite: 'en', storefront: 'nutrition' });
+```
+
+## Debug Mode
+
+Enable debug logging to see tracking activity in the browser console:
+
+```javascript
+localStorage.setItem('insights_debug', 'true');
+```
+
+Reload the page to see debug output. To disable:
+
+```javascript
+localStorage.removeItem('insights_debug');
+```
+
+## Custom Events
+
+Track any event by defining your own event types. The event name and data structure are flexible - use whatever makes sense for your analytics needs.
+
+```javascript
+// Track a hover event
+window.insights.event("hover", {
   category: "product",
   id: "featured-item",
   price: "29.99",
 });
 ```
 
-#### `insights.flush()`
+Events are queued and sent automatically - no additional configuration required.
 
-Manually flush all queued events to the server.
+## Safe Usage Pattern
 
-**Returns:** `Promise<void>`
-
-```javascript
-// Manually flush event queue
-await insights.flush();
-```
-
-#### `insights.context()`
-
-Get the current tracker context including configuration and state.
-
-**Returns:** `object` - Current tracker context
+Always check that the SDK has loaded before calling methods:
 
 ```javascript
-// Get tracker context
-const context = insights.context();
+if (typeof window.insights !== "undefined") {
+  window.insights.event("purchase", {
+    category: "ecommerce",
+    id: "order-123",
+    value: 99.99,
+  });
+}
 ```
 
-### SPA Additional Methods
+## Dynamic Content
 
-The SPA variant (`@thg-altitude/insights/spa`) extends the base API with:
+Elements added to the page after initial load are automatically detected for HTML attribute tracking. No additional JavaScript is needed for single-page applications or dynamically loaded content.
 
-#### `insights.triggerNavigation(trigger)`
+## Next Steps
 
-Manually trigger a navigation event for single-page applications.
-
-**Parameters:**
-
-- `trigger` (string, optional): The trigger source (defaults to 'manual')
-
-**Returns:** `string | null` - The new page UUID after navigation
-
-```javascript
-// Trigger manual navigation
-const newPageUUID = insights.triggerNavigation("manual");
-console.log("New page UUID:", newPageUUID);
-```
+- **[Event Tracking](../tracking)** - HTML attribute tracking (simpler approach)
+- **[Payload Schema](./payload-schema)** - Understand the data structure

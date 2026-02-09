@@ -1,43 +1,49 @@
 ---
 title: "Installation"
 order: 2
-description: "Installing and importing Insights v0.6 for your web application"
+description: "Installing Insights for your web application with a single script tag"
 ---
 
 # Installation
 
-Get started with Insights by installing the NPM package and importing the appropriate variant for your application type.
+Get started with Insights by adding a single script tag to your application. No build tools or package managers required.
 
-## NPM Package (Recommended)
+## Script Tag Installation
 
-Install via NPM for modern build systems:
+Add the following script tag to your HTML `<head>` section:
 
-```bash
-npm install @thg-altitude/insights
+```html
+<script
+  type="module"
+  src="https://insights.thgaltitude.com/sdk/client.js"
+  data-insights-channel="myprotein"
+  data-insights-subsite="en"
+  data-insights-storefront="nutrition"
+></script>
 ```
 
-## Choosing the Right Build
+Replace the attribute values with your specific configuration:
+- `channel` - Your brand or channel identifier (e.g., `myprotein`, `lookfantastic`)
+- `subsite` - Your locale or subsite identifier (e.g., `en`, `de`, `fr`)
+- `storefront` - Your storefront category (e.g., `nutrition`, `beauty`)
 
-Then import the appropriate variant in your JavaScript/TypeScript files:
+The script should be placed within the main template used across your application (e.g., `Layout.astro`, `_app.tsx`, or your base HTML template). Loading it in the `<head>` ensures tracking begins as early as possible.
 
-The insights package provides 4 variants, as seen below. The split between MPA and SPA behaviour results in optimised builds for each use case, while the developer and production variants provide the choice between the silent production build and the verbose debug build, allowing for a minimal bundle size in production and detailed logging during development.
+### Complete Example
 
-| Variant            | Import                             | Bundle Size |
-| ------------------ | ---------------------------------- | ----------- |
-| **MPA Production** | `@thg-altitude/insights/mpa`       | ~30KB       |
-| **MPA Debug**      | `@thg-altitude/insights/mpa/debug` | ~120KB      |
-| **SPA Production** | `@thg-altitude/insights/spa`       | ~31KB       |
-| **SPA Debug**      | `@thg-altitude/insights/spa/debug` | ~122KB      |
-
-## Adding the Component
-
-The appropriate component should be imported within the main template used across your application, such as the `Layout.astro` file. It is important to ensure that this component is loaded as quickly as possible, and as such should be placed within the `<head>` tag.
-
-```javascript
+```html
 <!DOCTYPE html>
 <html>
   <head>
-    <insights-tracker tenant={tenantConfig?.siteName || 'altitude'}></insights-tracker>
+    <meta charset="UTF-8" />
+    <title>My Application</title>
+    <script
+      type="module"
+      src="https://insights.thgaltitude.com/sdk/client.js"
+      data-insights-channel="myprotein"
+      data-insights-subsite="en"
+      data-insights-storefront="nutrition"
+    ></script>
   </head>
   <body>
     <!-- Your content -->
@@ -45,24 +51,63 @@ The appropriate component should be imported within the main template used acros
 </html>
 ```
 
+## Configuration
+
+Configuration is handled through data attributes on the script tag.
+
+| Attribute                   | Required | Description                                         |
+| --------------------------- | -------- | --------------------------------------------------- |
+| `data-insights-channel`     | Yes      | Your brand or channel identifier                    |
+| `data-insights-subsite`     | Yes      | Your locale or subsite identifier                   |
+| `data-insights-storefront`  | Yes      | Your storefront category                            |
+
+### Example Configuration
+
+```html
+<script
+  type="module"
+  src="https://insights.thgaltitude.com/sdk/client.js"
+  data-insights-channel="myprotein"
+  data-insights-subsite="en"
+  data-insights-storefront="nutrition"
+></script>
+```
+
+## Programmatic Installation
+
+For applications using a bundler, you can install and initialise Insights programmatically:
+
+```javascript
+import { insights } from '@thg-altitude/insights';
+
+insights({
+  channel: 'myprotein',
+  subsite: 'en',
+  storefront: 'nutrition',
+  pageType: 'Product'  // optional
+});
+```
+
+This approach is useful for single-page applications where you need more control over initialisation timing.
+
 ## Verification
 
-After importing, we can verify the installation by checking for the presence of the global `insights` object via the browser console:
+After adding the script, verify the installation by checking for the presence of the global `insights` object via the browser console:
 
 ```javascript
 // Check if insights is available
 if (typeof window.insights !== "undefined") {
-  console.log("✅ Insights loaded successfully");
+  console.log("Insights loaded successfully");
 } else {
-  console.error("❌ Insights failed to load");
+  console.error("Insights failed to load");
 }
 ```
 
-We should also see network events fire on navigation.
+You should also see network requests firing on page load.
 
-> **Note**: In some browsers such as chrome, since the events are fired using the beacon api, following a fire and forget approach, the events may appear to fail in the network tab. This is expected behaviour, and a quirk of the browser.
+> **Troubleshooting**: Events are sent using the Beacon API, which uses a fire-and-forget approach. In some browsers (particularly Chrome DevTools), these requests may appear as "failed" or "cancelled" in the Network tab. This is expected behaviour and does not indicate an actual failure.
 
 ## Next Steps
 
 1. **[Tracking](./tracking)** - Track user interactions with HTML attributes
-2. **[Configuration](./configuration)** - Add the component and configure your tenant
+2. **[JavaScript API](./advanced/javascript-api)** - Programmatic tracking for advanced scenarios

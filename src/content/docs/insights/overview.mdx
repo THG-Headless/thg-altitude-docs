@@ -1,37 +1,38 @@
 ---
 title: "Overview"
 order: 1
-description: "Introduction to Insights v0.6 analytics library for comprehensive user behavior monitoring"
+description: "Introduction to Insights analytics library for comprehensive user behavior monitoring"
 ---
 
-# Insights v0.6
+# Insights
 
-A lightweight analytics library designed for modern web applications. Insights provides automatic tracking with minimal setup - just add the component and set your tenant to start collecting comprehensive analytics data.
+A lightweight analytics library designed for modern web applications. Insights provides automatic tracking with minimal setup - add a single script tag with your channel configuration to start collecting comprehensive analytics data.
 
-The insights package forms the client side SDK for the new THG Ingenuity tracking pipeline, providing data to drive reporting.
-
-The insights package provides out the box tracking of page view events. Since the tracking data is primarily driven by back end events, this should be sufficient for most use cases. For cases where a front event needs tracking that does not have a back end event, the package provides HTML attributes and a JavaScript API as means to trigger tracking events.
+Collected data flows into THG's analytics infrastructure, where it drives reporting and business intelligence.
 
 ## Key Features
 
-- **Minimal Setup**: 1 line setup to start tracking
-- **Automatic Page Views**: Tracks navigation and core user metrics with zero configuration
-- **HTML Attribute Tracking**: Track clicks and impressions automatically with `data-insights-*` attributes
-- **Framework Agnostic**: Works with any JS front end web application framework.
+- **Simple Setup**: Single script tag with channel, subsite, and storefront configuration
+- **Automatic Page Views**: Tracks navigation and page context with zero configuration
+- **Core Web Vitals**: Automatic tracking of FCP, LCP, CLS, INP, and TTFB
+- **Session Tracking**: Automatic tracking of viewport changes, scroll depth, and tab visibility
+- **Attribution Tracking**: UTM parameters and referrer data captured automatically
+- **A/B Testing Support**: Automatically captures experiment assignments when configured
+- **Dynamic Content Support**: Automatically detects new elements added to the page for impression tracking
+- **HTML Attribute Tracking**: Track clicks and impressions with simple `data-insights-*` attributes
+- **Framework Agnostic**: Works with any JavaScript front-end web application framework
 - **Zero Configuration**: Authentication, batching, and transmission handled automatically
-- **Debug Mode**: Development builds with detailed logging and diagnostics
-- **Lightweight**: ~30KB lightweight production bundle minimises performance impact
+
+## When to Use the JavaScript API
+
+For most tracking needs, HTML attributes are sufficient. Use the JavaScript API when you need to:
+
+- Track events that don't correspond to a DOM element (e.g., hover, scroll depth)
+- Track events on dynamically generated content where attributes can't be applied
+- Integrate with existing event handlers or analytics logic
 
 ## Next Steps
 
-### Start Tracking
-
-1. **[Installation](./installation)** - Install and import the package
+1. **[Installation](./installation)** - Add the script tag to your application
 2. **[Tracking](./tracking)** - Track user interactions with HTML attributes
-3. **[Browser Requirements](./advanced/browser-requirements)** - Check browser compatibility
-4. **[Configuration](./configuration)** - Add the component and set your tenant
-
-### Advanced Configuration
-
-- **[JavaScript API](./advanced/javascript-api)** - For complex tracking scenarios
-- **[Payload Schema](./advanced/payload-schema)** - Data structure documentation
+3. **[JavaScript API](./advanced/javascript-api)** - Programmatic tracking for advanced scenarios
