@@ -10,34 +10,6 @@ Page views are tracked automatically once the Insights script is added to your s
 
 This declarative approach keeps tracking logic out of your JavaScript and makes it easy to add tracking to any component.
 
-## Page Type
-
-To provide richer analytics context, add a `data-insights-page-type` attribute to any element on the page (typically the `<body>` or a top-level container):
-
-```html
-<body data-insights-page-type="Product">
-  <!-- Your content -->
-</body>
-```
-
-### Valid Page Types
-
-| Value | Description |
-|-------|-------------|
-| `Home` | Homepage |
-| `List` | Product listing or category page |
-| `Product` | Product detail page |
-| `Search` | Search results page |
-| `Basket` | Shopping basket/cart |
-| `Checkout` | Checkout flow |
-| `Checkout Complete` | Order confirmation |
-| `Account` | User account pages |
-| `Login` | Login/authentication page |
-| `PW Reset` | Password reset page |
-| `Blog` | Blog or editorial content |
-| `Info` | Informational pages (FAQ, About, etc.) |
-| `Trade` | Trade/B2B pages |
-
 ## Required Attributes
 
 To track an element, add these three attributes:
@@ -129,6 +101,5 @@ Elements added to the page after initial load are automatically detected. No add
 
 ## Next Steps
 
-For tracking events that don't correspond to DOM elements (hover, scroll, form submissions), use the JavaScript API:
-
+- **[Page Types](./page-types)** - Configure page type tracking for richer analytics
 - **[JavaScript API](./advanced/javascript-api)** - Programmatic tracking for advanced scenarios
