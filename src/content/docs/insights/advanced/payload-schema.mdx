@@ -1,141 +1,156 @@
 ---
 title: "Payload Schema"
 order: 3
-description: "Structure of data sent from the Insights client using two-stream architecture"
+description: "Structure of data collected by the Insights SDK"
 ---
 
 # Payload Schema
 
-The Insights tracking system uses a two-stream architecture to efficiently capture and transmit different types of user data. This separation allows for optimized processing of page-level context versus granular user interactions, ensuring both performance and data completeness.
+The Insights SDK collects and transmits analytics data in three categories: page views, events, and sessions. This page documents the structure of this data for developers who need to understand what is being collected.
 
-## Two-Stream Architecture
+## Data Categories
 
-Insights separates tracking data into two distinct streams, each optimized for its specific purpose:
+### Page Views
 
-### Page View Stream
+Captured automatically when a user visits a page. Includes device information, attribution data, and performance metrics.
 
-Captures navigation events and page-level context whenever a user visits a new page or route. This stream provides the foundation for understanding user journeys and associating subsequent events with their page context.
+**When sent:** Immediately on page load
 
-### Event Stream
+### Events
 
-Tracks granular user interactions like clicks, impressions, and custom events. Events are batched together for efficient transmission while maintaining their association with the originating page through UUIDs.
+User interactions tracked via HTML attributes or the JavaScript API. Includes clicks, impressions, and custom events.
 
-## Page View Stream
+**When sent:** Batched every 30 seconds, or when the batch reaches 50KB, or on page exit
 
-Page views are automatically tracked when navigation occurs and can be enriched with custom data specific to your application's needs.
+### Sessions
 
-### Structure
+Engagement data tracking how users interact with the page over time. Sessions capture rich interaction data including viewport changes, scroll behaviour, and tab visibility.
+
+**When sent:** On visibility change (tab hidden) and page exit
+
+**Session data includes:**
+
+| Field | Description |
+|-------|-------------|
+| `session_index` | Increments each time the tab becomes visible again |
+| `start_time` | When this session segment started |
+| `end_time` | When this session segment ended |
+| `viewports` | Array of viewport dimensions with duration at each size |
+| `document_states` | Array containing document height snapshots over time |
+| `max_scroll_depth` | Deepest scroll position reached (pixels) |
+| `scroll_events` | Number of scroll interactions |
+
+Performance metrics (Core Web Vitals) are included with the final session on page exit.
+
+## Event Structure
+
+Events tracked via `data-insights-*` attributes or the JavaScript API follow this structure:
 
 ```typescript
-interface PageViewPayload {
-  // Core identification
-  session_cookie: string;
-  user_cookie: string;
-  path: string;
-  uuid: string;
-  timestamp: number;
-
-  // Context
-  device: {
-    user_agent: string;
-    viewport?: { width: number; height: number };
+interface Event {
+  event_category: string; // 'click', 'impression', or custom type
+  event_data: {
+    [key: string]: unknown; // Flexible key-value pairs
   };
-  domain: string;
-  tenant: string;
+  timestamp: number; // Unix timestamp in milliseconds
 }
 ```
 
-### Example Page View
+### Example Events
 
-When a user navigates to your product listing page, the following payload is automatically generated and sent to the page view endpoint:
+**Click event from HTML attributes:**
 
 ```json
 {
-  "session_cookie": "sess_abc123",
-  "user_cookie": "user_xyz789",
-  "path": "/products",
-  "uuid": "550e8400-e29b-41d4-a716-446655440000",
-  "timestamp": 1704067200000,
-  "device": {
-    "user_agent": "Mozilla/5.0...",
-    "viewport": { "width": 1920, "height": 1080 }
+  "event_category": "click",
+  "event_data": {
+    "category": "button",
+    "id": "signup-cta",
+    "action": "signup"
   },
-  "domain": "https://example.com",
-  "tenant": "my-company",
-  "page": "products",
-  "category": "listing"
+  "timestamp": 1704067260000
 }
 ```
 
-The `uuid` field is particularly important as it links all subsequent events on this page back to this page view, enabling complete journey reconstruction.
-
-## Event Stream
-
-Events capture user interactions and are automatically batched for optimal network efficiency. The batching mechanism reduces request overhead while ensuring timely data delivery.
-
-### Batch Structure
-
-Multiple events are collected and sent together in a single payload:
-
-```typescript
-interface EventBatchPayload {
-  // Batch identification
-  batch_id: string;
-  page_uuid: string;
-  schemaVersion: string;
-  tenant: string;
-  batch_timestamp: number;
-
-  // Events array
-  events: Array<{
-    event_category: string; // 'click', 'impression', or custom
-    event_data: {
-      // Flexible data object
-      [key: string]: any;
-    };
-    timestamp: number;
-  }>;
-}
-```
-
-### Example Event Batch
-
-This example shows a typical batch containing both a click event and an impression event from the same page session:
+**Custom event from JavaScript API:**
 
 ```json
 {
-  "batch_id": "batch_550e8400-e29b-41d4-a716-446655440001",
-  "page_uuid": "550e8400-e29b-41d4-a716-446655440000",
-  "schemaVersion": "0.2",
-  "tenant": "my-company",
-  "batch_timestamp": 1704067260500,
-  "events": [
-    {
-      "event_category": "click",
-      "event_data": {
-        "category": "button",
-        "id": "signup-header",
-        "campaign": "summer_sale"
-      },
-      "timestamp": 1704067260000
-    },
-    {
-      "event_category": "impression",
-      "event_data": {
-        "category": "product",
-        "id": "laptop_123",
-        "position": 3,
-        "price": "999.99"
-      },
-      "timestamp": 1704067265000
-    }
-  ]
+  "event_category": "purchase",
+  "event_data": {
+    "category": "ecommerce",
+    "id": "order-123",
+    "value": 99.99,
+    "currency": "GBP"
+  },
+  "timestamp": 1704067265000
 }
 ```
 
-Notice how the `page_uuid` matches the UUID from the page view example above, establishing the relationship between the page context and these user interactions. The flexible `event_data` structure accommodates any custom properties your tracking requires while maintaining consistency through the `category` and `id` fields.
+## Event Batching
+
+Events are collected in memory and sent in batches for efficiency. A batch is sent when any of these conditions are met:
+
+- **Time threshold:** 30 seconds since the last batch
+- **Size threshold:** Batch exceeds 50KB
+- **Page exit:** User navigates away or closes the tab
+
+Events are sent using the Beacon API to ensure reliable delivery even during page unload.
+
+## Page View Data
+
+Page views include contextual information about the visit:
+
+| Field | Description |
+|-------|-------------|
+| `path` | URL path of the page |
+| `url` | Full page URL |
+| `title` | Page title |
+| `referrer` | Referring URL |
+| `domain` | Site domain |
+| `viewport` | Browser viewport dimensions |
+| `timestamp` | When the page was loaded |
+| `channel` | Channel identifier from configuration |
+| `subsite` | Subsite identifier from configuration |
+| `storefront` | Storefront identifier from configuration |
+| `pageType` | Page type if configured via attribute or init |
+| `navigationType` | How the page was reached (`navigate`, `reload`, `back_forward`, `prerender`) |
+
+### Query Parameters
+
+All query parameters from both the page URL and referrer URL are captured automatically. This includes common attribution parameters such as:
+
+- UTM parameters (`utm_source`, `utm_medium`, `utm_campaign`, etc.)
+- Ad platform click IDs (`gclid`, `fbclid`, etc.)
+- Any other query parameters present in the URL
+
+### Performance Metrics
+
+Core Web Vitals are collected when available:
+
+| Metric | Description |
+|--------|-------------|
+| FCP | First Contentful Paint |
+| LCP | Largest Contentful Paint |
+| CLS | Cumulative Layout Shift |
+| INP | Interaction to Next Paint |
+| TTFB | Time to First Byte |
+
+## Data Linking
+
+All data is linked together using identifiers:
+
+- **Page UUID:** Links events and sessions to their originating page view
+- **Session Cookie:** Links page views across a browsing session
+- **User Cookie:** Links sessions across multiple visits
+
+You can access the current page UUID programmatically:
+
+```javascript
+const pageUUID = window.insights.getPageUUID();
+```
 
 ## Next Steps
 
-- **[JavaScript API](./javascript-api)** - Methods for sending this data
+- **[JavaScript API](./javascript-api)** - Methods for tracking events
 - **[Event Tracking](../tracking)** - HTML attribute tracking approach
