@@ -1,0 +1,117 @@
+---
+title: "Query Parameter Blocklist"
+order: 3
+description: "Filter sensitive query parameters from analytics tracking"
+---
+
+# Query Parameter Blocklist
+
+The query parameter blocklist allows you to prevent sensitive URL parameters from being captured in analytics data. This is useful for excluding tokens, passwords, or other private information that may appear in URLs.
+
+## Configuration
+
+Add the `data-insights-blocklist` attribute to your script tag with comma-separated patterns:
+
+```html
+<script
+  src="https://cdn.example.com/insights.js"
+  data-insights-channel="web"
+  data-insights-subsite="en"
+  data-insights-storefront="uk"
+  data-insights-blocklist="token,secret,password">
+</script>
+```
+
+## Pattern Syntax
+
+Blocklist patterns support both literal strings and regular expressions:
+
+| Pattern | Matches | Example URLs |
+|---------|---------|--------------|
+| `token` | Exact match | `?token=abc` |
+| `token.*` | Starts with "token" | `?token=abc`, `?tokenId=123` |
+| `^secret$` | Exact match (explicit) | `?secret=xyz` |
+| `pass\w+` | "pass" followed by word chars | `?password=abc`, `?passkey=123` |
+
+All matching is **case-insensitive**, so `token` will match `Token`, `TOKEN`, and `token`.
+
+## How It Works
+
+When a page view is captured, the library:
+
+1. Parses all query parameters from the current URL
+2. Checks each **parameter name** against the blocklist patterns (values are not checked)
+3. Excludes any matching parameters from the analytics payload
+
+> **Note**: The blocklist matches against parameter names only, not their values. A pattern like `token` will block any parameter named "token" regardless of its value, but will not block a parameter like `?type=token`.
+
+**Example**: Given the URL `?user=john&token=secret123&page=1` with blocklist `token`:
+
+```json
+{
+  "page": {
+    "query_params": {
+      "user": ["john"],
+      "page": ["1"]
+    }
+  }
+}
+```
+
+The `token` parameter is excluded from the captured data.
+
+## Multiple Patterns
+
+Separate multiple patterns with commas. Whitespace around patterns is automatically trimmed:
+
+```html
+<script
+  data-insights-blocklist="token, secret, password, auth.*, session.*">
+</script>
+```
+
+## Security Features
+
+The blocklist includes built-in protections:
+
+### ReDoS Protection
+
+Dangerous regex patterns that could cause performance issues are automatically detected and rejected. These patterns fall back to literal string matching:
+
+- Nested quantifiers: `(a+)+`
+- Overlapping alternations: `(a|a)+`
+- Repeated wildcards: `.*.*`
+
+### Invalid Pattern Handling
+
+If a pattern contains invalid regex syntax, it gracefully falls back to a literal string comparison rather than throwing an error.
+
+## Programmatic Configuration
+
+When using the JavaScript API, pass the blocklist as an array:
+
+```javascript
+window.insights.init({
+  channel: 'web',
+  subsite: 'en',
+  storefront: 'uk',
+  queryParamBlocklist: ['token', 'secret', 'password']
+});
+```
+
+## Common Use Cases
+
+| Use Case | Recommended Patterns |
+|----------|---------------------|
+| Authentication tokens | `token, auth, jwt, bearer` |
+| Session identifiers | `session.*, sid` |
+| Password reset flows | `password, reset_token` |
+| OAuth flows | `code, state, oauth.*` |
+| Tracking parameters | `utm_*, fbclid, gclid` |
+
+> **Note**: The blocklist only affects query parameters captured in page view data. It does not modify the actual URL or affect other tracking features.
+
+## Next Steps
+
+- [JavaScript API](./javascript-api) - Programmatic control over analytics
+- [Browser Requirements](./browser-requirements) - Supported browsers and features
