@@ -19,15 +19,20 @@ description: Use one GTLD to serve multiple locales.
 
  ### Locale Detection
 
- The system extracts locales from URL paths using the pattern `[a-z]{2}-[a-z]{2}` (e.g., `en-gb`, `de-de`, `fr-fr`). When a user visits a URL:
+ The system can extract locales from URL paths using either standard locale codes or custom prefixes:
 
- 1. **Direct locale match**: If the path starts with a valid locale (`/en-gb/p/...`), the system uses that locale
+ 1. **Standard locale pattern**: `[a-z]{2}-[a-z]{2}` (e.g., `en-gb`, `de-de`, `fr-fr`)
+ 2. **Custom prefix pattern**: User-defined URL-safe strings (e.g., `deutsch`, `row`, `en-mt`)
+
+ When a user visits a URL, the system follows this detection order:
+
+ 1. **Direct locale match**: If the path starts with a valid locale code or custom prefix, the system uses that locale
  2. **Cookie fallback**: If no locale in path, checks for a locale preference cookie
  3. **Default fallback**: Uses the configured `fallbackLocale` for the domain
 
 
   ### Configuration Options
-  For full config explanations vist the [config page](./config.md). The key properties needed for path based routing are:
+  For full config explanations visit the [config page](./config.md). The key properties needed for path based routing are:
 
  | Property | Type | Description |
  |----------|------|-------------|
@@ -35,6 +40,34 @@ description: Use one GTLD to serve multiple locales.
  | `fallbackLocale` | string | Default locale to redirect to (format: `xx-xx`) |
  | `locales` | object | Map of locale codes to locale configurations |
  | `localeCookie` | string | Name of cookie used to store user's locale preference |
+ | `customPrefix` | string | Optional custom URL prefix for each locale (within locale config) |
+
+ ### Custom Prefix Configuration
+
+ ```javascript
+ i18n: {
+   domains: {
+     'www.example.com': {
+       pathBasedRouting: true,
+       fallbackLocale: 'en-us',
+       locales: {
+         'en-us': {
+           commerce: { endpoint: 'https://api.example.com/en/graphql' }
+         },
+         'fr-fr': {
+           customPrefix: 'francais',
+           commerce: { endpoint: 'https://api.example.com/fr/graphql' }
+         },
+         'de-de': {
+           customPrefix: 'german',
+           commerce: { endpoint: 'https://api.example.com/de/graphql' }
+         }
+       }
+     }
+   },
+   localeCookie: 'locale_V6'
+ }
+ ```
 
 
   ## Features
@@ -43,9 +76,19 @@ description: Use one GTLD to serve multiple locales.
 
  The system automatically redirects users to appropriate localized URLs:
 
+ **With standard locale codes:**
  - **No locale in path + valid cookie**: `/page` → `/de-de/page` (if cookie has `de-de`)
  - **No locale in path + no cookie**: `/page` → `/en-gb/page` (using fallbackLocale)
  - **Invalid locale in path**: `/invalid/page` → `/en-gb/page` (using fallbackLocale)
+
+ **With custom prefixes:**
+ - **No locale in path + valid cookie**: `/page` → `/deutsch/page` (if cookie has `de-de` with `customPrefix: "deutsch"`)
+ - **No locale in path + no cookie**: `/page` → `/english/page` (using fallbackLocale with custom prefix)
+ - **Invalid prefix in path**: `/invalid/page` → `/english/page` (using fallbackLocale)
+
+ - **Consistency**: The same locale preference works across different configurations
+ - **Flexibility**: You can change custom prefixes without invalidating user cookies
+ - **Compatibility**: The system can switch between standard and custom prefix URLs seamlessly
 
   ### Multi-tenant Support
 
@@ -155,12 +198,64 @@ export default {
 ```
 
 
-  ## Schema Validation
+  ## Advanced Configuration Examples
 
- The configuration is validated against JSON Schema with these constraints:
+ ### Combining Domain and Path-Based Routing
 
- - **Domain-based routing**: Limited to 1 locale per domain
- - **Path-based routing**: Unlimited locales allowed
- - **Locale format**: Must match `^[a-z]{2}-[a-z]{2}$`
- - **Required fields**: domains, commerce.endpoint, i18n.localeCookie
+ You can use both routing strategies within the same configuration:
+
+ ```javascript
+ export default {
+   domains: ["www.example.com", "www.example.de"],
+   commerce: {
+     endpoint: "https://api.global.com/graphql"
+   },
+   i18n: {
+     domains: {
+       // Global domain with path-based routing
+       "www.example.com": {
+         pathBasedRouting: true,
+         fallbackLocale: "en-us",
+         locales: {
+           "en-us": {
+             commerce: { endpoint: ... }
+           },
+           "es-es": {
+             commerce: { endpoint: ... }
+           },
+           "fr-fr": {
+             commerce: { endpoint: ... }
+           }
+         }
+       },
+       // German domain with domain-based routing
+       "www.example.de": {
+         pathBasedRouting: false,
+         fallbackLocale: "de-de",
+         locales: {
+           "de-de": {
+             commerce: { endpoint: ... }
+           }
+         }
+       },
+     },
+     localeCookie: "user_locale_v3"
+   }
+ }
+ ```
+ The result of this config would be two different domains supporting 4 locales:
+ - `www.example.com/en-us/`
+ - `www.example.com/es-es/`
+ - `www.example.com/fr-fr/`
+ - `www.example.de`
+
+ ## Schema Validation
+
+ The configuration is validated against JSON Schema v3 with these constraints:
+
+ - **Domain-based routing**: Limited to 1 locale per domain when `pathBasedRouting: false`
+ - **Path-based routing**: Unlimited locales allowed when `pathBasedRouting: true`
+ - **Locale format**: Must match `^[a-z]{2}-[a-z]{2}$` pattern
+ - **Custom prefix format**: Must be URL-safe strings when provided
+ - **Required fields**: domains, commerce.endpoint, i18n.localeCookie, pathBasedRouting, fallbackLocale
  - **KV namespaces**: Only "config", "lang", or "session" allowed

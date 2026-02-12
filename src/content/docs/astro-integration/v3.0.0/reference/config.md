@@ -4,7 +4,7 @@ title: "Config"
 
 # Configuration
 
-The below reference covers all of the different configuration options for the Astro Integration providing further flexibility for your application.
+The below reference covers all of the different configuration options for the Astro Integration v3.0.0, providing enhanced flexibility for your application.
 
 ```js
 //config/site.js
@@ -194,18 +194,91 @@ i18n: {
 ### i18n.domains.\<domain>.pathBasedRouting
 
 **Type**: `Boolean` \
+**Required: True**
+
+Enables path-based locale routing for this domain. When `true`, multiple locales can be served from the same domain using URL path prefixes (e.g., `/en-gb/`, `/fr-fr/`). When `false`, the domain serves only one locale without path prefixes.
+
+**Schema Validation**:
+- When `pathBasedRouting: false`, only one locale is allowed per domain
+- When `pathBasedRouting: true`, unlimited locales are allowed per domain
+
+**Examples**:
+
+```javascript
+// Path-based routing (multiple locales)
+"www.example.com": {
+  pathBasedRouting: true,
+  fallbackLocale: "en-us",
+  locales: {
+    "en-us": {...},
+    "fr-fr": {...},
+    "de-de": {...}
+  }
+}
+
+// Domain-based routing (single locale)
+"fr.example.com": {
+  pathBasedRouting: false,
+  fallbackLocale: "fr-fr",
+  locales: {
+    "fr-fr": {...}
+  }
+}
+```
+
+### i18n.domains.\<domain>.locales.\<locale>.customPrefix
+
+**Type**: `String` \
 **Required: False**
-**Default: False**
 
-If true, enables path-based locale routing for this domain.
+Allows you to define a custom URL path prefix for a locale instead of using the standard locale code. This is particularly useful for creating user-friendly URLs or branding purposes.
 
-### i18n.locales.\<domain>.\<locale>.kv
+**Examples:**
+
+```javascript
+i18n: {
+  domains: {
+    'www.example.com': {
+      pathBasedRouting: true,
+      fallbackLocale: 'en-us',
+      locales: {
+        'en-us': {
+          // No customPrefix - uses locale as prefix
+          commerce: {...}
+        },
+        'fr-fr': {
+          customPrefix: 'francais',
+          commerce: {...}
+        },
+        'de-de': {
+          customPrefix: 'deutsch',
+          commerce: {...}
+        },
+        'es-es': {
+          customPrefix: 'espanol',
+          commerce: {...}
+        }
+      }
+    }
+  }
+}
+```
+
+This configuration creates URL patterns like:
+- `www.example.com/en-us/` (English - fallback locale)
+- `www.example.com/francais/` (French)
+- `www.example.com/deutsch/` (German)
+- `www.example.com/espanol/` (Spanish)
+
+Note: ensure an proxys you site uses is tolerant to different path prefix structures.
+
+### i18n.domains.\<domain>.locales.\<locale>.kv
 
 Any locale specific KV keys to be retrieved from the cloudflare namespace. See config setup [here](#kv).
 
 If there are no locale specific KV settings then favour putting them in the top-level kv object instead.
 
-### i18n.locales.\<domain>.\<locale>.commerce.endpoint
+### i18n.domains.\<domain>.locales.\<locale>.commerce.endpoint
 
 Any locale specific api endpoint to be used. See config setup [here](/packages/astro-integration/#commerce)
 
@@ -213,16 +286,17 @@ Any locale specific api endpoint to be used. See config setup [here](/packages/a
 
 **Type**: `String` \
 **Required: True**
-**Default: False**
+**Pattern**: `^[a-z]{2}-[a-z]{2}$`
 
-The default locale to use for this domain if no valid locale is detected. e.g. "en-gb"
+The default locale to use for this domain if no valid locale is detected. Must be one of the locales defined in the `locales` object for this domain.
+
 
 ### i18n.localeCookie
 
 **Type**: `String` \
 **Required: True**
 
-The name of the cookie used to persist the user's locale preference. e.g. "locale_V6"
+The name of the cookie used to persist the user's locale preference across sessions. This cookie stores the actual locale code (e.g., `"en-gb"`), not custom prefixes.
 
 
 #### Locale Inheritance
@@ -295,4 +369,7 @@ Custom keys can also be supplied to the build config, such as environment variab
 
 # Reference
 
-- the full schema is available [here](https://github.com/THG-AltitudeSiteBuilds/astro-integration/blob/main/config_schemas/schemaV3.json) 
+- **JSON Schema v3**: [Full schema definition](https://github.com/THG-AltitudeSiteBuilds/astro-integration/blob/main/config_schemas/schemaV3.json)
+- **TypeScript Types**: [Type definitions](https://github.com/THG-AltitudeSiteBuilds/astro-integration/blob/main/types/index.ts)
+- **Migration Guide**: [Upgrading from v2](../guides/migration-v3)
+- **Path-based Routing**: [Detailed routing guide](./path-based-routing) 

@@ -48,13 +48,196 @@ altitudeMiddleware({
 
 ## 3. Update Tenant Config Structure
 
-- The structure of the i18n block within configs has changed where now the configs are split by domain, an example config can be found [here](./getting-started.md).
-- An additional `pathBasedRouting` key has been added on a domain basis.
-- Remove an `exclusionList` keys.
-- Update all tenant config files accordingly.
+The v3.0.0 release introduces significant changes to the configuration structure, particularly for i18n settings.
 
+### Configuration Structure Changes
 
-## 4. Test Your Migration
+**Before (v2):**
+
+```json
+{
+  "domains": ["example.com"],
+  "commerce": {
+    "endpoint": "https://api.example.com/graphql"
+  },
+  "kv": [
+    {
+      "key": "config",
+      "namespace": "config",
+      "local": {}
+    }
+  ],
+  "i18n": {
+    "locales": {
+      "en-us": {
+        "domain": "example.com"
+      },
+      "fr-fr": {
+        "domain": "fr.example.com"
+      }
+    },
+    "localeCookie": "locale"
+  }
+}
+```
+
+**After (v3):**
+
+```json
+{
+  "domains": ["example.com", "fr.example.com"],
+  "commerce": {
+    "endpoint": "https://api.example.com/graphql"
+  },
+  "kv": [
+    {
+      "key": "config",
+      "namespace": "config",
+      "local": {}
+    }
+  ],
+  "i18n": {
+    "domains": {
+      "example.com": {
+        "pathBasedRouting": true,
+        "fallbackLocale": "en-us",
+        "locales": {
+          "en-us": {
+            "commerce": {
+              "endpoint": "https://api.example.com/graphql"
+            }
+          },
+          "fr-fr": {
+            "customPrefix": "french",
+            "commerce": {
+              "endpoint": "https://api.fr.example.com/graphql"
+            }
+          }
+        }
+      },
+      "fr.example.com": {
+        "pathBasedRouting": false,
+        "fallbackLocale": "fr-fr",
+        "locales": {
+          "fr-fr": {
+            "commerce": {
+              "endpoint": "https://api.fr.example.com/graphql"
+            }
+          }
+        }
+      }
+    },
+    "localeCookie": "locale"
+  }
+}
+```
+
+### Key Changes Explained
+
+1. **Domain-based i18n structure**: Configuration is now organized by domain rather than by locale
+2. **Required `pathBasedRouting` property**: Each domain must specify whether to use path-based routing
+3. **Required `fallbackLocale` property**: Each domain must specify a fallback locale
+4. **`customPrefix` support**: Locales can now use custom URL prefixes instead of locale codes
+5. **Nested commerce and kv configs**: Locale-specific configurations can override global settings
+
+### Breaking Changes Checklist
+
+- [ ] **Remove `exclusionList` properties** - No longer read from in v3
+- [ ] **Update i18n structure** - Move from locale-based to domain-based organization
+- [ ] **Add `pathBasedRouting`** - Specify routing strategy for each domain
+- [ ] **Add `fallbackLocale`** - Define fallback locale for each domain
+- [ ] **Update locale configurations** - Move locale-specific settings under domain structure
+- [ ] **Remove deprecated context usage** - Update code that uses `locals.altitude.preferredLocale` or `locals.altitude.localeDomains`
+
+### Using Custom Prefixes
+
+The new `customPrefix` feature allows you to use custom URL paths instead of locale codes:
+
+**Example with custom prefixes:**
+
+```json
+{
+  "i18n": {
+    "domains": {
+      "example.com": {
+        "pathBasedRouting": true,
+        "fallbackLocale": "en-us",
+        "locales": {
+          "en-us": {
+            "commerce": {...}
+          },
+          "en-mt": {
+            "customPrefix": "en-eu",
+            "commerce": {...}
+          },
+          "de-de": {
+            "commerce": {...}
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+This configuration would create URLs like:
+- `example.com/en-us/` (English, default)
+- `example.com/en-eu/` (Europe, custom prefix used instead of locale)
+- `example.com/de-de/` (German)
+
+### Configuration Validation
+
+V3 includes enhanced JSON schema validation. Validate your configuration:
+
+```bash
+# Install the integration and run validation
+npm install @thg-altitude/astro-integration@^3.0.0
+
+# Your configuration will be automatically validated at build time
+npm run build
+```
+
+### Step-by-Step Migration Process
+
+1. **Update the package version** in `package.json`
+2. **Restructure each tenant configuration file**:
+   - Group locales by domain in `i18n.domains`
+   - Add required `pathBasedRouting` and `fallbackLocale` properties
+   - Move locale-specific commerce/kv configs under each locale
+   - Add `customPrefix` if desired for cleaner URLs
+3. **Remove deprecated properties**:
+   - Delete any `exclusionList` properties
+   - Remove locale-based domain mappings from v2 structure
+4. **Update application code**:
+   - Replace usage of deprecated context properties
+   - Update any direct configuration access patterns
+5. **Test thoroughly** with the new configuration structure
+
+## 4. Troubleshooting Common Issues
+
+### Configuration Validation Errors
+
+**Error**: `"pathBasedRouting" property is required`
+**Solution**: Add `"pathBasedRouting": true` or `false` to each domain in `i18n.domains`
+
+**Error**: `"fallbackLocale" property is required`
+**Solution**: Add `"fallbackLocale": "xx-xx"` with a valid locale code for each domain
+
+**Error**: Domain-based routing with multiple locales
+**Solution**: When `pathBasedRouting: false`, ensure only one locale is configured per domain
+
+### Runtime Issues
+
+**Issue**: Locale detection not working
+**Solution**: Check that your `localeCookie` configuration matches your application's cookie handling
+
+**Issue**: Custom prefixes not resolving
+**Solution**: Ensure `customPrefix` values are URL-safe and don't conflict with existing routes
+
+**Issue**: Commerce API endpoints not found
+**Solution**: Verify that locale-specific commerce configurations are properly nested under each locale
+
+## 5. Test Your Migration
 
 - Run your site locally and verify that all tenants resolve correctly.
 - Check that domain-based routing and tenant switching still work as expected.

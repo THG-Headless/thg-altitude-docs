@@ -232,6 +232,62 @@ export default {
 };
 ```
 
+### Custom Locale Prefixes (v3.0.0)
+
+V3.0.0 introduces the ability to use custom URL prefixes instead of standard locale codes. This allows for more user-friendly URLs and better local branding:
+
+```js
+// config/site.js with custom prefixes
+export default {
+  domains: ["www.global-store.com"],
+  tenantInstance: "global-store",
+  commerce: {
+    endpoint: "https://api.global-store.com/graphql",
+  },
+  i18n: {
+    domains: {
+      "www.example.com": {
+        pathBasedRouting: true,
+        fallbackLocale: "en-us",
+        locales: {
+          "en-us": {
+            commerce: {
+              endpoint: "https://api.example.com/en/graphql"
+            }
+          },
+          "en-mt": {
+            customPrefix: "en-eu",
+            commerce: {
+              endpoint: "https://api.example.com/fr/graphql"
+            }
+          },
+          "de-de": {
+            customPrefix: "deutsch",
+            commerce: {
+              endpoint: "https://api.global-store.com/de/graphql"
+            }
+          }
+        }
+      }
+    },
+    localeCookie: "locale_V6"
+  }
+}
+```
+
+This configuration creates URL patterns like:
+- `www.example.com/en-us/p/123` (English - fallback locale)
+- `www.example.com/en-mt/p/123` (en-mt site with custom prefix)
+- `www.example.com/de-de/p/123` (German site)
+```
+
 ## Config validation
 
-In development mode, the first thing that astro-integration will do is validate the config or configs you have passed to it to make sure they match the schema for the required keys. See the [config reference](../reference/config) for more information.
+In development mode, the astro-integration will validate your configuration against JSON Schema v3 to ensure all required properties are present and properly formatted. The validation includes:
+
+- **Required properties**: domains, commerce.endpoint, pathBasedRouting, fallbackLocale
+- **Format validation**: Locale codes must match `xx-xx` pattern
+- **Custom prefix validation**: Must be URL-safe if provided
+- **Domain constraints**: Domain-based routing limited to 1 locale per domain
+
+See the [config reference](../reference/config) for complete schema information.

@@ -30,7 +30,7 @@ export default {
 
 ### Step 2: Add the i18n key to your config
 
-We will add an i18n key with two locales, english and german. The `i18n.locales<Object>.domain` key must correspond to the domain you added in the `domains` array in step 1. `i18n.locales<Object>.kv` will contain locale-specific keys such as language files and locale-specific settings.
+We will add an i18n key with two locales, English and German. In v3.0.0, the configuration is organized by domain, with each domain specifying its routing strategy and locale configurations.
 
 ```js
 // config/site.js
@@ -43,36 +43,42 @@ export default {
     // ...top-level kv
   ],
   i18n: {
-    locales: [
-      {
-        prefix: "en-gb",
-        domain: "www.exampledomain1.com",
-        icons: {
-          flag: await fetchIcon("circle-flags", "gb"),
+    domains: {
+      "www.exampledomain1.com": {
+        pathBasedRouting: false, // Domain-based routing for English site
+        fallbackLocale: "en-gb",
+        locales: {
+          "en-gb": {
+            icons: {
+              flag: await fetchIcon("circle-flags", "gb"),
+            },
+          },
         },
       },
-      {
-        prefix: "de-de",
-        domain: "www.exampledomain1.de",
-        kv: [
-          {
-            key: "tenant1",
-            namespace: "config",
-            local: tenant1Config,
+      "www.exampledomain1.de": {
+        pathBasedRouting: false, // Domain-based routing for German site
+        fallbackLocale: "de-de",
+        locales: {
+          "de-de": {
+            kv: [
+              {
+                key: "tenant1",
+                namespace: "config",
+                local: tenant1Config,
+              },
+              {
+                key: "tenant1.de_de.properties",
+                namespace: "lang",
+                local: tenant1Lang,
+              },
+            ],
+            icons: {
+              flag: await fetchIcon("circle-flags", "de"),
+            },
           },
-          {
-            key: "tenant1.de_de.properties",
-            namespace: "lang",
-            local: tenant1Lang,
-          },
-        ],
-        icons: {
-          flag: await fetchIcon("circle-flags", "de"),
         },
       },
-    ],
-    fallbackLocale: "en-gb",
-    exclusionList: ["api"],
+    },
     localeCookie: "locale_V6",
   },
 };
