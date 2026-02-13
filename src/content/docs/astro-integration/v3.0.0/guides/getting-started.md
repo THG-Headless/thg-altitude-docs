@@ -232,17 +232,17 @@ export default {
 };
 ```
 
-### Custom Locale Prefixes (v3.0.0)
+### Custom Locale Prefixes
 
 V3.0.0 introduces the ability to use custom URL prefixes instead of standard locale codes. This allows for more user-friendly URLs and better local branding:
 
 ```js
 // config/site.js with custom prefixes
 export default {
-  domains: ["www.global-store.com"],
-  tenantInstance: "global-store",
+  domains: ["www.example.com"],
+  tenantInstance: "example",
   commerce: {
-    endpoint: "https://api.global-store.com/graphql",
+    endpoint: "https://api.example.com/graphql",
   },
   i18n: {
     domains: {
@@ -262,9 +262,8 @@ export default {
             }
           },
           "de-de": {
-            customPrefix: "deutsch",
             commerce: {
-              endpoint: "https://api.global-store.com/de/graphql"
+              endpoint: "https://api.example.com/de/graphql"
             }
           }
         }
