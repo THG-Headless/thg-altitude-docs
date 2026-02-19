@@ -82,7 +82,7 @@ Each environment has functions, which make up the deployed version of the site. 
 
 ![Function Logs](/statics/screenshots/function_logs/function-logs.png)
 
-On Altitude you can search for the logs assocaited to each of your functions. These logs are grouped by request giving information on the path, HTTP Method status code type, wall time and CPU time associated to each request. You are able to search through the logs by filtering by time, status code range and HTTP Method for the requests. You can also search for logs by request path, log message and RequestId of the the HTTP request.
+On Altitude you can search for the logs assocaited to each of your functions. These logs are grouped by request giving information on the path, HTTP Method status code type, wall time and CPU time associated to each request. You are able to search through the logs by filtering by time, status code range and HTTP Method for the requests. You can also use the search bar to search for logs and request by path, log message and request ID.
 
 ## Updating Source Code Repository
 
