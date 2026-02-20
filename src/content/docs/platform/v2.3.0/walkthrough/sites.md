@@ -94,11 +94,11 @@ Users can filter by the following:
 
 #### Searching Function Logs,
 
-The search bar allows users to query the logs for text this allows users to search for a request or log that matches the string given in the search bar. When the qeury is sent it check if the string matches either of the following:
+The search bar allows users to query the logs for a given piece of text. This query searches for a match for the following.
 
-- The request Id
+- The request Id of the request
 - A piece of text in a log message
-- A part of a request path
+- If the string is part of a request path
 
 ## Updating Source Code Repository
 
