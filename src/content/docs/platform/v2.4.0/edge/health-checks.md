@@ -5,17 +5,13 @@ description: "Configure health checks for your edge functions to enable automati
 
 # Health Checks
 
-Health checks allow you to monitor the health of your functions and automatically failover to our backup ;platform Altitude Anywhere when issues with our primary edge function provider (Cloudflare) are detected.
+Health checks allow you to monitor the health of your functions and automatically failover to our backup platform when issues with our primary edge function provider are detected.
 
 ## How Health Checks Work
 
-When you configure a health check for a function route, Fastly (our CDN) periodically sends requests to your worker's health check endpoint. Based on the responses, Fastly will determine whether your worker is healthy:
+When you configure a health check for a function route, our CDN periodically sends requests to your function's health check endpoint. To determine whether or not your site is healthy, the CDN uses a window of recent health checks and a required threshold of passing health check requests in order to be considered healthy. For example, if the threshold is set to 3 and the window is set to 5, of the last 5 health check requests, 3 must have returned the expected response in order for the function to be considered healthy.
 
-1. **Healthy**: If the health check endpoint returns the expected response code within the timeout period, the worker is considered healthy and traffic continues to flow to it normally.
-
-2. **Unhealthy**: If the health check fails (wrong status code, timeout, or error), and the number of failed health checks exceeds the threshold for a given window, Fastly marks the backend as unhealthy and automatically routes traffic to Altitude Anywhere.
-
-3. **Recovery**: Once the health check starts passing again, traffic is automatically routed back to your Cloudflare Worker.
+If the amount of passing health checks is less than the required threshold (such as in the event of outage of our primary provider), then we will serve your function from a backup platform until the threshold is once again met.
 
 ## Configuring Health Checks
 
@@ -42,7 +38,7 @@ routes:
 
 | Option           | Required | Default | Description                                                                                   |
 | ---------------- | -------- | ------- | --------------------------------------------------------------------------------------------- |
-| path             | Yes      |         | The path for the health check endpoint on your worker (e.g., `/health`)                       |
+| path             | Yes      |         | The path for the health check endpoint on your function (e.g., `/health`)                     |
 | intervalMillis   | No       | 15000   | How often to perform the health check in milliseconds                                         |
 | timeoutMillis    | No       | 5000    | How long to wait for the health check response in milliseconds                                |
 | threshold        | No       | 3       | How many checks within the window must be successful for the backend to be considered healthy |
@@ -50,35 +46,21 @@ routes:
 | initial          | No       | 4       | Number of health checks to initially consider as successful before real checks begin          |
 | expectedResponse | No       | 200     | The expected HTTP status code for a healthy response                                          |
 | method           | No       | HEAD    | HTTP method to use for the health check request (`HEAD` or `GET`)                             |
-| headers          | No       |         | Custom headers to include in the health check request                                         |
+| headers          | No       | []      | Custom headers to include in the health check request                                         |
 
 ## Implementing a Health Check Endpoint
 
-Your worker needs to implement an endpoint that responds to health check requests. Here's a simple example:
+Your function needs to implement an endpoint that responds to health check requests. We advise that you choose a unique path on the function, e.g. `pages/altitude/health`. Here's a simple example of an Astro endpoint:
 
-```javascript
-export default {
-  async fetch(request, env) {
-    const url = new URL(request.url);
+```typescript
+import type { APIRoute } from "astro";
 
-    // Health check endpoint
-    if (url.pathname === "/health") {
-      // Health check logic to determine whether health check should pass or fail
-      return new Response(null, { status: 204 });
-    }
-
-    // Rest of function
-  },
+export const GET: APIRoute = () => {
+  return new Response("OK", { status: 200 });
 };
 ```
 
-### Health Check Best Practices
-
-1. **Simple logic**: Health check endpoints should be lightweight and fast. Avoid complex logic that could timeout.
-
-2. **Check dependencies**: If your worker depends on external services (databases, APIs, Horizon), consider checking their availability in your health check. Factor in how long it takes for these services to respond in your `timeoutMillis` field.
-
-3. **Use appropriate status codes**: Return 2xx (200 and 204 are common status codes for health checks), and 5xx for unhealthy. Configure `expectedResponse` to match your implementation.
+This health check will cover the simple case of our CDN being unable to reach the primary origin, but you can extend the health check to include testing connectivity between the function and any external services, such as Horizon. Please take caution in ensuring your health check is correctly configured before deploying as a misconfigured health check can cause failover even if it isn't necessary. Also, consider that the more complex your health check is, the longer you may need to configure the timeout property.
 
 ## Multi-Tenant Health Checks
 
@@ -86,21 +68,21 @@ If you're running a multi-tenant setup where different domains serve different s
 
 ```yaml
 healthcheck:
-  path: /health
+  path: /altitude/health
   method: GET
   expectedResponse: 200
   headers:
     - "X-Altitude-Instance: www.mysite.com"
 ```
 
-Your worker can then use this header to perform site-specific health checks:
+Your function can then use this header to perform site-specific health checks:
 
 ```javascript
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
-    if (url.pathname === "/health") {
+    if (url.pathname === "/altitude/health") {
       const instance = request.headers.get("X-Altitude-Instance");
 
       // Perform site-specific health check
@@ -121,7 +103,6 @@ export default {
 ## Limitations
 
 - Health checks are only available for **function routes**. Static and proxy routes do not support health checks.
-- The `Host` header for health check requests is automatically set to your Cloudflare Worker's domain and cannot be overridden.
 
 ## Further Reading
 
