@@ -14,7 +14,7 @@ To enable multi-tenancy for your site, see the [guide](/docs/astro-integration/v
 
 Altitude allows multiple [custom domains](https://docs.thgaltitude.com/edge/domains/) to be attached to a single site, giving the feel of a separately hosted site per-tenant.
 
-For example `www.allsole.com` and `www.biossance.com` point to the same Altitude deployment.
+For example `www.myprotein.com` and `www.myvitamins.com` point to the same Altitude deployment.
 
 ## Tenant Configuration
 
