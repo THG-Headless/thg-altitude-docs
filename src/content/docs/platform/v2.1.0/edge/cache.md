@@ -75,7 +75,11 @@ The result of adding this cache would be:
 
 ## Cache Purging
 
-Cache purging can now be performed using the API endpoint `POST sites/:siteId/domain/purge-cache` with the body parameters `domainName`, `purgeType`, `key`, and `allPathWildcards`.
+Cache purging allows you to immediately update content delivered to users when you make changes to your site.
+
+### CDN Purging
+
+CDN cache purging can now be performed using the API endpoint `POST sites/:siteId/domain/purge-cache` with the body parameters `domainName`, `purgeType`, `key`, and `allPathWildcards`.
 
 Below is a detailed explanation of all the body parameters expected by the endpoint:
 
@@ -114,6 +118,64 @@ Please follow the guide [How to use Altitude API](../guides/how-to-use-altitude-
 ```
  curl -i --location 'https://api.platform.thgaltitude.com/v1/sites/:siteId/domain/purge-cache' --header 'Accept: application/json' --header 'Content-Type: application/json' --header "Authorization: Bearer $token" --data '{"domainName": "www.foo.com", "purgeType": "path", "key": "/bar", "allPathWildcards": true}'
 ```
+
+### Worker Purging
+
+Worker cache purging allows you to clear cached content stored in the worker layer of your application. Unlike CDN cache purging which clears content at the edge, worker cache purging targets the application-level cache that is created using the Cache API (e.g., `cache.put()` and `cache.match()` methods). This is particularly useful when you need to invalidate cached API responses, header/footer content, or other dynamically generated data that is stored using the worker Cache API.
+
+Worker cache purging can be performed using the API endpoint `POST sites/:siteId/worker-purge-cache` with the body parameter `purgeType`.
+
+Below is a detailed explanation of the body parameters expected by the endpoint:
+
+#### purgeType
+
+This is an enum that accepts one of the following values:
+
+- `all`: Purges all worker cache entries for the site.
+- `tags`: Purges worker cache entries that match specific cache tags.
+
+#### tags
+
+This field is required when `purgeType` is set to `tags`.
+
+- When `purgeType` is `tags`: The tags should be an array of cache tag identifiers you want to purge, with each tag having the format `"siteId-tag"`. Cache tags allow you to group related cache entries together and purge them as a group. For example, if you tag all product-related cache entries, you can selectively purge only those entries.
+- When `purgeType` is `all`: The tags field is not required.
+
+### CURL request
+
+Examples of how the curl requests would look like for worker cache purging:
+
+Please follow the guide [How to use Altitude API](../guides/how-to-use-altitude-api/) to get your bearer token.
+
+**Example 1: Purging all worker cache entries:**
+
+```
+curl -i --location 'https://api.platform.thgaltitude.com/v1/sites/:siteId/worker-purge-cache' \
+  --header 'Accept: application/json' \
+  --header 'Content-Type: application/json' \
+  --header "Authorization: Bearer $token" \
+  --data '{"purgeType": "all"}'
+```
+
+**Example 2: Purging worker cache entries by tags:**
+
+```
+curl -i --location 'https://api.platform.thgaltitude.com/v1/sites/:siteId/worker-purge-cache' \
+  --header 'Accept: application/json' \
+  --header 'Content-Type: application/json' \
+  --header "Authorization: Bearer $token" \
+  --data '{"purgeType": "tags", "tags": ["siteId-tag"]}'
+```
+
+### Common Use Cases for Worker Cache Purging
+
+**Purging API response cache:**
+- Use cache tags when storing API responses with `cache.put()`
+- Purge by tags when the underlying API data changes
+
+**Clearing header/footer cache:**
+- Tag header/footer fragments with identifiers like `siteId-header`
+- Purge these tags when navigation or branding updates occur
 
 ## Request Collapsing
 
