@@ -220,9 +220,19 @@ Note: Worker cache purging is independent from CDN cache purging. If you're usin
 
 ### Purging via Altitude UI
 
-Cache purging can also be requested via the Altitude UI for purge types: `domain`, `path`, `key` and `all`
+Cache purging can also be requested via the Altitude UI, which provides separate tabs for CDN Cache and Worker Cache purging:
 
-![Cache purge example](/statics/screenshots/cache/cache-purge-example.png)
+**CDN Cache Tab**
+- Supports purge types: `domain`, `path`, `key`, and `all`
+- Requires environment selection
+
+![CDN Cache purge example](/statics/screenshots/cache/cdn-cache-purge-example.png)
+
+**Worker Cache Tab**
+- Supports purge types: `all` and `tags`
+- Purge all worker cache entries for the site, or selectively purge by cache tags
+
+![Worker Cache purge example](/statics/screenshots/cache/worker-cache-purge-example.png)
 
 ## Request Collapsing
 
