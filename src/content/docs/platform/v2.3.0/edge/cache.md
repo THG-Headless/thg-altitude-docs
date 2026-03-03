@@ -127,12 +127,6 @@ This will purge cached content for all experiments on an environment. No additio
 
 Please follow the guide [How to use Altitude API](../guides/how-to-use-altitude-api/) to get your bearer token.
 
-### Purging via Altitude UI
-
-Cache purging can also be requested via the Altitude UI for purge types: `domain`, `path`, `key` and `all`
-
-![Cache purge example](/statics/screenshots/cache/cache-purge-example.png)
-
 ### Worker Purging
 
 Worker cache purging allows you to clear cached content stored in the worker layer of your application. Unlike CDN cache purging which clears content at the edge, worker cache purging targets the application-level cache that is created using the Cache API (e.g., `cache.put()` and `cache.match()` methods). This is particularly useful when you need to invalidate cached API responses, header/footer content, or other dynamically generated data that is stored using the worker Cache API.
@@ -223,6 +217,12 @@ curl -i --location 'https://api.platform.thgaltitude.com/v1/sites/:siteId/worker
 - Example: `purgeType: "tags"`, `tags: ["12345-headerfooter"]`
 
 Note: Worker cache purging is independent from CDN cache purging. If you're using both caching layers, you may need to purge both to ensure content is fully updated across your application.
+
+### Purging via Altitude UI
+
+Cache purging can also be requested via the Altitude UI for purge types: `domain`, `path`, `key` and `all`
+
+![Cache purge example](/statics/screenshots/cache/cache-purge-example.png)
 
 ## Request Collapsing
 
