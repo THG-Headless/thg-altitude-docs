@@ -82,7 +82,7 @@ Each environment has functions, which make up the deployed version of the site. 
 
 ![Function Logs](/statics/screenshots/function_logs/function-logs.png)
 
-On Altitude you can search for the logs assocaited to each of your functions. These logs are grouped by request giving information on the path, HTTP Method, status code type, wall time and CPU time associated to each request.
+On Altitude you can search for the logs for each of your functions. These logs are grouped by request giving information on the path, HTTP Method, status code type, wall time and CPU time associated to each request.
 
 #### Filtering Function Logs
 
