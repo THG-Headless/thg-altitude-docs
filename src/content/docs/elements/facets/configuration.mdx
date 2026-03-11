@@ -55,21 +55,24 @@ The `options` prop contains settings for API requests:
 - The currency symbol to be appended to pricing labels
 
 #### concessionCode
+
 - • **Type:** `String`
 - • **Required:** No
 - Concession code to be passed in Horizon requests. There is no default value here so concessionCode will not be included in the query if one is not provided in the props.
 
 #### skipRedirects
+
 - • **Type:** `Boolean`
 - • **Required:** No
 - • **Default:** `false`
 - Value of skipRedirects to be passed in Horizon requests
 
 #### skipRecursivePathSearch
+
 - • **Type:** `Boolean`
 - • **Required:** No
 - • **Default:** `false`
-- Value of skipRecursivePathSearch to be passed in Horizon requests, for collection page queries only 
+- Value of skipRecursivePathSearch to be passed in Horizon requests, for collection page queries only
 
 ### Example Configuration
 
@@ -300,6 +303,31 @@ More details on how to configure accessibility labels can be viewed [here](/docs
 </FacetSearch>
 ```
 
+## FacetSearchFilter
+
+The FacetSearchFilter is an optional component and should be used nested inside of the [FacetSearch](#facetsearch-props) component. This component should consume the slot `elements-facets-filter-bar` when used.
+This component enables character filtering allowing users to filter based on the first character of options.
+
+#### text
+
+A text object can be passed to add copy to UI. The only copy required for this UI is the `all` key.
+
+### Example Usage
+
+```javascript
+<FacetSearch
+  slot="facet-search"
+  open={false}
+  text={{ clear: "Clear" }}
+  aria={{
+    clearFacet: "Clear all for {facet-group-name-display}",
+    searchInput: "Search {facet-group-name-display} options",
+  }}
+>
+  <FacetSearchFilter text={{ all: "All" }} slot="elements-facets-filter-bar" />
+</FacetSearch>
+```
+
 ## FacetSlider Props
 
 The FacetSlider provides an out the box UI for facets with the following typename: `SliderFacet`. This should be nested within the `FacetResults` component.
@@ -312,6 +340,14 @@ This should consume the named slot `facet-slider`
 - • **Required:** No
 - • **Default:** `false`
 - Sets the options to be active when first hydrated. If `true` is set, it is advised to set the `hydrateOptions="all"` prop in `FacetResults` to ensure the template is updated. Named [slots](/docs/elements/facets/slots) can be used to configure loading states to minimise CLS.
+
+#### step
+
+Enables configuration of the step attribute on inputs allowing more granular values to be visible.
+
+- • **Type:** `String`
+- • **Required:** No
+- • **Default:** `1`
 
 #### text
 
@@ -335,6 +371,7 @@ More details on how to configure accessibility labels can be viewed [here](/docs
 <FacetSlider
   slot="facet-slider"
   open={false}
+  step="0.01"
   text={{ clear: "Clear", currency: "£", submit: "Apply" }}
   aria={{
     clearFacet: "Clear all for {facet-group-name-display}",
