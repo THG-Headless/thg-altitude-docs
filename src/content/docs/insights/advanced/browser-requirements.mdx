@@ -1,20 +1,65 @@
 ---
 title: "Browser Requirements"
 order: 3
-description: "Browser compatibility and API requirements for Insights v0.6"
+description: "Browser compatibility and requirements for Insights"
 ---
-
-import InsightsBrowserRequirements from "../../../../components/InsightsBrowserRequirements.tsx";
 
 # Browser Requirements
 
-Insights is built with modern browser APIs for optimal performance and security. The tracker uses Custom Elements V1 for component initialization and the Beacon API for reliable event transmission. Fallback mechanisms are provided for browsers with limited support.
+Insights is built with modern browser APIs for optimal performance and reliability. The SDK uses ES Modules for loading and the Beacon API for reliable event transmission.
 
-## Browser API Support Matrix
+## Minimum Browser Versions
 
-<InsightsBrowserRequirements client:load />
+| Browser          | Minimum Version |
+| ---------------- | --------------- |
+| Chrome           | 80+             |
+| Firefox          | 72+             |
+| Safari           | 14+             |
+| Edge             | 80+             |
+| Chrome Android   | 80+             |
+| iOS Safari       | 14+             |
+| Samsung Internet | 14+             |
+
+## Required APIs
+
+The following browser APIs are used by Insights:
+
+| API | Purpose | Fallback |
+|-----|---------|----------|
+| ES Modules | Script loading | None (required) |
+| Beacon API | Reliable event transmission | `fetch()` with `keepalive` |
+| Intersection Observer | Impression tracking | Disabled if unavailable |
+| Fetch API | Token requests, data upload | None (required) |
+| localStorage | Token persistence | In-memory (current session only) |
+
+## Graceful Degradation
+
+Insights degrades gracefully in environments with limited API support:
+
+- **Beacon API unavailable:** Falls back to `fetch()` with the `keepalive` flag for reliable transmission during page unload
+- **Intersection Observer unavailable:** HTML attribute impression tracking is disabled; programmatic tracking via `window.insights.impression()` still works
+- **localStorage unavailable:** Tokens are stored in memory for the current session only
+- **Core Web Vitals unavailable:** Performance metrics are omitted from page view data
+
+In all cases, core page view and event tracking continue to function. No errors are thrown in unsupported environments.
+
+## Script Loading
+
+Insights must be loaded as an ES Module:
+
+```html
+<script
+  type="module"
+  src="https://insights.thgaltitude.com/sdk/client.js"
+  data-insights-channel="myprotein"
+  data-insights-subsite="en"
+  data-insights-storefront="nutrition"
+></script>
+```
+
+The `type="module"` attribute is required. Without it, the script will not execute.
 
 ## Next Steps
 
-- **[Installation](../installation)** - Install the package for supported browsers
-- **[Configuration](../configuration)** - Set up tracking for your application
+- **[Installation](../installation)** - Add the script tag to your application
+- **[Tracking](../tracking)** - Set up tracking for your application

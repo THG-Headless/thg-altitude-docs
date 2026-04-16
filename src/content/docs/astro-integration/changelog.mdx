@@ -7,6 +7,43 @@ description: Summary of the changelog for the Astro Integration
 
 This page contains a summary of the changelog for astro integration. You can also see a detailed changelog on [GitHub](https://github.com/THG-AltitudeSiteBuilds/astro-integration/releases/)
 
+## v3.0.0 (2025-12-01)
+
+### New Features
+
+- **Path-based routing support** - Multiple locales can now be served from the same domain using URL path prefixes (e.g., `/en/`, `/fr/`). This enables more flexible multi-locale deployments without requiring separate domains.
+- **Custom locale prefixes (`customPrefix`)** - Configure custom URL path prefixes for locales instead of using standard locale codes. For example, use `/english/` instead of `/en-us/` in URLs.
+- **TypeScript rewrite** - Complete conversion from JavaScript to TypeScript with comprehensive type definitions exported for enhanced developer experience.
+- **Cloudflare Workers runtime support** - Full compatibility with Cloudflare Workers environments, including proper TypeScript types via `@cloudflare/workers-types`.
+- **Enhanced configuration validation** - Improved JSON schema validation (v3) with better error messages and more precise constraints.
+- **Domain-based i18n configuration restructure** - New streamlined configuration structure for better organization and multi-tenancy support.
+
+### Breaking Changes
+
+- **Configuration structure changes** - The i18n configuration structure has been reorganized for better clarity and extensibility:
+  - `i18n.domains` now uses domain keys with nested locale configurations
+  - `pathBasedRouting` is now configured per domain rather than globally
+  - `fallbackLocale` is required for each domain configuration
+- **Deprecated context properties removed** - Several previously deprecated properties are no longer available:
+  - `locals.altitude.preferredLocale` - Use locale detection methods instead
+  - `locals.altitude.localeDomains` - Access domain configuration directly
+  - `locals.altitude.localeCookie` - No longer exposed in context
+- **Single tenancy mode simplification** - i18n configuration is now optional for single tenancy setups
+- **Cookie routing support removed** - Path-based and domain-based routing are the only supported methods
+- **Schema validation updates** - Configuration must now validate against JSON Schema v3 with stricter constraints
+
+### Improvements
+
+- **Better locale detection and routing logic** - Enhanced algorithm for determining user locale preferences with improved fallback handling
+- **Enhanced multi-tenancy support** - Cleaner separation between single and multi-tenant configurations with better validation
+- **Performance optimizations** - Reduced runtime overhead for locale resolution and configuration processing
+- **Improved error messages** - More descriptive validation errors and runtime exceptions with actionable guidance
+- **Better TypeScript integration** - Full type safety for configuration objects and runtime context
+
+### Migration Required
+
+Existing v2.x configurations require updates to work with v3.0.0. See the [Migration Guide](/astro-integration/v3.0.0/guides/migration-v3/) for detailed instructions and examples.
+
 ## v2.0.0 (2025-07-10)
 
 ### Changed

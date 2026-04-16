@@ -1,0 +1,90 @@
+---
+title: "Page Types"
+order: 4
+description: "Configure page type tracking for richer analytics context"
+---
+
+# Page Types
+
+Page type tracking provides richer analytics context by categorising each page in your application. This enables more meaningful reporting and segmentation of your analytics data.
+
+## Setting the Page Type
+
+Add a `data-insights-page-type` attribute to any element on the page (typically the `<body>` or a top-level container):
+
+```html
+<body data-insights-page-type="Product">
+  <!-- Your content -->
+</body>
+```
+
+The SDK scans the page for this attribute on load and includes the page type in all analytics data.
+
+## Valid Page Types
+
+| Value | Description |
+|-------|-------------|
+| `Home` | Homepage |
+| `List` | Product listing or category page |
+| `Product` | Product detail page |
+| `Search` | Search results page |
+| `Basket` | Shopping basket/cart |
+| `Checkout` | Checkout flow |
+| `Checkout Complete` | Order confirmation |
+| `Account` | User account pages |
+| `Login` | Login/authentication page |
+| `PW Reset` | Password reset page |
+| `Blog` | Blog or editorial content |
+| `Info` | Informational pages (FAQ, About, etc.) |
+| `Trade` | Trade/B2B pages |
+
+## Examples
+
+### Product Detail Page
+
+```html
+<body data-insights-page-type="Product">
+  <main>
+    <h1>Whey Protein Powder</h1>
+    <p>High-quality protein for muscle recovery</p>
+  </main>
+</body>
+```
+
+### Category Listing Page
+
+```html
+<body data-insights-page-type="List">
+  <main>
+    <h1>Protein Supplements</h1>
+    <div class="product-grid">
+      <!-- Products -->
+    </div>
+  </main>
+</body>
+```
+
+### Checkout Flow
+
+```html
+<body data-insights-page-type="Checkout">
+  <main>
+    <h1>Complete Your Order</h1>
+    <!-- Checkout form -->
+  </main>
+</body>
+```
+
+## Dynamic Page Types
+
+For single-page applications where the page type changes without a full page reload, you can update the attribute dynamically. The SDK will detect the change for subsequent events.
+
+```javascript
+// Update page type when navigating to a product page
+document.body.setAttribute('data-insights-page-type', 'Product');
+```
+
+## Next Steps
+
+- **[Event Tracking](./tracking)** - Track clicks and impressions with HTML attributes
+- **[JavaScript API](./advanced/javascript-api)** - Programmatic tracking for advanced scenarios
