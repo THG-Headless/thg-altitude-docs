@@ -127,9 +127,29 @@ Worker cache purging can be performed using the API endpoint `POST sites/:siteId
 
 #### Setting Up Cache Tags
 
-Before you can purge worker cache, you need to add cache tags to your responses. Cache tags are set using the `Cache-Tag` header and should include your Altitude site ID as a prefix. `ALTITUDE_SITE_ID` will be provided as an environment variable.
+Before you can purge worker cache, you need to add cache tags to your responses.
 
-**Example: Setting cache tags for header/footer content:**
+> **Note:** If you are using `@thg-altitude/astro-integration >= 3.1.0`, `Cache-Tag` headers are set automatically when calling `cache.set()`. You no longer need to construct them manually — pass an optional `cacheTag` string as the 4th argument and the integration will prepend `ALTITUDE_SITE_ID` for you.
+
+**Using `@thg-altitude/astro-integration >= 3.1.0`:**
+
+Tag the response with the site ID only (enables site-wide purging):
+
+```javascript
+await Astro.locals.altitude.cache.set(cacheKey, response.clone(), { expiry: 600 });
+// Cache-Tag is automatically set to: ${ALTITUDE_SITE_ID}
+```
+
+Tag the response with a specific identifier (enables targeted purging):
+
+```javascript
+await Astro.locals.altitude.cache.set(cacheKey, response.clone(), { expiry: 600 }, 'headerfooter');
+// Cache-Tag is automatically set to: ${ALTITUDE_SITE_ID}, ${ALTITUDE_SITE_ID}-headerfooter
+```
+
+**Using `@thg-altitude/astro-integration < 3.1.0` (manual approach):**
+
+Cache tags are set using the `Cache-Tag` header and should include your Altitude site ID as a prefix. `ALTITUDE_SITE_ID` will be provided as an environment variable.
 
 ```javascript
 // Fetch your content
