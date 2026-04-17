@@ -127,9 +127,29 @@ Worker cache purging can be performed using the API endpoint `POST sites/:siteId
 
 #### Setting Up Cache Tags
 
-Before you can purge worker cache, you need to add cache tags to your responses. Cache tags are set using the `Cache-Tag` header and should include your altitude site ID as a prefix. `ALTITUDE_SITE_ID` will be provided as an environment variable.
+Before you can purge worker cache, you need to add cache tags to your responses.
 
-**Example: Setting cache tags for header/footer content:**
+> **Note:** If you are using `@thg-altitude/astro-integration >= 3.1.0`, `Cache-Tag` headers are set automatically when calling `cache.set()`. You no longer need to construct them manually — pass an optional `cacheTag` string as the 4th argument and the integration will prepend `ALTITUDE_SITE_ID` for you.
+
+**Using `@thg-altitude/astro-integration >= 3.1.0`:**
+
+Tag the response with the site ID only (enables site-wide purging):
+
+```javascript
+await Astro.locals.altitude.cache.set(cacheKey, response.clone(), { expiry: 600 });
+// Cache-Tag is automatically set to: ${ALTITUDE_SITE_ID}
+```
+
+Tag the response with a specific identifier (enables targeted purging):
+
+```javascript
+await Astro.locals.altitude.cache.set(cacheKey, response.clone(), { expiry: 600 }, 'headerfooter');
+// Cache-Tag is automatically set to: ${ALTITUDE_SITE_ID}, ${ALTITUDE_SITE_ID}-headerfooter
+```
+
+**Using `@thg-altitude/astro-integration < 3.1.0` (manual approach):**
+
+Cache tags are set using the `Cache-Tag` header and should include your Altitude site ID as a prefix. `ALTITUDE_SITE_ID` will be provided as an environment variable.
 
 ```javascript
 // Fetch your content
@@ -168,7 +188,7 @@ This is an enum that accepts one of the following values:
 
 This field is required when `purgeType` is set to `tags`.
 
-- When `purgeType` is `tags`: The tags should be an array of cache tag identifiers you want to purge. Cache tags allow you to group related cache entries together and purge them as a group. For example, if you tag all header/footer cache entries with `${SITE_ID}-headerfooter`, you can selectively purge only those entries.
+- When `purgeType` is `tags`: The tags should be an array of cache tag identifiers you want to purge. Altitude site ID is automatically prepended to each tag, so you only need to provide the identifier (e.g., `headerfooter` rather than `12345-headerfooter`). Cache tags allow you to group related cache entries together and purge them as a group.
 - When `purgeType` is `site`: The tags field is not required.
 
 ### CURL request
@@ -194,19 +214,18 @@ curl -i --location 'https://api.platform.thgaltitude.com/v1/sites/:siteId/worker
   --header 'Accept: application/json' \
   --header 'Content-Type: application/json' \
   --header "Authorization: Bearer $token" \
-  --data '{"purgeType": "tags", "tags": ["12345-headerfooter", "12345-products"]}'
+  --data '{"purgeType": "tags", "tags": ["headerfooter", "products"]}'
 ```
 
 ### Common Use Cases for Worker Cache Purging
 
 **Purging all site cache:**
 - Use `purgeType: "site"` to clear all worker cache entries for your site
-- Ensure all cached responses include the altitude site ID in their Cache-Tag header
 
 **Clearing header/footer cache:**
-- Tag header/footer fragments with identifiers like `${SITE_ID}-headerfooter`
+- Tag header/footer fragments with identifiers like `headerfooter`
 - Purge these tags when navigation or branding updates occur
-- Example: `purgeType: "tags"`, `tags: ["12345-headerfooter"]`
+- Example: `purgeType: "tags"`, `tags: ["headerfooter"]`
 
 Note: Worker cache purging is independent from CDN cache purging. If you're using both caching layers, you may need to purge both to ensure content is fully updated across your application.
 
