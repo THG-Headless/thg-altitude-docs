@@ -93,7 +93,6 @@ routes:
     build:
       preBuildCommand: node prebuild.js
       command: build
-       
       output:
         directory: dist
 ```
