@@ -1,4 +1,5 @@
 ---
+<<<<<<< HEAD
 title: Creating a Site (v2.3.0)
 description: Learn how to create a site in Altitude Platform v2.3.0
 ---
@@ -6,6 +7,15 @@ description: Learn how to create a site in Altitude Platform v2.3.0
 # Creating a Site in Altitude Platform v2.3.0
 
 This guide will walk you through the process of creating a new site in Altitude Platform version 2.3.0, which includes several new features and improvements over previous versions.
+=======
+title: Creating a Site (v2.4.0)
+description: Learn how to create a site in Altitude Platform v2.4.0
+---
+
+# Creating a Site in Altitude Platform v2.4.0
+
+This guide will walk you through the process of creating a new site in Altitude Platform version 2.4.0.
+>>>>>>> main
 
 ## Prerequisites
 
@@ -27,14 +37,22 @@ Before you begin, make sure you have:
 2. Enter a name for your site
 3. Select the GitHub repository containing your project
 4. Choose the branch you want to deploy
+<<<<<<< HEAD
 5. **New in v2.3.0**: You can now select multiple branches for preview deployments with custom domain patterns
+=======
+5. You can select multiple branches for preview deployments with custom domain patterns
+>>>>>>> main
 
 ## Step 3: Configure Build Settings
 
 1. Specify the build command (e.g., `npm run build`)
 2. Set the output directory (e.g., `dist` or `build`)
 3. Configure environment variables needed for the build
+<<<<<<< HEAD
 4. **New in v2.3.0**: You can now set different environment variables for different deployment environments with inheritance support
+=======
+4. You can set different environment variables for different deployment environments with inheritance support
+>>>>>>> main
 
 ## Step 4: Configure Advanced Settings
 
@@ -42,14 +60,23 @@ Before you begin, make sure you have:
 2. Configure edge function settings with enhanced performance options
 3. Set up team permissions with role-based access control
 4. Configure CI/CD integration with detailed deployment reports
+<<<<<<< HEAD
 5. **New in v2.3.0**: Set up real-time monitoring alerts
+=======
+5. Set up real-time monitoring alerts
+6. Configure health checks for automatic failover (see [Health Checks](/docs/platform/v2.4.0/edge/health-checks))
+>>>>>>> main
 
 ## Step 5: Deploy Your Site
 
 1. Click "Create Site" to finalize the setup
 2. Wait for the initial build and deployment to complete
 3. Once deployed, you'll receive a URL where your site is accessible
+<<<<<<< HEAD
 4. **New in v2.3.0**: View real-time deployment logs and metrics
+=======
+4. View real-time deployment logs and metrics
+>>>>>>> main
 
 ## Step 6: Configure Custom Domain
 
@@ -57,23 +84,43 @@ Before you begin, make sure you have:
 2. Click on "Domains"
 3. Add your custom domain
 4. Follow the DNS configuration instructions
+<<<<<<< HEAD
 5. **New in v2.3.0**: Automatic SSL certificate provisioning and renewal with HTTP/3 support
+=======
+5. Automatic SSL certificate provisioning and renewal with HTTP/3 support
+>>>>>>> main
 
 ## Troubleshooting
 
 If you encounter issues during deployment:
 
+<<<<<<< HEAD
 - Use the new real-time monitoring dashboard to identify issues
 - Check the enhanced build logs for detailed error information
 - Use the deployment inspector to identify performance bottlenecks
 - Contact support through the new in-app chat feature
+=======
+- Use the real-time monitoring dashboard to identify issues
+- Check the build logs for detailed error information
+- Use the deployment inspector to identify performance bottlenecks
+- Contact support through the in-app chat feature
+>>>>>>> main
 
 ## Next Steps
 
 Now that you've created your site, you can:
 
+<<<<<<< HEAD
 - [Set up environment variables](/docs/platform/v2.3.0/guides/environment-variables)
 - [Configure the KV store](/docs/platform/v2.3.0/guides/kv-store)
 - [Set up team permissions](/docs/platform/v2.3.0/guides/team-permissions)
 - [Configure CI/CD integration](/docs/platform/v2.3.0/guides/ci-cd-integration)
 - [Set up real-time monitoring](/docs/platform/v2.3.0/guides/monitoring)
+=======
+- [Set up environment variables](/docs/platform/v2.4.0/guides/environment-variables)
+- [Configure the KV store](/docs/platform/v2.4.0/edge/kv-store)
+- [Set up team permissions](/docs/platform/v2.4.0/guides/team-permissions)
+- [Configure CI/CD integration](/docs/platform/v2.4.0/guides/ci-cd-integration)
+- [Set up real-time monitoring](/docs/platform/v2.4.0/guides/monitoring)
+- [Configure health checks](/docs/platform/v2.4.0/edge/health-checks)
+>>>>>>> main

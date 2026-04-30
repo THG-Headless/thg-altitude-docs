@@ -8,7 +8,11 @@ title: Edge Configuration
 
 | Key                 | Required | Type                                                             | Examples   | Description                                                               |
 | ------------------- | -------- | ---------------------------------------------------------------- | ---------- | ------------------------------------------------------------------------- |
+<<<<<<< HEAD
 | version             | Yes      | String                                                           | v2.4       | Altitude Edge Configuration Version. The current latest version is `v2.4` |
+=======
+| version             | Yes      | String                                                           | v2.2       | Altitude Edge Configuration Version. The current latest version is `v2.2` |
+>>>>>>> main
 | provider            | Yes      | String                                                           | cloudflare | Cloud Provider                                                            |
 | routes              | Yes      | Array[[Routes Configuration](#routes)]                           |            |                                                                           |
 | cache               | No       | Array[[Cache Configuration](#cache)]                             |            |                                                                           |
