@@ -91,9 +91,9 @@ routes:
     type: static
     directory: .
     build:
-      commands:
-        - npm install
-        - node prebuild.js
+      preBuildCommand: node prebuild.js
+      command: build
+       
       output:
         directory: dist
 ```

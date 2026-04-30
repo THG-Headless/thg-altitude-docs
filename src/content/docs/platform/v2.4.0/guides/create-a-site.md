@@ -1,13 +1,4 @@
 ---
-<<<<<<< HEAD
-title: Creating a Site (v2.3.0)
-description: Learn how to create a site in Altitude Platform v2.3.0
----
-
-# Creating a Site in Altitude Platform v2.3.0
-
-This guide will walk you through the process of creating a new site in Altitude Platform version 2.3.0, which includes several new features and improvements over previous versions.
-=======
 title: Creating a Site (v2.4.0)
 description: Learn how to create a site in Altitude Platform v2.4.0
 ---
@@ -15,7 +6,6 @@ description: Learn how to create a site in Altitude Platform v2.4.0
 # Creating a Site in Altitude Platform v2.4.0
 
 This guide will walk you through the process of creating a new site in Altitude Platform version 2.4.0.
->>>>>>> main
 
 ## Prerequisites
 

@@ -76,21 +76,12 @@ Please note that once created you will only be able to update or delete an envir
 
 Each environment has functions, which make up the deployed version of the site. You can see the logs and metrics for an individual function by clicking on it from the list on the environment page.
 
-<<<<<<< HEAD
-![Function Logs and Metrics](https://media.graphassets.com/YPLJU4uWR6WuiiKJzKK3)
-=======
 ![Function Logs and Metrics](/statics/screenshots/monitoring/monitoring.png)
->>>>>>> main
 
 ### Function Logs
 
 ![Function Logs](/statics/screenshots/function_logs/function-logs.png)
 
-<<<<<<< HEAD
-The function logs feature of Altitude allows you to filter the logs by time. You can either use the relative or absolute time selection options to specify the time frame for the logs.
-
-You are able to search the logs by keywords as well as filter them by requestID using the search bar. You are able to find the requestID for each log within the component itself as well as in the networks tab of the site you are requesting. The requestID is defined by the **Cf-Ray** value within the **Request Headers** section of the networks tab. The Cf-Ray value is structured as `RequestId-Location`.
-=======
 On Altitude you can search for the logs for each of your functions. These logs are grouped by request giving information on the path, HTTP Method, status code type, wall time and CPU time associated to each request.
 
 #### Filtering Function Logs
@@ -108,7 +99,6 @@ The search bar allows users to query the logs for a given piece of text. This qu
 - The request Id of the request
 - A piece of text in a log message
 - If the string is part of a request path
->>>>>>> main
 
 ## Updating Source Code Repository
 
