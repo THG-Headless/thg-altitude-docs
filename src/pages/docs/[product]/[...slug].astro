@@ -1,7 +1,7 @@
 ---
 import DocsLayout from '../../../layouts/DocsLayout.astro';
 import DocsSidebar from '../../../components/DocsSidebar.astro';
-import { getCollection } from 'astro:content';
+import { getCollection, render } from 'astro:content';
 import { products } from '../../../config/products';
 import { isVersionFolder } from '../../../utils/versions';
 
@@ -76,7 +76,7 @@ try {
       docData = doc.data;
       
       // Render the content
-      const result = await (doc as any).render();
+      const result = await render(doc);
       Content = result.Content;
       headings = result.headings;
       console.log('Content available:', !!Content);
@@ -94,7 +94,7 @@ try {
         docData = flexibleDoc.data;
         
         // Render the content
-        const result = await (flexibleDoc as any).render();
+        const result = await render(flexibleDoc);
         Content = result.Content;
         headings = result.headings;
         console.log('Content available (flexible):', !!Content);
@@ -113,7 +113,7 @@ try {
           docData = directDoc.data;
           
           // Render the content
-          const result = await (directDoc as any).render();
+          const result = await render(directDoc);
           Content = result.Content;
           headings = result.headings;
           console.log('Content available (direct):', !!Content);

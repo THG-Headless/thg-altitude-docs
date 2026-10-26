@@ -12,4 +12,4 @@ routes:
         filename: _bundled_worker.js
         staticDirectory: statics
       nodeSettings:
-       version: 22.13.1
+       version: 22.23.4
