@@ -1,0 +1,6 @@
+---
+// Altitude runs the worker without an ASSETS binding, and @astrojs/cloudflare
+// calls env.ASSETS.fetch() for any request that matches no route. Matching every
+// path here means that never happens; Astro renders its 404 page instead.
+return new Response(null, { status: 404 });
+---
