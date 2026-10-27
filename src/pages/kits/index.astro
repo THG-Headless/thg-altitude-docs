@@ -15,9 +15,20 @@ interface Kit {
   services: string[];
 }
 
-// Fetch kits from the API
-const response = await fetch('https://www.platform.thgaltitude.com/api/v1/templates');
-const kits: Kit[] = await response.json();
+// Fetch kits from the API. If it fails (it currently returns 401), show the
+// directory empty instead of failing the whole page.
+let kits: Kit[] = [];
+try {
+  const response = await fetch('https://www.platform.thgaltitude.com/api/v1/templates');
+  const data = await response.json();
+  if (response.ok && Array.isArray(data)) {
+    kits = data;
+  } else {
+    console.error(`Failed to load kits: ${response.status}`);
+  }
+} catch (error) {
+  console.error('Failed to load kits:', error);
+}
 
 // Function to format date
 function formatDate(timestamp: number): string {
@@ -41,6 +52,12 @@ function formatDate(timestamp: number): string {
         Select a kit to view details and deploy.
       </p>
     </div>
+
+    {kits.length === 0 && (
+      <p class="text-center text-stone-400 py-12">
+        Starter kits can't be loaded right now. Please try again later.
+      </p>
+    )}
 
     <!-- Kit Cards Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
