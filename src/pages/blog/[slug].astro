@@ -1,6 +1,6 @@
 ---
 import BlogLayout from '../../layouts/BlogLayout.astro';
-import { getCollection } from 'astro:content';
+import { getCollection, render } from 'astro:content';
 
 // Get the slug from the URL
 const slug = Astro.params.slug || '';
@@ -18,7 +18,7 @@ if (!entry) {
 }
 
 // Render the content
-const { Content } = await (entry as any).render();
+const { Content } = await render(entry);
 ---
 
 <BlogLayout

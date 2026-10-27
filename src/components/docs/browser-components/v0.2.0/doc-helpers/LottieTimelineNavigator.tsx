@@ -270,10 +270,7 @@ const LottieTimelineNavigator: React.FC<LottieTimelineNavigatorProps> = ({
       return (
         <div className="slide-content" style={{ borderRadius: "20px" }}>
           {currentTimestamp.description && (
-            <div
-              className="description"
-              dangerouslySetInnerHTML={{ __html: currentTimestamp.description }}
-            />
+            <div className="description">{currentTimestamp.description}</div>
           )}
 
           {currentTimestamp.codeBlock && (

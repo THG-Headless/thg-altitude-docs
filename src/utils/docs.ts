@@ -13,7 +13,7 @@ export interface DocPageData {
 }
 
 export async function getDocPageData(productId: string, docPath: string): Promise<DocPageData> {
-  const { getCollection } = await import('astro:content');
+  const { getCollection, render } = await import('astro:content');
   const { getProduct } = await import('../config/products');
 
   const docs = await getCollection('docs');
@@ -24,7 +24,7 @@ export async function getDocPageData(productId: string, docPath: string): Promis
   }
 
   const product = getProduct(productId);
-  const { Content, headings } = await doc.render();
+  const { Content, headings } = await render(doc);
 
   return {
     doc,

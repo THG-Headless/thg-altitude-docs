@@ -1,4 +1,6 @@
+import { fileURLToPath } from 'node:url';
 import { defineConfig, passthroughImageService } from 'astro/config';
+import { unified } from '@astrojs/markdown-remark';
 import { remarkCustomComponents } from './src/plugins/remarkCustomComponents.mjs';
 import mdx from '@astrojs/mdx';
 import react from '@astrojs/react';
@@ -7,12 +9,36 @@ import altitude from '@thg-altitude/astro-adapter';
 
 import tailwindcss from "@tailwindcss/vite";
 
+const componentsDir = new URL('./src/components/', import.meta.url);
+
+// @cloudflare/vite-plugin treats every `.html` import as a Workers text module,
+// which would turn our HTML component imports into plain strings. Resolve them
+// first so Astro still compiles them as components.
+function htmlComponents() {
+  return {
+    name: 'altitude-docs:html-components',
+    enforce: 'pre',
+    resolveId(source) {
+      if (source.startsWith('@components/') && source.endsWith('.html')) {
+        return fileURLToPath(new URL(source.slice('@components/'.length), componentsDir));
+      }
+      return null;
+    },
+  };
+}
+
 export default defineConfig({
   site: 'http://thgaltitude.com/',
   output: 'server',
   adapter: altitude(),
   build: {
     assets: 'statics'
+  },
+  // Astro 7 defaults to 'jsx'; keep the v5 whitespace behaviour.
+  compressHTML: true,
+  // Astro 7 defaults to Sätteri; remark/rehype plugins need the unified processor.
+  markdown: {
+    processor: unified(),
   },
   integrations: [
   mdx({
@@ -39,6 +65,7 @@ export default defineConfig({
   },
   vite: {
     plugins: [
+      htmlComponents(),
       tailwindcss({
         globalStyle: "./src/styles/global.css"
       })

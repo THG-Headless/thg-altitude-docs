@@ -43,4 +43,4 @@ Depending on the output mode selected above refer to these guides on tailoring y
 - [Create an SSG Site](/guides/create-a-ssr-site/)
 - [Create an SPA Site](/guides/create-a-ssr-site/)
 
-### 4. Done! 🎉
+### 4. Done!

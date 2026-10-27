@@ -2,7 +2,7 @@
 import ProductContext from '../components/ProductContext.astro';
 import HeaderNav from '../components/HeaderNav.astro';
 import Footer from '../components/Footer.astro';
-import { ViewTransitions } from 'astro:transitions';
+import { ClientRouter } from 'astro:transitions';
 import '@styles/global.css'
 import '@styles/search.css'
 
@@ -37,7 +37,7 @@ const { title, description, product } = Astro.props;
     <meta name="generator" content={Astro.generator} />
     <title>{title} - THG Altitude</title>
     {description && <meta name="description" content={description} />}
-    <ViewTransitions />
+    <ClientRouter />
     <script is:inline src="/components/docs/browser-components/v0.2.0/modals/modal-init.js"></script>
   </head>
   <body class="min-h-screen bg-[#010101] text-stone-100">
